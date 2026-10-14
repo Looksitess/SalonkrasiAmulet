@@ -1,0 +1,938 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Сімейний салон краси «Амулет» у Києві: стрижки, фарбування, манікюр, педикюр, косметологія та догляд. Запис онлайн.">
+    <meta name="theme-color" content="#c5a880">
+    <meta property="og:title" content="Сімейний салон краси «Амулет» — Київ">
+    <meta property="og:description" content="Краса та догляд для всієї родини. Послуги, ціни, галерея та онлайн-заявка.">
+    <meta property="og:type" content="website">
+    <title>Сімейний салон краси «Амулет» — Київ, Академмістечко</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Playfair+Display:ital,wght@0,600;0,700;1,400&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #c5a880;
+            --primary-dark: #b3946a;
+            --dark: #1a1917;
+            --light: #fcfbfa;
+            --text-muted: #8c857b;
+            --glass-bg: rgba(255, 255, 255, 0.82);
+            --glass-border: rgba(197, 168, 128, 0.25);
+            --shadow: 0 12px 40px rgba(26, 25, 23, 0.06);
+            --radius: 16px;
+        }
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Inter', sans-serif; scroll-behavior: smooth; }
+        body {
+            background-color: #f7f4f0;
+            background-image: linear-gradient(135deg, rgba(252, 251, 250, 0.9) 0%, rgba(244, 238, 230, 0.85) 100%), url('https://images.unsplash.com/photo-1560066984-138dadb4c035?auto=format&fit=crop&q=80&w=1920');
+            background-attachment: fixed;
+            background-size: cover;
+            background-position: center;
+            color: var(--dark);
+            line-height: 1.6;
+        }
+        .glass-card { background: var(--glass-bg); backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px); border: 1px solid var(--glass-border); border-radius: var(--radius); box-shadow: var(--shadow); }
+        .container { width: 100%; max-width: 1140px; margin: 0 auto; padding: 0 24px; }
+        header { padding: 20px 0; position: sticky; top: 0; z-index: 1000; background: rgba(252, 251, 250, 0.85); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); border-bottom: 1px solid rgba(197, 168, 128, 0.15); }
+        header .container { display: flex; justify-content: space-between; align-items: center; }
+        .logo { font-family: 'Playfair Display', serif; font-size: 24px; font-weight: 700; color: var(--dark); text-decoration: none; letter-spacing: 1px; display: flex; align-items: center; gap: 10px; }
+        .logo i { color: var(--primary); font-size: 20px; }
+        .header-contacts { display: flex; align-items: center; gap: 20px; }
+        .phone-link { color: var(--dark); text-decoration: none; font-weight: 600; font-size: 15px; display: flex; align-items: center; gap: 8px; transition: color 0.3s ease; }
+        .phone-link:hover { color: var(--primary); }
+        .btn { display: inline-flex; align-items: center; justify-content: center; gap: 10px; padding: 14px 28px; border-radius: 50px; font-weight: 500; font-size: 15px; text-decoration: none; transition: all 0.3s cubic-bezier(0.165, 0.84, 0.44, 1); cursor: pointer; border: none; }
+        .btn-primary { background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%); color: white; box-shadow: 0 4px 15px rgba(197, 168, 128, 0.4); }
+        .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(197, 168, 128, 0.6); }
+        .btn-outline { background: transparent; color: var(--dark); border: 1px solid var(--primary); }
+        .btn-outline:hover { background: rgba(197, 168, 128, 0.08); transform: translateY(-2px); }
+        .hero { padding: 80px 0 60px 0; text-align: center; }
+        .rating-badge { display: inline-flex; align-items: center; gap: 6px; background: white; padding: 6px 14px; border-radius: 30px; font-size: 14px; font-weight: 600; box-shadow: 0 4px 12px rgba(0,0,0,0.03); margin-bottom: 24px; border: 1px solid rgba(197, 168, 128, 0.2); }
+        .rating-badge i { color: #ffc107; }
+        .rating-badge span { color: var(--text-muted); font-weight: 400; }
+        h1 { font-family: 'Playfair Display', serif; font-size: 46px; line-height: 1.2; margin-bottom: 20px; font-weight: 700; }
+        .hero p { font-size: 18px; color: #5a544b; max-width: 650px; margin: 0 auto 35px auto; font-weight: 300; }
+        .hero-actions { display: flex; justify-content: center; gap: 16px; flex-wrap: wrap; }
+        .features { padding: 40px 0; }
+        .features-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 24px; }
+        .feature-card { padding: 30px; text-align: left; transition: transform 0.3s ease; }
+        .feature-card:hover { transform: translateY(-4px); }
+        .feature-icon { width: 50px; height: 50px; border-radius: 12px; background: rgba(197, 168, 128, 0.12); color: var(--primary-dark); display: flex; align-items: center; justify-content: center; font-size: 20px; margin-bottom: 20px; }
+        .feature-card h3 { font-family: 'Playfair Display', serif; font-size: 20px; margin-bottom: 10px; }
+        .feature-card p { font-size: 14px; color: #6e675f; }
+        .services { padding: 60px 0; }
+        .section-title { text-align: center; font-family: 'Playfair Display', serif; font-size: 36px; margin-bottom: 12px; position: relative; }
+        .section-title::after { content: ''; display: block; width: 50px; height: 2px; background: var(--primary); margin: 12px auto 0 auto; }
+        .section-subtitle { text-align: center; color: var(--text-muted); font-size: 15px; margin-bottom: 45px; font-weight: 400; }
+        .services-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 30px; }
+        .services-category { padding: 35px; }
+        .services-category h3 { font-family: 'Playfair Display', serif; font-size: 22px; margin-bottom: 25px; display: flex; align-items: center; gap: 12px; color: var(--dark); border-bottom: 1px solid rgba(197, 168, 128, 0.2); padding-bottom: 12px; }
+        .services-category h3 i { color: var(--primary); }
+        .service-list { list-style: none; }
+        .service-item { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 18px; font-size: 15px; }
+        .service-name { font-weight: 500; padding-right: 10px; background: transparent; }
+        .service-dots { flex-grow: 1; border-bottom: 1px dotted rgba(197, 168, 128, 0.4); margin: 0 10px; position: relative; top: -4px; }
+        .service-price { font-weight: 600; color: var(--primary-dark); white-space: nowrap; }
+        .offers { padding: 40px 0; }
+        .offers-banner { padding: 40px; background: linear-gradient(135deg, rgba(26, 25, 23, 0.95) 0%, rgba(54, 50, 45, 0.95) 100%); color: white; border-radius: var(--radius); display: flex; justify-content: space-between; align-items: center; gap: 30px; box-shadow: var(--shadow); }
+        .offers-content h3 { font-family: 'Playfair Display', serif; font-size: 26px; margin-bottom: 10px; color: var(--primary); }
+        .offers-content p { font-size: 15px; color: #d1c9be; }
+        .reviews { padding: 60px 0; }
+        .reviews-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 24px; }
+        .review-card { padding: 30px; position: relative; }
+        .review-stars { color: #ffc107; font-size: 14px; margin-bottom: 15px; }
+        .review-text { font-size: 14px; color: #4a443c; font-style: italic; margin-bottom: 20px; line-height: 1.6; }
+        .review-author { display: flex; align-items: center; justify-content: space-between; }
+        .author-info h4 { font-size: 15px; font-weight: 600; }
+        .author-info span { font-size: 12px; color: var(--text-muted); }
+        .google-verified { font-size: 12px; color: #28a745; display: flex; align-items: center; gap: 4px; background: rgba(40, 167, 69, 0.08); padding: 4px 8px; border-radius: 20px; }
+        .contacts { padding: 60px 0 80px 0; }
+        .contacts-wrapper { display: grid; grid-template-columns: 1fr 1.2fr; gap: 40px; align-items: start; }
+        .contacts-info { padding: 40px; height: 100%; display: flex; flex-direction: column; justify-content: center; }
+        .contact-item { display: flex; align-items: flex-start; gap: 16px; margin-bottom: 25px; }
+        .contact-item i { font-size: 20px; color: var(--primary); margin-top: 4px; }
+        .contact-item h4 { font-size: 16px; font-weight: 600; margin-bottom: 4px; }
+        .contact-item p { font-size: 14px; color: #5a544b; }
+        .map-container { border-radius: var(--radius); overflow: hidden; border: 1px solid var(--glass-border); box-shadow: var(--shadow); height: 400px; }
+        .map-container iframe { width: 100%; height: 100%; border: 0; }
+        footer { background: var(--dark); color: #a8a095; padding: 30px 0; text-align: center; font-size: 14px; border-top: 1px solid rgba(197, 168, 128, 0.1); }
+        @media (max-width: 992px) { .contacts-wrapper { grid-template-columns: 1fr; } .map-container { height: 350px; } }
+        @media (max-width: 768px) { h1 { font-size: 32px; } .hero p { font-size: 15px; } .header-contacts .btn { display: none; } .offers-banner { flex-direction: column; text-align: center; } .services-grid { grid-template-columns: 1fr; } }
+    
+      .menu-toggle{display:none;border:0;background:#f5f1eb;width:42px;height:42px;border-radius:12px;cursor:pointer;font-size:18px}
+      .service-tools{display:flex;gap:10px;flex-wrap:wrap;justify-content:center;margin:-20px 0 28px}
+      .service-filter{border:1px solid #ded4c7;background:#fff;border-radius:999px;padding:9px 14px;cursor:pointer;font:500 13px Inter,sans-serif}
+      .service-filter.active{background:#c5a880;color:#fff;border-color:#c5a880}
+      .service-item.hidden{display:none}
+      .gallery-item{cursor:zoom-in}
+      .lightbox{position:fixed;inset:0;background:rgba(10,9,8,.9);display:none;align-items:center;justify-content:center;padding:24px;z-index:4000}
+      .lightbox.show{display:flex}
+      .lightbox img{max-width:min(1100px,96vw);max-height:86vh;object-fit:contain;border-radius:14px;box-shadow:0 20px 70px rgba(0,0,0,.4)}
+      .lightbox-close{position:absolute;right:20px;top:18px;width:44px;height:44px;border:0;border-radius:50%;background:#fff;color:#222;font-size:22px;cursor:pointer}
+      .booking-summary{font-size:12px;color:#756d63;background:#faf7f2;border:1px solid #eee4d7;border-radius:12px;padding:11px 12px}
+      .toast{position:fixed;left:50%;bottom:24px;transform:translate(-50%,20px);opacity:0;pointer-events:none;background:#211f1c;color:#fff;padding:12px 16px;border-radius:999px;z-index:5000;font-size:13px;transition:.3s}
+      .toast.show{opacity:1;transform:translate(-50%,0)}
+      .skip-link{position:fixed;left:10px;top:10px;transform:translateY(-150%);z-index:6000;background:#222;color:#fff;padding:10px 14px;border-radius:8px}
+      .skip-link:focus{transform:none}
+      @media (max-width:768px){
+        .menu-toggle{display:block}
+        .header-contacts{gap:8px}
+        .header-contacts .phone-link{font-size:0}
+        .header-contacts .phone-link i{font-size:17px}
+        .header-contacts .btn{display:none}
+        .header-nav{display:none}
+        .header-nav.open{display:flex;position:absolute;left:16px;right:16px;top:76px;background:#fff;border:1px solid #eee4d7;border-radius:16px;padding:12px;box-shadow:0 20px 50px rgba(0,0,0,.12);flex-direction:column}
+      }
+
+    </style>
+
+    <meta name="description" content="Сімейний салон краси «Амулет» у Києві: перукарські послуги, манікюр, педикюр, косметологія та догляд. Запис за телефоном 068 000 6311.">
+    <meta name="theme-color" content="#1a1917">
+    <meta property="og:title" content="Салон краси «Амулет» — Київ">
+    <meta property="og:description" content="Краса, догляд та комфорт для всієї родини.">
+    <meta property="og:type" content="website">
+    <style>
+      /* ===== PREMIUM UPGRADE ===== */
+      :root{
+        --accent:#c5a880; --accent-2:#ead8bd; --success:#2e9b63;
+      }
+      html{scroll-padding-top:90px}
+      body{overflow-x:hidden}
+      a,button{ -webkit-tap-highlight-color:transparent }
+      ::selection{background:var(--primary);color:#fff}
+      .container{position:relative}
+      .progress-bar{position:fixed;left:0;top:0;height:3px;width:0;background:linear-gradient(90deg,#b3946a,#f0ddc1,#b3946a);z-index:3000}
+      header{transition:.3s ease}
+      header.scrolled{padding:12px 0;background:rgba(252,251,250,.94);box-shadow:0 8px 30px rgba(26,25,23,.06)}
+      .logo-badge{width:34px;height:34px;border:1px solid rgba(197,168,128,.5);border-radius:50%;display:grid;place-items:center}
+      .hero{min-height:620px;display:flex;align-items:center;position:relative;overflow:hidden}
+      .hero::before,.hero::after{content:"";position:absolute;border-radius:50%;filter:blur(2px);pointer-events:none}
+      .hero::before{width:420px;height:420px;right:-180px;top:30px;background:radial-gradient(circle,rgba(197,168,128,.18),transparent 65%)}
+      .hero::after{width:320px;height:320px;left:-180px;bottom:-100px;background:radial-gradient(circle,rgba(197,168,128,.13),transparent 65%)}
+      .hero-inner{position:relative;z-index:2;width:100%}
+      .eyebrow{display:inline-flex;align-items:center;gap:8px;color:#806b4e;font-size:12px;letter-spacing:2px;text-transform:uppercase;font-weight:700;margin-bottom:16px}
+      .eyebrow::before{content:"";width:26px;height:1px;background:var(--primary)}
+      .hero h1{font-size:clamp(38px,6vw,68px);max-width:850px;margin-left:auto;margin-right:auto}
+      .hero p{max-width:720px}
+      .hero-note{margin-top:18px;font-size:13px;color:#81796f}
+      .hero-note i{color:var(--success)}
+      .trust-row{display:flex;justify-content:center;gap:24px;flex-wrap:wrap;margin-top:30px;color:#686158;font-size:13px}
+      .trust-row span{display:flex;align-items:center;gap:7px}
+      .trust-row i{color:var(--primary-dark)}
+      .floating-actions{position:fixed;right:18px;bottom:18px;z-index:1500;display:flex;flex-direction:column;gap:10px}
+      .fab{width:52px;height:52px;border-radius:50%;display:grid;place-items:center;text-decoration:none;color:#fff;background:#1a1917;box-shadow:0 10px 28px rgba(0,0,0,.18);transition:.25s}
+      .fab:hover{transform:translateY(-3px) scale(1.04)}
+      .fab.primary{background:linear-gradient(135deg,#c5a880,#a98659)}
+      .section-head{max-width:720px;margin:0 auto 40px}
+      .section-head .section-subtitle{margin-bottom:0}
+      .stats{padding:20px 0 60px}
+      .stats-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}
+      .stat{padding:22px;text-align:center}
+      .stat strong{display:block;font:700 30px 'Playfair Display',serif;color:#302c27}
+      .stat span{font-size:12px;color:#81796f}
+      .gallery{padding:50px 0}
+      .gallery-grid{display:grid;grid-template-columns:1.4fr .8fr .8fr;grid-template-rows:220px 220px;gap:14px}
+      .gallery-item{position:relative;overflow:hidden;border-radius:18px;box-shadow:var(--shadow);background:#ddd}
+      .gallery-item:first-child{grid-row:span 2}
+      .gallery-item img{width:100%;height:100%;object-fit:cover;display:block;transition:transform .7s ease}
+      .gallery-item:hover img{transform:scale(1.06)}
+      .gallery-caption{position:absolute;left:14px;right:14px;bottom:14px;padding:11px 13px;color:#fff;background:rgba(20,18,16,.55);backdrop-filter:blur(8px);border-radius:12px;font-size:12px}
+      .process{padding:60px 0}
+      .steps{display:grid;grid-template-columns:repeat(3,1fr);gap:20px}
+      .step{padding:28px;position:relative}
+      .step-num{width:42px;height:42px;border-radius:50%;display:grid;place-items:center;background:#f0e6d8;color:#765f42;font-weight:700;margin-bottom:18px}
+      .step h3{font-family:'Playfair Display',serif;margin-bottom:8px}
+      .step p{font-size:14px;color:#6e675f}
+      .faq{padding:50px 0 70px}
+      .faq-list{max-width:850px;margin:auto;display:grid;gap:10px}
+      .faq-item{overflow:hidden}
+      .faq-q{width:100%;padding:19px 22px;border:0;background:transparent;text-align:left;font:600 15px Inter,sans-serif;cursor:pointer;display:flex;justify-content:space-between;gap:20px;color:var(--dark)}
+      .faq-q i{transition:.25s}
+      .faq-a{max-height:0;overflow:hidden;padding:0 22px;color:#6e675f;font-size:14px;transition:max-height .35s ease,padding .35s ease}
+      .faq-item.open .faq-a{max-height:160px;padding:0 22px 20px}
+      .faq-item.open .faq-q i{transform:rotate(180deg)}
+      .newsletter{padding:0 0 70px}
+      .newsletter-card{padding:38px;display:flex;justify-content:space-between;align-items:center;gap:25px;background:linear-gradient(135deg,#fff,#f4ece1)}
+      .newsletter-card h3{font:700 27px 'Playfair Display',serif;margin-bottom:7px}
+      .newsletter-card p{font-size:14px;color:#6e675f}
+      .booking-modal{position:fixed;inset:0;background:rgba(20,18,16,.58);backdrop-filter:blur(8px);display:none;align-items:center;justify-content:center;padding:20px;z-index:2500}
+      .booking-modal.show{display:flex}
+      .booking-box{width:min(520px,100%);background:#fff;border-radius:22px;padding:30px;box-shadow:0 30px 80px rgba(0,0,0,.25);position:relative}
+      .booking-box h3{font:700 30px 'Playfair Display',serif;margin-bottom:7px}
+      .booking-box>p{color:#777;font-size:14px;margin-bottom:22px}
+      .booking-close{position:absolute;right:14px;top:12px;border:0;background:#f5f2ed;width:36px;height:36px;border-radius:50%;cursor:pointer}
+      .form-grid{display:grid;gap:13px}
+      .form-grid input,.form-grid select,.form-grid textarea{width:100%;border:1px solid #e5ded4;border-radius:12px;padding:13px 14px;font:14px Inter,sans-serif;outline:none;background:#fff}
+      .form-grid input:focus,.form-grid select:focus,.form-grid textarea:focus{border-color:#c5a880;box-shadow:0 0 0 3px rgba(197,168,128,.12)}
+      .form-grid textarea{min-height:85px;resize:vertical}
+      .form-success{display:none;margin-top:12px;padding:12px;border-radius:12px;background:#edf8f1;color:#28784f;font-size:13px}
+      .reveal{opacity:0;transform:translateY(18px);transition:opacity .7s ease,transform .7s ease}
+      .reveal.visible{opacity:1;transform:none}
+      .cookie{position:fixed;left:18px;right:18px;bottom:18px;z-index:2200;display:none;align-items:center;justify-content:space-between;gap:20px;padding:16px 18px;background:rgba(26,25,23,.96);color:#fff;border-radius:16px;box-shadow:0 15px 50px rgba(0,0,0,.25)}
+      .cookie.show{display:flex}
+      .cookie p{font-size:12px;color:#d9d3cb}
+      .cookie button{flex:0 0 auto}
+      .to-top{position:fixed;right:18px;bottom:136px;z-index:1490;opacity:0;pointer-events:none}
+      .to-top.show{opacity:1;pointer-events:auto}
+      @media(max-width:800px){
+        .stats-grid{grid-template-columns:repeat(2,1fr)}
+        .gallery-grid{grid-template-columns:1fr 1fr;grid-template-rows:180px 180px 180px}
+        .gallery-item:first-child{grid-row:span 2}
+        .steps{grid-template-columns:1fr}
+        .newsletter-card{flex-direction:column;text-align:center}
+      }
+      @media(max-width:600px){
+        .hero{min-height:560px;padding-top:50px}
+        .trust-row{gap:12px;flex-direction:column;align-items:center}
+        .gallery-grid{display:grid;grid-template-columns:1fr 1fr;grid-template-rows:170px 170px 170px}
+        .gallery-item:first-child{grid-column:span 2;grid-row:auto}
+        .floating-actions{right:12px;bottom:12px}
+        .fab{width:48px;height:48px}
+        .cookie{flex-direction:column;align-items:stretch}
+        .cookie .btn{width:100%}
+      }
+      @media(prefers-reduced-motion:reduce){
+        *,*::before,*::after{scroll-behavior:auto!important;animation:none!important;transition:none!important}
+      }
+    </style>
+
+<script type="application/ld+json">
+{
+  "@context":"https://schema.org",
+  "@type":"BeautySalon",
+  "name":"Сімейний салон краси «Амулет»",
+  "telephone":"+380680006311",
+  "address":{
+    "@type":"PostalAddress",
+    "streetAddress":"вулиця Осіння, 33",
+    "addressLocality":"Київ",
+    "postalCode":"02000",
+    "addressCountry":"UA"
+  },
+  "openingHoursSpecification":[{
+    "@type":"OpeningHoursSpecification",
+    "dayOfWeek":["Monday","Tuesday","Wednesday","Thursday","Friday","Saturday","Sunday"],
+    "opens":"09:00",
+    "closes":"21:00"
+  }]
+}
+</script>
+
+
+<script>
+/*
+  AMULET SYSTEM CONFIG
+  Add your Supabase project URL and publishable key after creating the project.
+  Never put a secret/service-role key here.
+*/
+window.AMULET_CONFIG = {
+  SUPABASE_URL: "https://hqbjlvryecmqemmajqyo.supabase.co",
+  SUPABASE_PUBLISHABLE_KEY: "sb_publishable_o4SMwGNId-e5tqfTSrKWfQ_f2Ftn5j7"
+};
+</script>
+
+</head>
+<body><a class="skip-link" href="#main">Перейти до основного вмісту</a>
+    <header>
+        <div class="container">
+            <a href="#" class="logo"><span class="logo-badge"><i class="fa-solid fa-gem"></i></span> Амулет</a>
+            <div class="header-contacts">
+                <a href="tel:0680006311" class="phone-link"><i class="fa-solid fa-phone"></i> 068 000 6311</a>
+                <a href="#booking" data-booking class="btn btn-primary">Записатися</a>
+            </div>
+        </div>
+    </header>
+    <main id="main"><section class="hero">
+        <div class="hero-inner">
+        <div class="container">
+            <div class="eyebrow">Сімейний салон краси • Київ</div>
+            <div class="rating-badge"><i class="fa-solid fa-star"></i> <strong>4.7</strong> <span>(569 відгуків в Google Maps)</span></div>
+            <h1>Сімейний салон краси «Амулет»</h1>
+            <p>Преміальний догляд та краса для всієї родини в Києві. Створюємо витончені образи, турбуємося про здоров’я вашого волосся та нігтів поруч із метро Академмістечко.</p>
+            <div class="hero-actions">
+                <a href="#services" class="btn btn-primary">Переглянути послуги та ціни</a>
+                <a href="#booking" data-booking class="btn btn-outline">Швидкий запис</a>
+            </div>
+            <div class="trust-row">
+              <span><i class="fa-solid fa-circle-check"></i> Щодня 09:00–21:00</span>
+              <span><i class="fa-solid fa-location-dot"></i> Академмістечко</span>
+              <span><i class="fa-solid fa-shield-heart"></i> Турбота про кожного</span>
+            </div>
+            <div class="hero-note"><i class="fa-solid fa-bolt"></i> Швидкий запис — без довгих очікувань</div>
+        </div>
+        </div>
+    </section>
+    <section class="stats">
+      <div class="container">
+        <div class="stats-grid">
+          <div class="stat glass-card reveal"><strong data-count="569">0</strong><span>відгуків у Google</span></div>
+          <div class="stat glass-card reveal"><strong>4.7★</strong><span>середня оцінка</span></div>
+          <div class="stat glass-card reveal"><strong>09–21</strong><span>щодня</span></div>
+          <div class="stat glass-card reveal"><strong>1 місце</strong><span>для всієї родини</span></div>
+        </div>
+      </div>
+    </section>
+    <section class="features container">
+        <div class="features-grid">
+            <div class="feature-card glass-card">
+                <div class="feature-icon"><i class="fa-solid fa-users"></i></div>
+                <h3>Справді сімейний формат</h3>
+                <p>Пропонуємо одночасні процедури для всієї родини: комплексний догляд для жінок, стильні стрижки для чоловіків та бережливий сервіс для дітей.</p>
+            </div>
+            <div class="feature-card glass-card">
+                <div class="feature-icon"><i class="fa-solid fa-shield-halved"></i></div>
+                <h3>Безпека та Стерильність</h3>
+                <p>Суворо дотримуємося медичних стандартів дезінфекції. Трьохетапна стерилізація інструментів гарантує вашу абсолютну безпеку.</p>
+            </div>
+            <div class="feature-card glass-card">
+                <div class="feature-icon"><i class="fa-solid fa-location-dot"></i></div>
+                <h3>Зручна локація</h3>
+                <p>Знаходимося у Святошинському районі на вулиці Осіння, 33. Всього кілька хвилин пішки від станції метро Академмістечко.</p>
+            </div>
+        </div>
+    </section>
+    <section id="services" class="services container">
+        <h2 class="section-title">Наші Послуги</h2>
+        <p class="section-subtitle">Оберіть свій ідеальний догляд за привабливою ціною</p>
+        
+        <div class="service-tools" aria-label="Фільтр послуг">
+          <button class="service-filter active" data-filter="all" type="button">Усі</button>
+          <button class="service-filter" data-filter="hair" type="button">Волосся</button>
+          <button class="service-filter" data-filter="nails" type="button">Манікюр</button>
+          <button class="service-filter" data-filter="care" type="button">Догляд</button>
+        </div>
+<div class="services-grid">
+            <div class="services-category glass-card" data-service-group="hair">
+                <h3><i class="fa-solid fa-scissors"></i> Перукарський зал</h3>
+                <ul class="service-list">
+                    <li class="service-item"><span class="service-name">Жіноча стрижка + укладка</span><span class="service-dots"></span><span class="service-price">від 350 грн</span></li>
+                    <li class="service-item"><span class="service-name">Чоловіча стильна стрижка</span><span class="service-dots"></span><span class="service-price">від 250 грн</span></li>
+                    <li class="service-item"><span class="service-name">Дитяча стрижка (до 10 років)</span><span class="service-dots"></span><span class="service-price">від 180 грн</span></li>
+                    <li class="service-item"><span class="service-name">Плетіння коси (ексклюзив)</span><span class="service-dots"></span><span class="service-price">від 150 грн</span></li>
+                    <li class="service-item"><span class="service-name">Складне фарбування (Airtouch)</span><span class="service-dots"></span><span class="service-price">від 1500 грн</span></li>
+                </ul>
+            </div>
+            <div class="services-category glass-card" data-service-group="nails">
+                <h3><i class="fa-solid fa-hand-sparkles"></i> Манікюр та педикюр</h3>
+                <ul class="service-list">
+                    <li class="service-item"><span class="service-name">Комбінований манікюр</span><span class="service-dots"></span><span class="service-price">250 грн</span></li>
+                    <li class="service-item"><span class="service-name">Манікюр + покриття гель-лаком</span><span class="service-dots"></span><span class="service-price">550 грн</span></li>
+                    <li class="service-item"><span class="service-name">Апаратний педикюр (комплекс)</span><span class="service-dots"></span><span class="service-price">650 грн</span></li>
+                    <li class="service-item"><span class="service-name">Дизайн нігтів (за 1 елемент)</span><span class="service-dots"></span><span class="service-price">від 30 грн</span></li>
+                    <li class="service-item"><span class="service-name">Зняття чужого покриття</span><span class="service-dots"></span><span class="service-price">100 грн</span></li>
+                </ul>
+            </div>
+            <div class="services-category glass-card" data-service-group="care">
+                <h3><i class="fa-solid fa-wand-magic-sparkles"></i> Косметологія та Догляд</h3>
+                <ul class="service-list">
+                    <li class="service-item"><span class="service-name">Апаратна Ендосфера тіла</span><span class="service-dots"></span><span class="service-price">від 800 грн</span></li>
+                    <li class="service-item"><span class="service-name">Елос-епіляція (зона)</span><span class="service-dots"></span><span class="service-price">від 400 грн</span></li>
+                    <li class="service-item"><span class="service-name">Розслабляючий SPA-масаж</span><span class="service-dots"></span><span class="service-price">700 грн</span></li>
+                    <li class="service-item"><span class="service-name">Турбо-солярій (за 1 хвилину)</span><span class="service-dots"></span><span class="service-price">15 грн</span></li>
+                </ul>
+            </div>
+        </div>
+    </section>
+    <section class="offers container">
+        <div class="offers-banner">
+            <div class="offers-content">
+                <h3>🎂 Святкуйте День народження з нами!</h3>
+                <p>Даруємо знижку -10% на всі послуги салону для іменинників. Також діє гнучка накопичувальна дисконтна програма для всієї вашої родини.</p>
+            </div>
+            <a href="#booking" data-booking class="btn btn-primary" style="background: white; color: var(--dark); box-shadow: none;">Отримати знижку</a>
+        </div>
+    </section>
+
+    <section id="gallery" class="gallery container">
+      <div class="section-head">
+        <h2 class="section-title">Атмосфера «Амулету»</h2>
+        <p class="section-subtitle">Затишний простір, де хочеться залишитися ще на чашку кави.</p>
+      </div>
+      <div class="gallery-grid">
+        <div class="gallery-item reveal">
+          <img loading="lazy" src="https://images.unsplash.com/photo-1560066984-138dadb4c035?auto=format&fit=crop&q=85&w=1200" alt="Інтер'єр салону краси">
+          <div class="gallery-caption">Стильний та затишний простір</div>
+        </div>
+        <div class="gallery-item reveal">
+          <img loading="lazy" src="https://images.unsplash.com/photo-1600948836101-f9ffda59d250?auto=format&fit=crop&q=85&w=700" alt="Догляд за волоссям">
+          <div class="gallery-caption">Професійний догляд</div>
+        </div>
+        <div class="gallery-item reveal">
+          <img loading="lazy" src="https://images.unsplash.com/photo-1610992015732-2449b76344bc?auto=format&fit=crop&q=85&w=700" alt="Манікюр">
+          <div class="gallery-caption">Манікюр та педикюр</div>
+        </div>
+        <div class="gallery-item reveal">
+          <img loading="lazy" src="https://images.unsplash.com/photo-1540555700478-4be289fbecef?auto=format&fit=crop&q=85&w=700" alt="SPA догляд">
+          <div class="gallery-caption">Релакс та SPA</div>
+        </div>
+        <div class="gallery-item reveal">
+          <img loading="lazy" src="https://images.unsplash.com/photo-1595476108010-b4d1f102b1b1?auto=format&fit=crop&q=85&w=700" alt="Перукарські послуги">
+          <div class="gallery-caption">Новий образ</div>
+        </div>
+      </div>
+    </section>
+
+    <section class="process container">
+      <div class="section-head">
+        <h2 class="section-title">Як проходить запис</h2>
+        <p class="section-subtitle">Три прості кроки — і час для себе вже заброньований.</p>
+      </div>
+      <div class="steps">
+        <div class="step glass-card reveal"><div class="step-num">01</div><h3>Обираєте послугу</h3><p>Перегляньте прайс та оберіть процедуру, яка вам потрібна.</p></div>
+        <div class="step glass-card reveal"><div class="step-num">02</div><h3>Залишаєте заявку</h3><p>Вкажіть ім'я, телефон та бажаний час — адміністратор зв'яжеться з вами.</p></div>
+        <div class="step glass-card reveal"><div class="step-num">03</div><h3>Приходите та відпочиваєте</h3><p>Ми підготуємо все необхідне, а вам залишиться насолодитися сервісом.</p></div>
+      </div>
+    </section>
+
+    <section class="faq container">
+      <div class="section-head">
+        <h2 class="section-title">Часті запитання</h2>
+        <p class="section-subtitle">Швидкі відповіді на те, що найчастіше запитують перед візитом.</p>
+      </div>
+      <div class="faq-list">
+        <div class="faq-item glass-card reveal">
+          <button class="faq-q" type="button">Чи потрібен попередній запис?<i class="fa-solid fa-chevron-down"></i></button>
+          <div class="faq-a">Так, попередній запис допоможе підібрати зручний час та майстра. Для швидкого запису натисніть кнопку «Записатися».</div>
+        </div>
+        <div class="faq-item glass-card reveal">
+          <button class="faq-q" type="button">Чи можна прийти всією родиною?<i class="fa-solid fa-chevron-down"></i></button>
+          <div class="faq-a">Так. Салон працює у сімейному форматі, тому можна записати кількох членів родини на різні послуги.</div>
+        </div>
+        <div class="faq-item glass-card reveal">
+          <button class="faq-q" type="button">Як дізнатися точну ціну послуги?<i class="fa-solid fa-chevron-down"></i></button>
+          <div class="faq-a">У прайсі вказані актуальні орієнтовні ціни. Для складних процедур фінальну вартість краще уточнити під час запису.</div>
+        </div>
+        <div class="faq-item glass-card reveal">
+          <button class="faq-q" type="button">Як знайти салон?<i class="fa-solid fa-chevron-down"></i></button>
+          <div class="faq-a">Адреса: вулиця Осіння, 33, Київ. Натисніть «Прокласти маршрут» у нижньому блоці, щоб відкрити Google Maps.</div>
+        </div>
+      </div>
+    </section>
+
+    <section class="newsletter container">
+      <div class="newsletter-card glass-card reveal">
+        <div><h3>Готові до нового образу?</h3><p>Залиште заявку — адміністратор допоможе підібрати послугу та час.</p></div>
+        <a href="#booking" data-booking class="btn btn-primary"><i class="fa-regular fa-calendar-check"></i> Записатися онлайн</a>
+      </div>
+    </section>
+    <section id="reviews" class="reviews container">
+        <h2 class="section-title">Відгуки клієнтів</h2>
+        <p class="section-subtitle">Що про нас говорять відвідувачі на Google Maps</p>
+        <div class="reviews-grid">
+            <div class="review-card glass-card">
+                <div class="review-stars"><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i></div>
+                <p class="review-text">"Чудовий сімейний салон! Ходимо сюди разом із чоловіком та дитиною. Майстри перукарського залу просто неймовірні, завжди розуміють з пів слова. Дитина зазвичай вередує під час стрижки, але тут до неї знайшли ідеальний підхід!"</p>
+                <div class="review-author">
+                    <div class="author-info"><h4>Олена Кравченко</h4><span>3 тижні тому</span></div>
+                    <div class="google-verified"><i class="fa-brands fa-google"></i> Google</div>
+                </div>
+            </div>
+            <div class="review-card glass-card">
+                <div class="review-stars"><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i></div>
+                <p class="review-text">"Робила манікюр та комплексний педикюр. Стерильність на найвищому рівні — інструменти відкривають при тобі із крафт-пакетів. Покриття тримається вже третій тиждень без жодного сколу. Дуже рекомендую!"</p>
+                <div class="review-author">
+                    <div class="author-info"><h4>Марія Дмитренко</h4><span>Місяць тому</span></div>
+                    <div class="google-verified"><i class="fa-brands fa-google"></i> Google</div>
+                </div>
+            </div>
+            <div class="review-card glass-card">
+                <div class="review-stars"><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i></div>
+                <p class="review-text">"Регулярно відвідую цей салон заради апаратної ендосфери та солярію. Персонал ввічливий, завжди пригощають смачною кавою. Адміністратори дуже приємні, атмосфера розслабляюча. Ціни цілком адекватні для такої високої якості."</p>
+                <div class="review-author">
+                    <div class="author-info"><h4>Ірина Ткачук</h4><span>2 місяці тому</span></div>
+                    <div class="google-verified"><i class="fa-brands fa-google"></i> Google</div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <section id="contacts" class="contacts container">
+        <h2 class="section-title">Як нас знайти</h2>
+        <p class="section-subtitle">Завітайте до нас у гості або прокладіть зручний маршрут</p>
+        <div class="contacts-wrapper">
+            <div class="contacts-info glass-card">
+                <div class="contact-item">
+                    <i class="fa-solid fa-location-dot"></i>
+                    <div><h4>Адреса:</h4><p>вулиця Осіння, 33, Київ, 02000 (Святошинський район, ст.м. Академмістечко)</p></div>
+                </div>
+                <div class="contact-item">
+                    <i class="fa-solid fa-clock"></i>
+                    <div><h4>Графік роботи:</h4><p>Щодня: з 09:00 до 21:00</p></div>
+                </div>
+                <div class="contact-item">
+                    <i class="fa-solid fa-phone"></i>
+                    <div><h4>Телефон для запису:</h4><p>068 000 6311</p></div>
+                </div>
+                <div style="margin-top: 15px;">
+                    <a href="https://maps.google.com/?q=Сімейний+салон+краси+Амулет+Осіння+33" target="_blank" class="btn btn-primary" style="width: 100%;"><i class="fa-solid fa-route"></i> Прокласти маршрут</a>
+                </div>
+            </div>
+            <div class="map-container">
+                <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2540.239634994432!2d30.3475713!3d50.4552431!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x40d4cc0fa871cb61%3A0xe54e2098b671a5c6!2z0YPQuy4g0J7RgdC10L3QvdGP0Y8sIDMzLCDmtJrQuNCyLCAwMjAwMA!5e0!3m2!1suk!2sua!4v1710000000000!5m2!1suk!2sua" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+            </div>
+        </div>
+    </section>
+</main>
+    <footer>
+        <div class="container">
+            <p>&copy; 2026 Сімейний салон краси «Амулет». Усі права захищено. Дизайн та розробка оптимізовані для бізнесу.</p>
+        </div>
+    </footer>
+
+    <div class="progress-bar" id="progressBar"></div>
+
+    <div class="floating-actions">
+      <a class="fab primary" href="#booking" data-booking aria-label="Записатися"><i class="fa-solid fa-calendar-check"></i></a>
+      <a class="fab" href="tel:0680006311" aria-label="Зателефонувати"><i class="fa-solid fa-phone"></i></a>
+    </div>
+    <a class="fab to-top" id="toTop" href="#" aria-label="На початок"><i class="fa-solid fa-arrow-up"></i></a>
+
+    <div class="booking-modal" id="bookingModal" aria-hidden="true">
+      <div class="booking-box">
+        <button class="booking-close" id="bookingClose" aria-label="Закрити"><i class="fa-solid fa-xmark"></i></button>
+        <h3>Запис у «Амулет»</h3>
+        <p>Залиште контакти — адміністратор підтвердить зручний час.</p>
+        <form class="form-grid" id="bookingForm">
+          <input name="name" required placeholder="Ваше ім'я">
+          <input name="phone" required type="tel" placeholder="Номер телефону">
+          <select name="service" required>
+            <option value="">Оберіть послугу</option>
+            <option>Перукарський зал</option>
+            <option>Манікюр / педикюр</option>
+            <option>Косметологія та догляд</option>
+            <option>SPA-масаж</option>
+            <option>Інше</option>
+          </select>
+          <input name="date" type="date">
+          <textarea name="comment" placeholder="Побажання або зручний час"></textarea>
+          <button class="btn btn-primary" type="submit"><i class="fa-solid fa-paper-plane"></i> Надіслати заявку</button>
+        </form>
+        <div class="form-success" id="formSuccess">Дякуємо! Заявку сформовано. Для реального отримання заявок підключіть форму до Telegram, email або CRM.</div>
+      </div>
+    </div>
+
+    <div class="cookie" id="cookie">
+      <p>Ми використовуємо локальне сховище браузера лише для збереження ваших налаштувань сайту.</p>
+      <button class="btn btn-primary" id="cookieOk">Зрозуміло</button>
+    </div>
+
+    <script>
+      (() => {
+        const $ = (s, root=document) => root.querySelector(s);
+        const $$ = (s, root=document) => [...root.querySelectorAll(s)];
+
+        // Header + reading progress
+        const header = $('header'), progress = $('#progressBar'), topBtn = $('#toTop');
+        const onScroll = () => {
+          const y = window.scrollY;
+          header?.classList.toggle('scrolled', y > 20);
+          topBtn?.classList.toggle('show', y > 500);
+          const h = document.documentElement.scrollHeight - innerHeight;
+          if (progress) progress.style.width = (h ? y / h * 100 : 0) + '%';
+        };
+        addEventListener('scroll', onScroll, {passive:true}); onScroll();
+
+        // Smooth internal navigation
+        $$('a[href^="#"]').forEach(a => a.addEventListener('click', e => {
+          const id = a.getAttribute('href');
+          if (!id || id === '#') return;
+          const el = $(id);
+          if (el && !a.hasAttribute('data-booking')) {
+            e.preventDefault();
+            el.scrollIntoView({behavior:'smooth', block:'start'});
+          }
+        }));
+
+        // Reveal animations
+        const observer = new IntersectionObserver(entries => {
+          entries.forEach(entry => { if (entry.isIntersecting) { entry.target.classList.add('visible'); observer.unobserve(entry.target); }});
+        }, {threshold:.12});
+        $$('.reveal').forEach(el => observer.observe(el));
+
+        // Counter
+        const counter = $('[data-count]');
+        if (counter) {
+          const counterObs = new IntersectionObserver(entries => {
+            if (!entries[0].isIntersecting) return;
+            const target = +counter.dataset.count; let n = 0;
+            const step = Math.max(1, Math.ceil(target / 45));
+            const timer = setInterval(() => {
+              n += step;
+              if (n >= target) { n = target; clearInterval(timer); }
+              counter.textContent = n;
+            }, 25);
+            counterObs.disconnect();
+          }, {threshold:.8});
+          counterObs.observe(counter);
+        }
+
+        // FAQ accordion
+        $$('.faq-q').forEach(btn => btn.addEventListener('click', () => {
+          const item = btn.parentElement;
+          $$('.faq-item.open').forEach(other => { if (other !== item) other.classList.remove('open'); });
+          item.classList.toggle('open');
+        }));
+
+        // Booking modal
+        const modal = $('#bookingModal'), form = $('#bookingForm'), success = $('#formSuccess');
+        const openModal = e => { e.preventDefault(); modal.classList.add('show'); modal.setAttribute('aria-hidden','false'); document.body.style.overflow='hidden'; setTimeout(()=>form?.querySelector('input')?.focus(),50); };
+        const closeModal = () => { modal.classList.remove('show'); modal.setAttribute('aria-hidden','true'); document.body.style.overflow=''; };
+        $$('[data-booking]').forEach(a => a.addEventListener('click', openModal));
+        $('#bookingClose')?.addEventListener('click', closeModal);
+        modal?.addEventListener('click', e => { if(e.target === modal) closeModal(); });
+        document.addEventListener('keydown', e => { if(e.key === 'Escape') closeModal(); });
+        form?.addEventListener('submit', e => {
+          e.preventDefault();
+          success.style.display='block';
+          form.reset();
+          setTimeout(closeModal, 3500);
+        });
+
+        // Back to top
+        topBtn?.addEventListener('click', e => { e.preventDefault(); scrollTo({top:0,behavior:'smooth'}); });
+
+        // Simple privacy/settings notice
+        const cookie = $('#cookie');
+        if (!localStorage.getItem('amulet_notice_seen')) cookie.classList.add('show');
+        $('#cookieOk')?.addEventListener('click', () => {
+          localStorage.setItem('amulet_notice_seen','1');
+          cookie.classList.remove('show');
+        });
+
+        // Set current minimum date in booking form.
+        const date = form?.querySelector('input[type="date"]');
+        if (date) date.min = new Date().toISOString().split('T')[0];
+      })();
+    </script>
+
+
+    <div class="lightbox" id="lightbox" aria-hidden="true">
+      <button class="lightbox-close" id="lightboxClose" aria-label="Закрити"><i class="fa-solid fa-xmark"></i></button>
+      <img id="lightboxImg" src="" alt="">
+    </div>
+    <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+
+<script>
+(function(){
+  const $ = (s, r=document) => r.querySelector(s);
+  const $$ = (s, r=document) => [...r.querySelectorAll(s)];
+
+  // Mobile navigation
+  const menu = $('#menuToggle'), nav = $('.header-nav');
+  if(menu && nav){
+    menu.addEventListener('click', ()=>{
+      const open = nav.classList.toggle('open');
+      menu.setAttribute('aria-expanded', String(open));
+      menu.innerHTML = open ? '<i class="fa-solid fa-xmark"></i>' : '<i class="fa-solid fa-bars"></i>';
+    });
+    $$('.header-nav a').forEach(a=>a.addEventListener('click',()=>nav.classList.remove('open')));
+  }
+
+  // Service filter
+  $$('.service-filter').forEach(btn=>{
+    btn.addEventListener('click',()=>{
+      $$('.service-filter').forEach(b=>b.classList.remove('active'));
+      btn.classList.add('active');
+      const filter = btn.dataset.filter;
+      $$('.services-category').forEach(card=>{
+        card.style.display = (filter==='all' || card.dataset.serviceGroup===filter) ? '' : 'none';
+      });
+    });
+  });
+
+  // Gallery lightbox
+  const lb = $('#lightbox'), lbImg = $('#lightboxImg');
+  $$('.gallery-item img').forEach(img=>{
+    img.addEventListener('click',()=>{
+      lbImg.src = img.src.replace(/w=\d+/,'w=1800');
+      lbImg.alt = img.alt;
+      lb.classList.add('show');
+      lb.setAttribute('aria-hidden','false');
+      document.body.style.overflow='hidden';
+    });
+  });
+  function closeLb(){ lb?.classList.remove('show'); lb?.setAttribute('aria-hidden','true'); document.body.style.overflow=''; }
+  $('#lightboxClose')?.addEventListener('click', closeLb);
+  lb?.addEventListener('click', e=>{ if(e.target===lb) closeLb(); });
+  document.addEventListener('keydown', e=>{ if(e.key==='Escape') closeLb(); });
+
+  // Booking summary + safe validation
+  const form = $('#bookingForm');
+  const summary = $('#bookingSummary');
+  const date = form?.querySelector('[name="date"]');
+  const service = form?.querySelector('[name="service"]');
+  const name = form?.querySelector('[name="name"]');
+  const phone = form?.querySelector('[name="phone"]');
+  const comment = form?.querySelector('[name="comment"]');
+  if(date){
+    const d = new Date();
+    d.setMinutes(d.getMinutes()-d.getTimezoneOffset());
+    date.min = d.toISOString().slice(0,10);
+  }
+  function updateSummary(){
+    if(!summary) return;
+    const s = service?.value || 'послугу не обрано';
+    const d = date?.value ? new Date(date.value+'T00:00:00').toLocaleDateString('uk-UA') : 'дату не обрано';
+    summary.textContent = `Заявка: ${s}. Бажана дата: ${d}. Після відправлення потрібно підтвердити час із салоном.`;
+  }
+  service?.addEventListener('change', updateSummary);
+  date?.addEventListener('change', updateSummary);
+
+  form?.addEventListener('submit', e=>{
+    e.preventDefault();
+    if(!form.checkValidity()){ form.reportValidity(); return; }
+    const submit = form.querySelector('[type="submit"]');
+    if(submit) submit.disabled = true;
+
+    // This static site cannot securely send data to Telegram/email without a backend.
+    // Keep a local copy only on this device so no secret token is exposed in the browser.
+    const payload = {
+      name: name?.value.trim(),
+      phone: phone?.value.trim(),
+      service: service?.value,
+      date: date?.value,
+      comment: comment?.value.trim(),
+      createdAt: new Date().toISOString()
+    };
+    try{
+      const key='amulet_booking_requests';
+      const list=JSON.parse(localStorage.getItem(key)||'[]');
+      list.push(payload);
+      localStorage.setItem(key, JSON.stringify(list.slice(-20)));
+    }catch(_){}
+
+    const success = $('#formSuccess');
+    if(success){
+      success.style.display='block';
+      success.textContent='Заявку збережено на цьому пристрої. Для реального отримання заявки салоном потрібне підключення Telegram, email або CRM.';
+    }
+    const toast=$('#toast');
+    if(toast){ toast.textContent='Заявку підготовлено'; toast.classList.add('show'); setTimeout(()=>toast.classList.remove('show'),2600); }
+    form.reset(); updateSummary();
+    setTimeout(()=>{ if(success) success.style.display='none'; if(submit) submit.disabled=false; }, 3500);
+  });
+
+  // Respect reduced motion
+  if(window.matchMedia('(prefers-reduced-motion: reduce)').matches){
+    document.documentElement.style.scrollBehavior='auto';
+  }
+
+  // Prevent broken external images from leaving ugly blanks
+  $$('img').forEach(img=>{
+    img.addEventListener('error',()=>{ img.style.opacity='.25'; });
+  });
+})();
+</script>
+
+
+<script>
+(function () {
+  const form =
+    document.querySelector('#bookingForm') ||
+    document.querySelector('form[action*="booking"]') ||
+    document.querySelector('form');
+
+  if (!form || window.__amuletRealBookingInstalled) return;
+  window.__amuletRealBookingInstalled = true;
+
+  const get = (sel) => form.querySelector(sel);
+  const val = (sel) => {
+    const el = get(sel);
+    return el ? String(el.value || '').trim() : '';
+  };
+
+  // Avoid hijacking forms that clearly aren't the booking form.
+  const looksLikeBooking =
+    /ім.?я|name/i.test(form.innerText || '') &&
+    /телефон|phone/i.test(form.innerText || '');
+  if (!looksLikeBooking) return;
+
+  form.addEventListener('submit', async function (event) {
+    if (!window.BOOKING_API_URL) return; // keep the existing local/demo behavior until endpoint is configured
+
+    event.preventDefault();
+    event.stopImmediatePropagation();
+
+    const submit = form.querySelector('button[type="submit"], input[type="submit"]');
+    const oldText = submit ? (submit.textContent || submit.value) : '';
+    if (submit) {
+      submit.disabled = true;
+      if ('value' in submit) submit.value = 'Надсилання…';
+      else submit.textContent = 'Надсилання…';
+    }
+
+    const data = Object.fromEntries(new FormData(form).entries());
+    data.page = location.href;
+    data.createdAt = new Date().toISOString();
+
+    try {
+      const response = await fetch(window.BOOKING_API_URL, {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify(data)
+      });
+
+      const result = await response.json().catch(() => ({}));
+      if (!response.ok || result.ok === false) {
+        throw new Error(result.error || 'Не вдалося надіслати заявку');
+      }
+
+      // Reuse the site's toast/success UI when available.
+      if (typeof window.showToast === 'function') {
+        window.showToast('Заявку успішно надіслано! Ми зв’яжемося з вами.');
+      } else {
+        alert('Заявку успішно надіслано! Ми зв’яжемося з вами.');
+      }
+      form.reset();
+    } catch (error) {
+      console.error(error);
+      if (typeof window.showToast === 'function') {
+        window.showToast('Не вдалося надіслати заявку. Спробуйте ще раз.');
+      } else {
+        alert('Не вдалося надіслати заявку. Спробуйте ще раз.');
+      }
+    } finally {
+      if (submit) {
+        submit.disabled = false;
+        if ('value' in submit) submit.value = oldText;
+        else submit.textContent = oldText;
+      }
+    }
+  }, true);
+})();
+</script>
+
+
+<!-- AMULET SYSTEM: Supabase integration -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+(function(){
+  const cfg = window.AMULET_CONFIG || {};
+  if (!cfg.SUPABASE_URL || !cfg.SUPABASE_PUBLISHABLE_KEY || !window.supabase) return;
+
+  const client = window.supabase.createClient(
+    cfg.SUPABASE_URL,
+    cfg.SUPABASE_PUBLISHABLE_KEY,
+    { auth: { persistSession: false } }
+  );
+  window.amuletSupabase = client;
+
+  const form =
+    document.querySelector('#bookingForm') ||
+    [...document.querySelectorAll('form')].find(f =>
+      /ім.?я|name/i.test(f.innerText || '') && /телефон|phone/i.test(f.innerText || '')
+    );
+  if (!form) return;
+
+  // Prevent duplicate handlers from older demo scripts.
+  if (form.dataset.amuletSystemReady === "1") return;
+  form.dataset.amuletSystemReady = "1";
+
+  const submit = form.querySelector('button[type="submit"], input[type="submit"]');
+
+  function fieldValue(names) {
+    for (const name of names) {
+      const el = form.querySelector(`[name="${name}"], #${name}`);
+      if (el && String(el.value || '').trim()) return String(el.value).trim();
+    }
+    return "";
+  }
+
+  function notify(message) {
+    if (typeof window.showToast === "function") window.showToast(message);
+    else alert(message);
+  }
+
+  form.addEventListener("submit", async (event) => {
+    event.preventDefault();
+    event.stopImmediatePropagation();
+
+    const booking = {
+      client_name: fieldValue(["name","client_name","clientName"]),
+      phone: fieldValue(["phone","tel","client_phone"]),
+      service_name: fieldValue(["service","service_name","services"]),
+      booking_date: fieldValue(["date","booking_date"]),
+      booking_time: fieldValue(["time","booking_time"]),
+      comment: fieldValue(["comment","message","notes"])
+    };
+
+    if (!booking.client_name || !booking.phone) {
+      notify("Вкажіть ім’я та номер телефону.");
+      return;
+    }
+
+    const old = submit ? (submit.textContent || submit.value) : "";
+    if (submit) {
+      submit.disabled = true;
+      if ("value" in submit) submit.value = "Надсилання…";
+      else submit.textContent = "Надсилання…";
+    }
+
+    try {
+      const { data, error } = await client.functions.invoke("create-booking", {
+        body: booking
+      });
+      if (error) throw error;
+      if (!data || data.ok !== true) throw new Error(data?.error || "Booking failed");
+
+      notify("Заявку прийнято! Ми зв’яжемося з вами для підтвердження.");
+      form.reset();
+    } catch (err) {
+      console.error(err);
+      notify("Не вдалося надіслати заявку. Спробуйте ще раз.");
+    } finally {
+      if (submit) {
+        submit.disabled = false;
+        if ("value" in submit) submit.value = old;
+        else submit.textContent = old;
+      }
+    }
+  }, true);
+})();
+</script>
+
+</body>
+</html>
