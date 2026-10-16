@@ -174,7 +174,7 @@
       .stat strong{display:block;font:700 30px 'Playfair Display',serif;color:#302c27}
       .stat span{font-size:12px;color:#81796f}
       .gallery{padding:50px 0}
-      .gallery-grid{display:grid;grid-template-columns:1.4fr .8fr .8fr;grid-template-rows:220px 220px;gap:14px}
+      .gallery-grid{display:grid;grid-template-columns:1.25fr .9fr .9fr;grid-template-rows:210px 210px 210px;gap:14px}
       .gallery-item{position:relative;overflow:hidden;border-radius:18px;box-shadow:var(--shadow);background:#ddd}
       .gallery-item:first-child{grid-row:span 2}
       .gallery-item img{width:100%;height:100%;object-fit:cover;display:block;transition:transform .7s ease}
@@ -219,7 +219,7 @@
       .to-top.show{opacity:1;pointer-events:auto}
       @media(max-width:800px){
         .stats-grid{grid-template-columns:repeat(2,1fr)}
-        .gallery-grid{grid-template-columns:1fr 1fr;grid-template-rows:180px 180px 180px}
+        .gallery-grid{grid-template-columns:1fr 1fr;grid-template-rows:170px 170px 170px 170px 170px}
         .gallery-item:first-child{grid-row:span 2}
         .steps{grid-template-columns:1fr}
         .newsletter-card{flex-direction:column;text-align:center}
@@ -227,7 +227,7 @@
       @media(max-width:600px){
         .hero{min-height:560px;padding-top:50px}
         .trust-row{gap:12px;flex-direction:column;align-items:center}
-        .gallery-grid{display:grid;grid-template-columns:1fr 1fr;grid-template-rows:170px 170px 170px}
+        .gallery-grid{display:grid;grid-template-columns:1fr 1fr;grid-template-rows:160px 160px 160px 160px 160px}
         .gallery-item:first-child{grid-column:span 2;grid-row:auto}
         .floating-actions{right:12px;bottom:12px}
         .fab{width:48px;height:48px}
@@ -388,29 +388,45 @@ window.AMULET_CONFIG = {
 
     <section id="gallery" class="gallery container">
       <div class="section-head">
-        <h2 class="section-title">Атмосфера «Амулету»</h2>
-        <p class="section-subtitle">Затишний простір, де хочеться залишитися ще на чашку кави.</p>
+        <h2 class="section-title">Наш салон та роботи</h2>
+        <p class="section-subtitle">Фото салону, інтер’єру та робіт майстрів «Амулету».</p>
       </div>
       <div class="gallery-grid">
         <div class="gallery-item reveal">
-          <img loading="lazy" src="https://images.unsplash.com/photo-1560066984-138dadb4c035?auto=format&fit=crop&q=85&w=1200" alt="Інтер'єр салону краси">
-          <div class="gallery-caption">Стильний та затишний простір</div>
+          <img loading="lazy" src="images/salon-interior-1.jpg" alt="Інтер’єр салону краси Амулет">
+          <div class="gallery-caption">Наш салон</div>
         </div>
         <div class="gallery-item reveal">
-          <img loading="lazy" src="https://images.unsplash.com/photo-1600948836101-f9ffda59d250?auto=format&fit=crop&q=85&w=700" alt="Догляд за волоссям">
-          <div class="gallery-caption">Професійний догляд</div>
+          <img loading="lazy" src="images/salon-exterior.jpg" alt="Фасад салону краси Амулет">
+          <div class="gallery-caption">Салон з вулиці</div>
         </div>
         <div class="gallery-item reveal">
-          <img loading="lazy" src="https://images.unsplash.com/photo-1610992015732-2449b76344bc?auto=format&fit=crop&q=85&w=700" alt="Манікюр">
-          <div class="gallery-caption">Манікюр та педикюр</div>
+          <img loading="lazy" src="images/treatment-room.jpg" alt="Кабінет салону Амулет">
+          <div class="gallery-caption">Кабінет та обладнання</div>
         </div>
         <div class="gallery-item reveal">
-          <img loading="lazy" src="https://images.unsplash.com/photo-1540555700478-4be289fbecef?auto=format&fit=crop&q=85&w=700" alt="SPA догляд">
-          <div class="gallery-caption">Релакс та SPA</div>
+          <img loading="lazy" src="images/hair-braid.jpg" alt="Плетіння та зачіска">
+          <div class="gallery-caption">Зачіска</div>
         </div>
         <div class="gallery-item reveal">
-          <img loading="lazy" src="https://images.unsplash.com/photo-1595476108010-b4d1f102b1b1?auto=format&fit=crop&q=85&w=700" alt="Перукарські послуги">
-          <div class="gallery-caption">Новий образ</div>
+          <img loading="lazy" src="images/hair-curly.jpg" alt="Кучеряве волосся після процедури">
+          <div class="gallery-caption">Роботи з волоссям</div>
+        </div>
+        <div class="gallery-item reveal">
+          <img loading="lazy" src="images/nails-red.jpg" alt="Червоний манікюр">
+          <div class="gallery-caption">Манікюр</div>
+        </div>
+        <div class="gallery-item reveal">
+          <img loading="lazy" src="images/nails-blue.jpg" alt="Синій манікюр з дизайном">
+          <div class="gallery-caption">Манікюр з дизайном</div>
+        </div>
+        <div class="gallery-item reveal">
+          <img loading="lazy" src="images/nails-pink.jpg" alt="Рожевий французький манікюр">
+          <div class="gallery-caption">Французький манікюр</div>
+        </div>
+        <div class="gallery-item reveal">
+          <img loading="lazy" src="images/gift-certificate.jpg" alt="Подарунковий сертифікат Амулет">
+          <div class="gallery-caption">Подарункові сертифікати</div>
         </div>
       </div>
     </section>
@@ -545,36 +561,8 @@ window.AMULET_CONFIG = {
             <option>SPA-масаж</option>
             <option>Інше</option>
           </select>
-          <input name="date" type="date" required>
-          <select name="time" required>
-            <option value="">Оберіть час</option>
-            <option value="09:00">09:00</option>
-            <option value="09:30">09:30</option>
-            <option value="10:00">10:00</option>
-            <option value="10:30">10:30</option>
-            <option value="11:00">11:00</option>
-            <option value="11:30">11:30</option>
-            <option value="12:00">12:00</option>
-            <option value="12:30">12:30</option>
-            <option value="13:00">13:00</option>
-            <option value="13:30">13:30</option>
-            <option value="14:00">14:00</option>
-            <option value="14:30">14:30</option>
-            <option value="15:00">15:00</option>
-            <option value="15:30">15:30</option>
-            <option value="16:00">16:00</option>
-            <option value="16:30">16:30</option>
-            <option value="17:00">17:00</option>
-            <option value="17:30">17:30</option>
-            <option value="18:00">18:00</option>
-            <option value="18:30">18:30</option>
-            <option value="19:00">19:00</option>
-            <option value="19:30">19:30</option>
-            <option value="20:00">20:00</option>
-            <option value="20:30">20:30</option>
-            <option value="21:00">21:00</option>
-          </select>
-          <textarea name="comment" placeholder="Побажання або додатковий коментар"></textarea>
+          <input name="date" type="date">
+          <textarea name="comment" placeholder="Побажання або зручний час"></textarea>
           <button class="btn btn-primary" type="submit"><i class="fa-solid fa-paper-plane"></i> Надіслати заявку</button>
         </form>
         <div class="form-success" id="formSuccess">Дякуємо! Заявку сформовано. Для реального отримання заявок підключіть форму до Telegram, email або CRM.</div>
