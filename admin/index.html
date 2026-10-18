@@ -613,8 +613,201 @@ function updateStats(data) {
       data.filter(
         x => x.status === "completed"
       ).length;
+  loadSchedule();
 }
+/* =========================
+   РАСПИСАНИЕ
+========================= */
 
+async function loadSchedule() {
+
+  const oldSchedule =
+    document.getElementById("adminSchedule");
+
+  if (oldSchedule) {
+    oldSchedule.remove();
+  }
+
+  const box =
+    document.getElementById("bookings");
+
+  if (!box) return;
+
+  const { data: schedule, error: scheduleError } =
+    await supabaseClient
+      .from("work_schedule")
+      .select("*")
+      .order("weekday", { ascending: true });
+
+  if (scheduleError) {
+    console.error("Ошибка расписания:", scheduleError);
+    return;
+  }
+
+  const { data: bookings, error: bookingsError } =
+    await supabaseClient
+      .from("bookings")
+      .select("booking_date, booking_time, status")
+      .in("status", ["new", "confirmed"]);
+
+  if (bookingsError) {
+    console.error("Ошибка записей:", bookingsError);
+    return;
+  }
+
+  const scheduleBox = document.createElement("div");
+
+  scheduleBox.id = "adminSchedule";
+
+  scheduleBox.style.cssText = `
+    margin-top: 24px;
+    padding: 20px;
+    border-radius: 16px;
+    background: #ffffff;
+    box-shadow: 0 4px 18px rgba(0,0,0,.08);
+  `;
+
+  scheduleBox.innerHTML = `
+    <h2 style="
+      margin: 0 0 18px;
+      font-size: 22px;
+    ">
+      Розклад
+    </h2>
+  `;
+
+  const days = [
+    "Неділя",
+    "Понеділок",
+    "Вівторок",
+    "Середа",
+    "Четвер",
+    "П’ятниця",
+    "Субота"
+  ];
+
+  const today = new Date();
+
+  for (let i = 0; i < 7; i++) {
+
+    const date = new Date(today);
+
+    date.setDate(today.getDate() + i);
+
+    const weekday = date.getDay();
+
+    const dateString =
+      date.toISOString().split("T")[0];
+
+    const daySchedule =
+      schedule.find(
+        item => Number(item.weekday) === weekday
+      );
+
+    const dayBox = document.createElement("div");
+
+    dayBox.style.cssText = `
+      margin-bottom: 18px;
+      padding: 14px;
+      border: 1px solid #e5e5e5;
+      border-radius: 12px;
+    `;
+
+    const dateText =
+      date.toLocaleDateString("uk-UA", {
+        day: "2-digit",
+        month: "2-digit"
+      });
+
+    dayBox.innerHTML = `
+      <div style="
+        font-weight: 700;
+        font-size: 17px;
+        margin-bottom: 10px;
+      ">
+        ${days[weekday]} — ${dateText}
+      </div>
+    `;
+
+    if (!daySchedule || daySchedule.is_day_off) {
+
+      dayBox.innerHTML += `
+        <div style="
+          padding: 10px;
+          border-radius: 8px;
+          background: #f3f3f3;
+          color: #777;
+        ">
+          Вихідний
+        </div>
+      `;
+
+      scheduleBox.appendChild(dayBox);
+      continue;
+    }
+
+    const startHour =
+      Number(daySchedule.start_time.slice(0, 2));
+
+    const endHour =
+      Number(daySchedule.end_time.slice(0, 2));
+
+    for (
+      let hour = startHour;
+      hour < endHour;
+      hour++
+    ) {
+
+      const time =
+        String(hour).padStart(2, "0") + ":00";
+
+      const booking =
+        bookings.find(item => {
+
+          const bookingTime =
+            String(item.booking_time || "")
+              .slice(0, 5);
+
+          return (
+            item.booking_date === dateString &&
+            bookingTime === time
+          );
+        });
+
+      const slot = document.createElement("div");
+
+      const busy = Boolean(booking);
+
+      slot.style.cssText = `
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 10px 12px;
+        margin-top: 7px;
+        border-radius: 8px;
+        background: ${busy ? "#ffe1e1" : "#ffffff"};
+        border: 1px solid ${busy ? "#e53935" : "#dddddd"};
+        color: ${busy ? "#c62828" : "#333333"};
+      `;
+
+      slot.innerHTML = `
+        <strong>${time}</strong>
+        <span style="
+          font-weight: 700;
+          color: ${busy ? "#d32f2f" : "#555"};
+        ">
+          ${busy ? "Зайнято" : "Не зайнято"}
+        </span>
+      `;
+
+      dayBox.appendChild(slot);
+    }
+
+    scheduleBox.appendChild(dayBox);
+  }
+
+  box.parentElement.appendChild(scheduleBox);
+}
 
 /* =========================
    ОТОБРАЖЕНИЕ ЗАЯВОК
