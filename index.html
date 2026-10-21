@@ -966,6 +966,96 @@ window.AMULET_CONFIG = {
   }, true);
 })();
 </script>
+<script>
+(function () {
 
+  const form = document.getElementById("bookingForm");
+  if (!form) return;
+
+  const dateInput = form.querySelector('[name="date"]');
+  const timeSelect = form.querySelector('[name="time"]');
+
+  if (!dateInput || !timeSelect) return;
+
+  const times = [
+    "09:00",
+    "10:00",
+    "11:00",
+    "12:00",
+    "13:00",
+    "14:00",
+    "15:00",
+    "16:00",
+    "17:00",
+    "18:00",
+    "19:00",
+    "20:00"
+  ];
+
+  function showTimes(bookedTimes) {
+
+    timeSelect.innerHTML =
+      '<option value="">Select a time</option>';
+
+    times.forEach(function (time) {
+
+      const option = document.createElement("option");
+      option.value = time;
+
+      if (bookedTimes.includes(time)) {
+        option.textContent = time + " — Зайнято";
+        option.disabled = true;
+        option.style.color = "#c62828";
+      } else {
+        option.textContent = time + " — Не зайнято";
+      }
+
+      timeSelect.appendChild(option);
+    });
+  }
+
+  async function updateTimes() {
+
+    const date = dateInput.value;
+
+    if (!date) {
+      showTimes([]);
+      return;
+    }
+
+    const supabaseClient = window.amuletSupabase;
+
+    if (!supabaseClient) {
+      console.error("Supabase client not found");
+      return;
+    }
+
+    const { data, error } =
+      await supabaseClient.rpc(
+        "get_public_booked_times",
+        {
+          p_booking_date: date
+        }
+      );
+
+    if (error) {
+      console.error(error);
+      showTimes([]);
+      return;
+    }
+
+    const bookedTimes = (data || []).map(function (row) {
+      return String(row.booking_time).slice(0, 5);
+    });
+
+    showTimes(bookedTimes);
+  }
+
+  dateInput.addEventListener("change", updateTimes);
+
+  showTimes([]);
+
+})();
+</script>
 </body>
 </html>
