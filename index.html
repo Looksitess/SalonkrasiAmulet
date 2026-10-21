@@ -561,8 +561,25 @@ window.AMULET_CONFIG = {
             <option>SPA-масаж</option>
             <option>Інше</option>
           </select>
-          <input name="date" type="date">
-          <textarea name="comment" placeholder="Побажання або зручний час"></textarea>
+          <input name="date" type="date" required>
+
+<select name="time" required>
+  <option value="">Select a time</option>
+  <option value="09:00">09:00</option>
+  <option value="10:00">10:00</option>
+  <option value="11:00">11:00</option>
+  <option value="12:00">12:00</option>
+  <option value="13:00">13:00</option>
+  <option value="14:00">14:00</option>
+  <option value="15:00">15:00</option>
+  <option value="16:00">16:00</option>
+  <option value="17:00">17:00</option>
+  <option value="18:00">18:00</option>
+  <option value="19:00">19:00</option>
+  <option value="20:00">20:00</option>
+</select>
+
+<textarea name="comment" placeholder="Additional comments or requests"></textarea>
           <button class="btn btn-primary" type="submit"><i class="fa-solid fa-paper-plane"></i> Надіслати заявку</button>
         </form>
         <div class="form-success" id="formSuccess">Дякуємо! Заявку сформовано. Для реального отримання заявок підключіть форму до Telegram, email або CRM.</div>
