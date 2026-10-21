@@ -1155,5 +1155,24 @@ window.AMULET_CONFIG = {
 
 })();
 </script>
+
+    <script>
+document.addEventListener("contextmenu", function (e) {
+  e.preventDefault();
+});
+
+document.addEventListener("dragstart", function (e) {
+  if (e.target.tagName === "IMG") {
+    e.preventDefault();
+  }
+});
+
+document.addEventListener("mousedown", function (e) {
+  if (e.target.tagName === "IMG" && e.button === 2) {
+    e.preventDefault();
+  }
+});
+</script>
+
 </body>
 </html>
