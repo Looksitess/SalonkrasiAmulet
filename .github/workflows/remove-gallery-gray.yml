@@ -1,0 +1,57 @@
+name: Remove gallery placeholders
+
+on:
+  push:
+    branches: [main]
+
+permissions:
+  contents: write
+
+jobs:
+  fix-gallery:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Remove gray gallery placeholders
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+
+          p = Path('index.html')
+          s = p.read_text(encoding='utf-8')
+
+          old = '.gallery-item{position:relative;overflow:hidden;border-radius:18px;box-shadow:var(--shadow);background:#ddd}'
+          new = '.gallery-item{position:relative;overflow:hidden;border-radius:18px;box-shadow:none;background:transparent}'
+          if old in s:
+              s = s.replace(old, new, 1)
+
+          old2 = '.gallery-item img{width:100%;height:100%;object-fit:cover;display:block;transition:transform .7s ease}'
+          new2 = '.gallery-item img{width:100%;height:100%;object-fit:cover;display:block;transition:transform .7s ease;color:transparent}'
+          if old2 in s:
+              s = s.replace(old2, new2, 1)
+
+          marker = '</body>'
+          script = '''<script>
+          document.querySelectorAll('.gallery-item img').forEach(function(img){
+            img.addEventListener('error', function(){
+              var item = img.closest('.gallery-item');
+              if (item) item.remove();
+            });
+          });
+          </script>\n'''
+          if script not in s and marker in s:
+              s = s.replace(marker, script + marker, 1)
+
+          p.write_text(s, encoding='utf-8')
+          PY
+
+      - name: Commit changes
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add index.html
+          git diff --cached --quiet && exit 0
+          git commit -m "Remove gray gallery placeholders"
+          git push
