@@ -14,7 +14,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Remove gray gallery placeholders
+      - name: Clean gallery background
         run: |
           python - <<'PY'
           from pathlib import Path
@@ -22,15 +22,26 @@ jobs:
           p = Path('index.html')
           s = p.read_text(encoding='utf-8')
 
-          old = '.gallery-item{position:relative;overflow:hidden;border-radius:18px;box-shadow:var(--shadow);background:#ddd}'
-          new = '.gallery-item{position:relative;overflow:hidden;border-radius:18px;box-shadow:none;background:transparent}'
-          if old in s:
-              s = s.replace(old, new, 1)
+          # Remove the large salon interior image from the page background.
+          old_body = "background-image: linear-gradient(135deg, rgba(252, 251, 250, 0.9) 0%, rgba(244, 238, 230, 0.85) 100%), url('https://images.unsplash.com/photo-1560066984-138dadb4c035?auto=format&fit=crop&q=80&w=1920');"
+          if old_body in s:
+              s = s.replace(old_body, "background-image: none;", 1)
 
-          old2 = '.gallery-item img{width:100%;height:100%;object-fit:cover;display:block;transition:transform .7s ease}'
-          new2 = '.gallery-item img{width:100%;height:100%;object-fit:cover;display:block;transition:transform .7s ease;color:transparent}'
-          if old2 in s:
-              s = s.replace(old2, new2, 1)
+          # Keep the gallery clean instead of showing a large background through it.
+          old_gallery = '.gallery{padding:50px 0}'
+          new_gallery = '.gallery{padding:50px 0;background:#fcfbfa}'
+          if old_gallery in s:
+              s = s.replace(old_gallery, new_gallery, 1)
+
+          old_card = '.gallery-item{position:relative;overflow:hidden;border-radius:18px;box-shadow:var(--shadow);background:#ddd}'
+          new_card = '.gallery-item{position:relative;overflow:hidden;border-radius:18px;box-shadow:none;background:transparent}'
+          if old_card in s:
+              s = s.replace(old_card, new_card, 1)
+
+          old_img = '.gallery-item img{width:100%;height:100%;object-fit:cover;display:block;transition:transform .7s ease}'
+          new_img = '.gallery-item img{width:100%;height:100%;object-fit:cover;display:block;transition:transform .7s ease;color:transparent}'
+          if old_img in s:
+              s = s.replace(old_img, new_img, 1)
 
           marker = '</body>'
           script = '''<script>
@@ -53,5 +64,5 @@ jobs:
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add index.html
           git diff --cached --quiet && exit 0
-          git commit -m "Remove gray gallery placeholders"
+          git commit -m "Remove large gallery background"
           git push
