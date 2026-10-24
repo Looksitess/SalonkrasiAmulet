@@ -1,0 +1,44 @@
+name: Place facade under FAQ
+
+on:
+  push:
+    branches: [main]
+
+permissions:
+  contents: write
+
+jobs:
+  place-facade:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Move facade after FAQ
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          import re
+          p = Path('index.html')
+          s = p.read_text(encoding='utf-8')
+          m = re.search(r'\s*<section id="facade" class="facade-section container">.*?</section>', s, flags=re.S)
+          if not m:
+              print('Facade section not found')
+              raise SystemExit(0)
+          facade = m.group(0).strip()
+          s = s[:m.start()] + s[m.end():]
+          faq = re.search(r'<section[^>]*(?:id="faq"|class="[^"]*faq[^"]*")[^>]*>.*?</section>', s, flags=re.S|re.I)
+          if not faq:
+              faq = re.search(r'<section[^>]*>.*?(?:Часті запитання|Часто запитують|FAQ).*?</section>', s, flags=re.S|re.I)
+          if faq:
+              s = s[:faq.end()] + '\n' + facade + '\n' + s[faq.end():]
+              print('Facade placed after FAQ')
+          else:
+              print('FAQ section not found; leaving facade removed')
+              raise SystemExit(1)
+          p.write_text(s, encoding='utf-8')
+          PY
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add index.html
+          git diff --cached --quiet && exit 0
+          git commit -m "Place salon facade below FAQ"
+          git push
