@@ -28,7 +28,7 @@
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Inter', sans-serif; scroll-behavior: smooth; }
         body {
             background-color: #f7f4f0;
-            background-image: linear-gradient(135deg, rgba(255, 253, 250, 0.78) 0%, rgba(250, 246, 240, 0.72) 100%), url('https://images.unsplash.com/photo-1560066984-138dadb4c035?auto=format&fit=crop&q=80&w=1920');
+            background-image: linear-gradient(135deg, rgba(255, 253, 250, 0.86) 0%, rgba(250, 246, 240, 0.80) 100%), url('https://images.unsplash.com/photo-1560066984-138dadb4c035?auto=format&fit=crop&q=80&w=1920');
             background-attachment: fixed;
             background-size: cover;
             background-position: center;
@@ -126,6 +126,15 @@
         .header-nav{display:none}
         .header-nav.open{display:flex;position:absolute;left:16px;right:16px;top:76px;background:#fff;border:1px solid #eee4d7;border-radius:16px;padding:12px;box-shadow:0 20px 50px rgba(0,0,0,.12);flex-direction:column}
       }
+
+    
+.facade-section{padding:20px 0 60px}
+.facade-card{overflow:hidden;padding:0}
+.facade-card img{display:block;width:100%;height:auto;max-height:520px;object-fit:cover;object-position:center;border-radius:16px}
+.facade-caption{padding:20px 24px 24px;text-align:center}
+.facade-caption h2{font-family:'Playfair Display',serif;font-size:30px;margin-bottom:6px}
+.facade-caption p{color:#6e675f;font-size:14px}
+@media(max-width:768px){.facade-section{padding:10px 0 40px}.facade-card img{max-height:360px}.facade-caption h2{font-size:25px}}
 
     </style>
 
@@ -485,6 +494,17 @@ window.AMULET_CONFIG = {
             </div>
         </div>
     </section>
+
+<section id="facade" class="facade-section container">
+  <div class="facade-card glass-card">
+    <img src="images/salon-facade.jpg" alt="Фасад сімейного салону краси «Амулет»">
+    <div class="facade-caption">
+      <h2>Наш салон «Амулет»</h2>
+      <p>Саме так виглядає наш салон зовні</p>
+    </div>
+  </div>
+</section>
+
 </main>
     <footer>
         <div class="container">
