@@ -230,7 +230,7 @@ function renderMasterManager() {
         '<input data-end type="time" value="' + escapeHtml(end) + '" aria-label="Кінець ' + DAY_NAMES[day] + '">' +
         '</div>';
     }
-    scheduleHtml += '<button type="button" onclick="saveMasterSchedule(\\'' + slot.id + '\\')">Зберегти графік</button></details>';
+    scheduleHtml += '<button type="button" onclick="saveMasterSchedule(\'' + slot.id + '\')">Зберегти графік</button></details>';
 
     let accountHtml = "";
     if (!profile) {
@@ -238,7 +238,7 @@ function renderMasterManager() {
         '<div class="account-box"><label class="field">Email<input data-email type="email" autocomplete="off" placeholder="майстер@example.com"></label>' +
         '<label class="field">Тимчасовий пароль<input data-password type="password" autocomplete="new-password" placeholder="Не менше 8 символів"></label>' +
         '<p class="tiny">Після створення передайте email і пароль майстру окремо.</p>' +
-        '<button type="button" onclick="createMasterAccount(\\'' + slot.id + '\\')">Створити акаунт</button></div></details>';
+        '<button type="button" onclick="createMasterAccount(\'' + slot.id + '\')">Створити акаунт</button></div></details>';
     }
     return '<article class="master-card" id="slot-' + slot.id + '">' +
       '<div class="master-heading"><strong>Місце №' + slot.slot_number + '</strong><span class="' + statusClass + '">' + statusText + '</span></div>' +
@@ -248,7 +248,7 @@ function renderMasterManager() {
       '<div class="field"><label>Спеціалізація</label><input data-specialty value="' + escapeHtml(slot.specialty || "") + '" placeholder="Перукар, манікюр…" maxlength="120"></div>' +
       '<label class="toggle field full"><input data-enabled type="checkbox" ' + (active ? "checked" : "") + '> Підключити місце для запису</label>' +
       '</div>' +
-      '<div class="card-actions"><button type="button" onclick="saveMasterSlot(\\'' + slot.id + '\\')">Зберегти дані</button></div>' +
+      '<div class="card-actions"><button type="button" onclick="saveMasterSlot(\'' + slot.id + '\')">Зберегти дані</button></div>' +
       identityNote + accountHtml + scheduleHtml + '</article>';
   }).join("");
 }
@@ -370,7 +370,7 @@ async function loadBookings() {
     const status = booking.status || "new";
     const slot = slotRows.find(function(s){return s.id === booking.master_id;});
     const masterName = slot ? ("Місце №" + slot.slot_number + " — " + slot.display_name) : "Не призначено";
-    return '<article class="booking"><div class="booking-top"><div><div class="client">' + escapeHtml(booking.client_name) + '</div><div class="phone">' + escapeHtml(booking.phone) + '</div></div><div><div class="status status-' + escapeHtml(status) + '">' + escapeHtml(statusName(status)) + '</div><br><select aria-label="Статус запису" onchange="changeStatus(\\'' + booking.id + '\\',this.value)">' +
+    return '<article class="booking"><div class="booking-top"><div><div class="client">' + escapeHtml(booking.client_name) + '</div><div class="phone">' + escapeHtml(booking.phone) + '</div></div><div><div class="status status-' + escapeHtml(status) + '">' + escapeHtml(statusName(status)) + '</div><br><select aria-label="Статус запису" onchange="changeStatus(\'' + booking.id + '\',this.value)">' +
       ['new','confirmed','completed','cancelled'].map(function(value){
         const names = {new:"Нова",confirmed:"Підтверджена",completed:"Завершена",cancelled:"Скасована"};
         return '<option value="' + value + '" ' + (status === value ? "selected" : "") + '>' + names[value] + '</option>';
@@ -458,7 +458,7 @@ function renderMyBlockedSlots(rows) {
     const start = new Date(row.starts_at).toLocaleString("uk-UA",{timeZone:"Europe/Kyiv",dateStyle:"short",timeStyle:"short"});
     const end = new Date(row.ends_at).toLocaleTimeString("uk-UA",{timeZone:"Europe/Kyiv",hour:"2-digit",minute:"2-digit"});
     return '<div class="block-card"><div><strong>' + escapeHtml(start) + '–' + escapeHtml(end) + '</strong>' +
-      (row.reason ? '<div class="tiny">' + escapeHtml(row.reason) + '</div>' : '') + '</div><button class="secondary" type="button" onclick="unblockTime(\\'' + row.id + '\\')">Звільнити час</button></div>';
+      (row.reason ? '<div class="tiny">' + escapeHtml(row.reason) + '</div>' : '') + '</div><button class="secondary" type="button" onclick="unblockTime(\'' + row.id + '\')">Звільнити час</button></div>';
   }).join("");
 }
 async function blockTime() {
