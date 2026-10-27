@@ -454,7 +454,7 @@ async function loadMasterPortal() {
 function renderWeeklySchedule(rows) {
   const box = document.getElementById("myWeeklySchedule");
   box.innerHTML = DAY_NAMES.map(function(day,index) {
-    const row = rows.find(function(r){return Number(r.weekday)===index;});
+    const row = rows.find(function(r){return Number(r.weekday)===displayDayToWeekday(index);});
     const text = !row || row.is_day_off ? "Вихідний" :
       String(row.start_time).slice(0,5) + "–" + String(row.end_time).slice(0,5);
     return '<div class="schedule-day"><strong>' + day + '</strong><span>' + escapeHtml(text) + '</span></div>';
