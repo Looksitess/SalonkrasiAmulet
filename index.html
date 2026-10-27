@@ -1111,7 +1111,8 @@ window.AMULET_CONFIG = {
         await supabaseClient.rpc(
           "get_public_booked_times",
           {
-            p_booking_date: date
+            p_booking_date: date,
+          p_master_id: document.getElementById("bookingMaster")?.value || null
           }
         );
 
