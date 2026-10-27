@@ -540,6 +540,9 @@ window.AMULET_CONFIG = {
             <option>SPA-масаж</option>
             <option>Інше</option>
           </select>
+          <select name="master_id" id="bookingMaster" required>
+            <option value="">Завантаження майстрів…</option>
+          </select>
           <input name="date" type="date" required>
 
 <select name="time" required>
@@ -908,11 +911,12 @@ window.AMULET_CONFIG = {
       service_name: fieldValue(["service","service_name","services"]),
       booking_date: fieldValue(["date","booking_date"]),
       booking_time: fieldValue(["time","booking_time"]),
+      master_id: fieldValue(["master_id"]),
       comment: fieldValue(["comment","message","notes"])
     };
 
-    if (!booking.client_name || !booking.phone) {
-      notify("Вкажіть ім’я та номер телефону.");
+    if (!booking.client_name || !booking.phone || !booking.master_id) {
+      notify("Вкажіть ім’я, номер телефону та майстра.");
       return;
     }
 
@@ -1013,7 +1017,8 @@ window.AMULET_CONFIG = {
       await supabaseClient.rpc(
         "get_public_booked_times",
         {
-          p_booking_date: date
+          p_booking_date: date,
+          p_master_id: document.getElementById("bookingMaster")?.value || null
         }
       );
 
@@ -1161,5 +1166,48 @@ document.querySelectorAll('.gallery-item img').forEach(function(img){
   });
 });
 </script>
+
+<script>
+(function () {
+  const form = document.getElementById("bookingForm");
+  const select = document.getElementById("bookingMaster");
+  if (!form || !select) return;
+  const dateInput = form.querySelector('[name="date"]');
+
+  async function loadMasters() {
+    const client = window.amuletSupabase;
+    if (!client) {
+      select.innerHTML = '<option value="">Запис тимчасово недоступний</option>';
+      return;
+    }
+    const { data, error } = await client
+      .from("public_masters")
+      .select("id, full_name, specialty")
+      .order("full_name", { ascending: true });
+
+    if (error || !data || !data.length) {
+      console.error("Could not load masters", error);
+      select.innerHTML = '<option value="">Немає доступних майстрів</option>';
+      return;
+    }
+
+    select.innerHTML = '<option value="">Оберіть майстра</option>';
+    data.forEach((master) => {
+      const option = document.createElement("option");
+      option.value = master.id;
+      option.textContent = master.specialty
+        ? master.full_name + " — " + master.specialty
+        : master.full_name;
+      select.appendChild(option);
+    });
+  }
+
+  select.addEventListener("change", () => {
+    if (dateInput && dateInput.value) dateInput.dispatchEvent(new Event("change"));
+  });
+  loadMasters();
+})();
+</script>
+
 </body>
 </html>
