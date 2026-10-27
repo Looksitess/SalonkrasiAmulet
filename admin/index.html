@@ -28,7 +28,7 @@
   <div class="container">
     <div class="header">
       <div><h1 style="margin:0 0 5px">Адміністратор «Амулет»</h1><div class="subtitle">20 місць для майстрів • графіки • записи</div></div>
-      <div class="actions"><button class="secondary" onclick="refreshAdmin()">Оновити</button><button class="danger" onclick="logout()">Вийти</button></div>
+      <div class="actions"><button class="secondary" onclick="enableBookingNotifications()">Увімкнути сповіщення</button><button class="secondary" onclick="refreshAdmin()">Оновити</button><button class="danger" onclick="logout()">Вийти</button></div>
     </div>
     <div class="stats">
       <div class="stat"><div>Усього записів</div><div class="stat-number" id="totalCount">0</div></div>
@@ -170,7 +170,8 @@ async function routeSession(session) {
   }
   if (currentProfile.is_admin || currentProfile.role === "admin") {
     showScreen("admin");
-    await Promise.all([loadBookings(), loadMasterManager()]);
+    await Promise.all([loadBookings(), loadCalendar(), loadMasterManager()]);
+    startBookingNotifications();
   } else if (currentProfile.role === "master" && currentProfile.master_slot_id) {
     showScreen("master");
     document.getElementById("masterWelcome").textContent = currentProfile.full_name || "Майстер";
@@ -524,7 +525,54 @@ function renderBookingGroups() {
   }).join("") + (unassigned.length ? '<section class="panel"><h3>Заявки без призначеного майстра (' + unassigned.length + ')</h3>' +
     unassigned.map(renderBooking).join("") + '</section>' : '');
 }
+let bookingNotificationTimer = null;
+let knownBookingIds = null;
+async function enableBookingNotifications() {
+  if (!("Notification" in window)) {
+    showMessage("adminMessage", "Цей браузер не підтримує сповіщення.", false);
+    return;
+  }
+  const permission = await Notification.requestPermission();
+  if (permission === "granted") {
+    showMessage("adminMessage", "Сповіщення увімкнено для цього браузера.", true);
+    startBookingNotifications(true);
+  } else {
+    showMessage("adminMessage", "Сповіщення не дозволені. Їх можна увімкнути в налаштуваннях браузера.", false);
+  }
+}
+function startBookingNotifications(sendExisting) {
+  if (bookingNotificationTimer) clearInterval(bookingNotificationTimer);
+  checkForNewBookings(!!sendExisting);
+  bookingNotificationTimer = setInterval(function(){checkForNewBookings(false);}, 60000);
+}
+async function checkForNewBookings(sendExisting) {
+  if (!currentProfile || !(currentProfile.is_admin || currentProfile.role === "admin")) return;
+  const result = await supabaseClient.from("bookings").select("id,client_name,booking_date,booking_time,status").order("created_at",{ascending:false}).limit(100);
+  if (result.error) return;
+  const bookings = result.data || [];
+  const ids = bookings.map(function(b){return b.id;});
+  if (knownBookingIds === null) {
+    knownBookingIds = ids;
+    if (sendExisting && "Notification" in window && Notification.permission === "granted") {
+      new Notification("Амулет — сповіщення увімкнено",{body:"Нові заявки перевірятимуться автоматично."});
+    }
+    return;
+  }
+  const newBookings = bookings.filter(function(b){return knownBookingIds.indexOf(b.id) === -1;});
+  knownBookingIds = ids;
+  if (newBookings.length && "Notification" in window && Notification.permission === "granted") {
+    const booking = newBookings[0];
+    new Notification("Нова заявка — Амулет",{body:(booking.client_name || "Клієнт") + " · " + (booking.booking_date || "") + " " + String(booking.booking_time || "").slice(0,5)});
+    showMessage("adminMessage", "Нова заявка! Оновіть список, щоб переглянути деталі.", true);
+    await loadBookings();
+    await loadCalendar();
+  }
+}
 async function changeStatus(id, status) {
+  if (status === "cancelled" && !confirm("Скасувати цей запис?")) {
+    await loadBookings();
+    return;
+  }
   const { error } = await supabaseClient.from("bookings")
     .update({status:status,updated_at:new Date().toISOString()}).eq("id",id);
   if (error) showMessage("adminMessage", "Не вдалося змінити статус: " + error.message, false);
