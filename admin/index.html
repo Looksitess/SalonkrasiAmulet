@@ -93,7 +93,8 @@ let currentSession = null;
 let masterSlots = [];
 let masterProfiles = [];
 let scheduleRows = [];
-const DAY_NAMES = ["Неділя","Понеділок","Вівторок","Середа","Четвер","П’ятниця","Субота"];
+const DAY_NAMES = ["Понеділок","Вівторок","Середа","Четвер","П’ятниця","Субота","Неділя"];
+function displayDayToWeekday(index) { return (index + 1) % 7; }
 
 function escapeHtml(value) {
   return String(value == null ? "" : value)
@@ -220,11 +221,12 @@ function renderMasterManager() {
       : '<p class="tiny">Щоб місце з’явилося в записі клієнта, створіть для майстра окремий акаунт.</p>';
     let scheduleHtml = '<details class="details"><summary>Робочий графік на тиждень</summary>';
     for (let day = 0; day < 7; day++) {
-      const row = schedule.find(function(r){ return Number(r.weekday) === day; });
+      const weekday = displayDayToWeekday(day);
+      const row = schedule.find(function(r){ return Number(r.weekday) === weekday; });
       const start = row && row.start_time ? String(row.start_time).slice(0,5) : "09:00";
       const end = row && row.end_time ? String(row.end_time).slice(0,5) : "21:00";
-      const dayOff = row ? Boolean(row.is_day_off) : day === 0;
-      scheduleHtml += '<div class="week-row" data-weekday="' + day + '">' +
+      const dayOff = row ? Boolean(row.is_day_off) : weekday === 0;
+      scheduleHtml += '<div class="week-row" data-weekday="' + weekday + '">' +
         '<label class="dayoff"><input data-day-off type="checkbox" ' + (dayOff ? "checked" : "") + '> ' + DAY_NAMES[day] + '</label>' +
         '<input data-start type="time" value="' + escapeHtml(start) + '" aria-label="Початок ' + DAY_NAMES[day] + '">' +
         '<input data-end type="time" value="' + escapeHtml(end) + '" aria-label="Кінець ' + DAY_NAMES[day] + '">' +
@@ -354,7 +356,7 @@ async function loadBookings() {
   box.innerHTML = '<div class="empty">Завантаження заявок…</div>';
   const [bookingRes, slotsRes] = await Promise.all([
     supabaseClient.from("bookings").select("*").order("booking_date", {ascending:false}).order("booking_time", {ascending:false}),
-    supabaseClient.from("master_slots").select("id,slot_number,display_name")
+    supabaseClient.from("master_slots").select("id,slot_number,display_name").order("slot_number")
   ]);
   if (bookingRes.error || slotsRes.error) {
     box.innerHTML = '<div class="empty">Не вдалося завантажити записи: ' + escapeHtml((bookingRes.error || slotsRes.error).message) + '</div>';
@@ -366,14 +368,9 @@ async function loadBookings() {
   document.getElementById("newCount").textContent = data.filter(function(x){return x.status === "new";}).length;
   document.getElementById("confirmedCount").textContent = data.filter(function(x){return x.status === "confirmed";}).length;
   document.getElementById("completedCount").textContent = data.filter(function(x){return x.status === "completed";}).length;
-  if (!data.length) {
-    box.innerHTML = '<div class="empty">Заявок поки немає.</div>';
-    return;
-  }
-  box.innerHTML = data.map(function(booking) {
+
+  function renderBooking(booking) {
     const status = booking.status || "new";
-    const slot = slotRows.find(function(s){return s.id === booking.master_id;});
-    const masterName = slot ? ("Місце №" + slot.slot_number + " — " + slot.display_name) : "Не призначено";
     return '<article class="booking"><div class="booking-top"><div><div class="client">' + escapeHtml(booking.client_name) + '</div><div class="phone">' + escapeHtml(booking.phone) + '</div></div><div><div class="status status-' + escapeHtml(status) + '">' + escapeHtml(statusName(status)) + '</div><br><select aria-label="Статус запису" onchange="changeStatus(\'' + booking.id + '\',this.value)">' +
       ['new','confirmed','completed','cancelled'].map(function(value){
         const names = {new:"Нова",confirmed:"Підтверджена",completed:"Завершена",cancelled:"Скасована"};
@@ -382,9 +379,30 @@ async function loadBookings() {
       '<div class="detail"><div class="detail-title">Послуга</div><strong>' + escapeHtml(booking.service_name || "Не вказана") + '</strong></div>' +
       '<div class="detail"><div class="detail-title">Дата</div><strong>' + escapeHtml(booking.booking_date || "—") + '</strong></div>' +
       '<div class="detail"><div class="detail-title">Час</div><strong>' + escapeHtml(String(booking.booking_time || "—").slice(0,5)) + '</strong></div>' +
-      '<div class="detail"><div class="detail-title">Майстер</div><strong>' + escapeHtml(masterName) + '</strong></div></div>' +
+      '<div class="detail"><div class="detail-title">Майстер</div><strong>' + escapeHtml(booking.master_name || "—") + '</strong></div></div>' +
       (booking.comment ? '<p class="muted">' + escapeHtml(booking.comment) + '</p>' : '') + '</article>';
-  }).join("");
+  }
+
+  if (!data.length) {
+    box.innerHTML = '<div class="empty">Заявок поки немає.</div>';
+    return;
+  }
+  const groups = slotRows.map(function(slot) {
+    return {
+      slot: slot,
+      bookings: data.filter(function(booking){ return booking.master_id === slot.id; })
+    };
+  });
+  const unassigned = data.filter(function(booking) {
+    return !slotRows.some(function(slot){ return slot.id === booking.master_id; });
+  });
+  box.innerHTML = groups.map(function(group) {
+    return '<section class="panel"><h3 style="margin:0 0 12px">Майстер №' + escapeHtml(group.slot.slot_number) + ' — ' +
+      escapeHtml(group.slot.display_name) + ' <span class="muted" style="font-size:14px;font-weight:400">(' + group.bookings.length + ')</span></h3>' +
+      (group.bookings.length ? group.bookings.map(renderBooking).join("") : '<div class="empty">Заявок у цього майстра поки немає.</div>') +
+      '</section>';
+  }).join("") + (unassigned.length ? '<section class="panel"><h3>Заявки без призначеного майстра (' + unassigned.length + ')</h3>' +
+    unassigned.map(renderBooking).join("") + '</section>' : '');
 }
 async function changeStatus(id, status) {
   const { error } = await supabaseClient.from("bookings")
