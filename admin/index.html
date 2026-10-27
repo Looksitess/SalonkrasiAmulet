@@ -37,14 +37,14 @@
       <div class="stat"><div>Завершені</div><div class="stat-number" id="completedCount">0</div></div>
     </div>
     <div id="adminMessage" aria-live="polite"></div>
+    <section>
+      <h2>Заявки клієнтів</h2>
+      <div id="bookings"><div class="empty">Завантаження заявок…</div></div>
+    </section>
     <section class="panel">
       <h2 class="section-heading">Майстри та вільні місця</h2>
       <p class="section-text">Усього 20 місць. Увімкнене місце з акаунтом показується клієнтам у формі запису. Для кожного майстра можна змінити ім’я, телефон, спеціалізацію та графік. Щоб майстер входив до системи, створіть йому окремий акаунт.</p>
       <div id="masterManager" class="master-grid"><div class="empty">Завантаження місць…</div></div>
-    </section>
-    <section>
-      <h2>Заявки клієнтів</h2>
-      <div id="bookings"><div class="empty">Завантаження заявок…</div></div>
     </section>
   </div>
 </div>
@@ -379,7 +379,7 @@ async function loadBookings() {
       '<div class="detail"><div class="detail-title">Послуга</div><strong>' + escapeHtml(booking.service_name || "Не вказана") + '</strong></div>' +
       '<div class="detail"><div class="detail-title">Дата</div><strong>' + escapeHtml(booking.booking_date || "—") + '</strong></div>' +
       '<div class="detail"><div class="detail-title">Час</div><strong>' + escapeHtml(String(booking.booking_time || "—").slice(0,5)) + '</strong></div>' +
-      '<div class="detail"><div class="detail-title">Майстер</div><strong>' + escapeHtml(booking.master_name || "—") + '</strong></div></div>' +
+      '<div class="detail"><div class="detail-title">Майстер</div><strong>' + escapeHtml(booking.master_name || ((slotRows.find(function(slot){return slot.id === booking.master_slot_id;}) || {}).display_name) || "Не призначений") + '</strong></div></div>' +
       (booking.comment ? '<p class="muted">' + escapeHtml(booking.comment) + '</p>' : '') + '</article>';
   }
 
