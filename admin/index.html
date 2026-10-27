@@ -52,7 +52,7 @@
 <div id="masterScreen" style="display:none">
   <div class="container">
     <div class="header">
-      <div><h1 style="margin:0 0 5px">Моє расписання</h1><div class="subtitle" id="masterWelcome"></div></div>
+      <div><h1 style="margin:0 0 5px">Мій графік</h1><div class="subtitle" id="masterWelcome"></div></div>
       <div class="actions"><button class="secondary" onclick="loadMasterPortal()">Оновити</button><button class="danger" onclick="logout()">Вийти</button></div>
     </div>
     <div id="masterMessage" aria-live="polite"></div>
@@ -297,6 +297,10 @@ async function createMasterAccount(slotId) {
   const specialty = card.querySelector("[data-specialty]").value.trim();
   if (!email || !password || !full_name) {
     showMessage("adminMessage", "Для акаунта заповніть ім’я, email і тимчасовий пароль.", false);
+    return;
+  }
+  if (!card.querySelector("[data-enabled]").checked) {
+    showMessage("adminMessage", "Спочатку увімкніть місце для запису. Це створить активний акаунт майстра.", false);
     return;
   }
   const saved = await saveMasterSlot(slotId, {silent:true, refresh:false});
