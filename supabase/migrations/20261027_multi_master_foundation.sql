@@ -1,113 +1,71 @@
--- Multi-master foundation for Amulet salon
--- Run this once in Supabase Dashboard -> SQL Editor -> New query.
--- This migration is additive: it does not remove existing bookings or schedule rows.
-BEGIN;
+-- Multi-master foundation for the existing Amulet Supabase schema.
+-- The project already uses public.profiles as the master/staff table.
+-- This migration is additive and preserves existing bookings and schedules.
 
-CREATE TABLE IF NOT EXISTS public.masters (
-  id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
-  name text NOT NULL,
-  specialty text,
-  bio text,
-  photo_url text,
-  is_active boolean NOT NULL DEFAULT true,
-  display_order integer NOT NULL DEFAULT 0,
-  created_at timestamptz NOT NULL DEFAULT now(),
-  updated_at timestamptz NOT NULL DEFAULT now()
-);
+ALTER TABLE public.profiles
+  ADD COLUMN IF NOT EXISTS specialty text;
 
--- Add a nullable relationship to bookings so the current booking endpoint keeps working
--- until the client form and Edge Function are updated to pass a selected master.
-ALTER TABLE public.bookings
-  ADD COLUMN IF NOT EXISTS master_id uuid;
+CREATE INDEX IF NOT EXISTS idx_profiles_salon_role_active
+  ON public.profiles (salon_id, role, active);
 
--- Keep the existing work_schedule structure and connect its existing master IDs to masters.
-DO $$
-DECLARE
-  master_total integer;
-BEGIN
-  INSERT INTO public.masters (id, name, display_order)
-  SELECT
-    source.master_id,
-    CASE
-      WHEN source.total = 1 THEN 'Основний майстер'
-      ELSE 'Майстер ' || source.position::text
-    END,
-    source.position - 1
-  FROM (
-    SELECT
-      ids.master_id,
-      row_number() OVER (ORDER BY ids.master_id)::integer AS position,
-      count(*) OVER ()::integer AS total
-    FROM (
-      SELECT DISTINCT ws.master_id
-      FROM public.work_schedule AS ws
-      WHERE ws.master_id IS NOT NULL
-    ) AS ids
-  ) AS source
-  ON CONFLICT (id) DO NOTHING;
+CREATE INDEX IF NOT EXISTS idx_bookings_salon_master_date_time
+  ON public.bookings (salon_id, master_id, booking_date, booking_time);
 
-  -- If the app has older bookings that already contain master_id, preserve those IDs too.
-  INSERT INTO public.masters (id, name, display_order)
-  SELECT DISTINCT b.master_id, 'Майстер (наявні записи)', 1000
+-- A public-safe read-only view: exposes only display fields for active masters
+-- at Amulet, never phone numbers or other profile data.
+CREATE OR REPLACE VIEW public.public_masters
+WITH (security_invoker = false)
+AS
+SELECT
+  p.id,
+  p.full_name,
+  p.specialty,
+  p.avatar_url
+FROM public.profiles AS p
+JOIN public.salons AS s ON s.id = p.salon_id
+WHERE s.slug = 'amulet'
+  AND p.role::text = 'master'
+  AND p.active = true;
+
+GRANT SELECT ON public.public_masters TO anon, authenticated;
+
+-- Prevent two active bookings from claiming the same slot for the same master.
+-- Existing bookings are currently unassigned (master_id IS NULL), so no data is rewritten.
+CREATE UNIQUE INDEX IF NOT EXISTS uq_bookings_active_master_slot
+  ON public.bookings (salon_id, master_id, booking_date, booking_time)
+  WHERE master_id IS NOT NULL
+    AND status IN ('new', 'confirmed');
+
+-- Keep the existing RPC name but allow a selected master_id.
+-- If master_id is omitted, behaviour stays compatible with the current website.
+-- Legacy bookings without a master_id block that time for every master.
+DROP FUNCTION IF EXISTS public.get_public_booked_times(date);
+
+CREATE FUNCTION public.get_public_booked_times(
+  p_booking_date date,
+  p_master_id uuid DEFAULT NULL
+)
+RETURNS TABLE (booking_time time without time zone)
+LANGUAGE sql
+STABLE
+SECURITY DEFINER
+SET search_path = ''
+AS $function$
+  SELECT b.booking_time
   FROM public.bookings AS b
-  WHERE b.master_id IS NOT NULL
-  ON CONFLICT (id) DO NOTHING;
+  JOIN public.salons AS s ON s.id = b.salon_id
+  WHERE s.slug = 'amulet'
+    AND b.booking_date = p_booking_date
+    AND b.status IN ('new', 'confirmed')
+    AND (
+      p_master_id IS NULL
+      OR b.master_id = p_master_id
+      OR b.master_id IS NULL
+    )
+  ORDER BY b.booking_time;
+$function$;
 
-  SELECT count(*) INTO master_total FROM public.masters;
-  IF master_total = 0 THEN
-    INSERT INTO public.masters (name, specialty, display_order)
-    VALUES ('Основний майстер', 'Не вказано', 0);
-  END IF;
-END
-$$;
+REVOKE ALL ON FUNCTION public.get_public_booked_times(date, uuid) FROM PUBLIC;
+GRANT EXECUTE ON FUNCTION public.get_public_booked_times(date, uuid) TO anon, authenticated;
 
--- Add foreign keys only if they do not already exist.
-DO $$
-BEGIN
-  IF NOT EXISTS (
-    SELECT 1 FROM pg_constraint
-    WHERE conrelid = 'public.bookings'::regclass
-      AND conname = 'bookings_master_id_fkey'
-  ) THEN
-    ALTER TABLE public.bookings
-      ADD CONSTRAINT bookings_master_id_fkey
-      FOREIGN KEY (master_id) REFERENCES public.masters(id)
-      ON DELETE SET NULL;
-  END IF;
-
-  IF NOT EXISTS (
-    SELECT 1 FROM pg_constraint
-    WHERE conrelid = 'public.work_schedule'::regclass
-      AND conname = 'work_schedule_master_id_fkey'
-  ) THEN
-    ALTER TABLE public.work_schedule
-      ADD CONSTRAINT work_schedule_master_id_fkey
-      FOREIGN KEY (master_id) REFERENCES public.masters(id)
-      ON DELETE RESTRICT;
-  END IF;
-END
-$$;
-
-CREATE INDEX IF NOT EXISTS idx_masters_active_order
-  ON public.masters (is_active, display_order);
-
-CREATE INDEX IF NOT EXISTS idx_bookings_master_date_time
-  ON public.bookings (master_id, booking_date, booking_time);
-
-CREATE INDEX IF NOT EXISTS idx_work_schedule_master_weekday
-  ON public.work_schedule (master_id, weekday);
-
--- Public clients may read active master profiles for the future master selector.
--- No public INSERT/UPDATE/DELETE policy is created.
-ALTER TABLE public.masters ENABLE ROW LEVEL SECURITY;
-
-DROP POLICY IF EXISTS "Anyone can read active masters" ON public.masters;
-CREATE POLICY "Anyone can read active masters"
-  ON public.masters
-  FOR SELECT
-  TO anon, authenticated
-  USING (is_active = true);
-
-GRANT SELECT ON public.masters TO anon, authenticated;
-
-COMMIT;
+NOTIFY pgrst, 'reload schema';
