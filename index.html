@@ -952,193 +952,83 @@ window.AMULET_CONFIG = {
 </script>
 <script>
 (function () {
-
   const form = document.getElementById("bookingForm");
   if (!form) return;
-
   const dateInput = form.querySelector('[name="date"]');
   const timeSelect = form.querySelector('[name="time"]');
+  const masterSelect = form.querySelector('[name="master_id"]');
+  if (!dateInput || !timeSelect || !masterSelect) return;
 
-  if (!dateInput || !timeSelect) return;
+  let requestNumber = 0;
 
-  const times = [
-    "09:00",
-    "10:00",
-    "11:00",
-    "12:00",
-    "13:00",
-    "14:00",
-    "15:00",
-    "16:00",
-    "17:00",
-    "18:00",
-    "19:00",
-    "20:00"
-  ];
+  function resetTimes(message) {
+    timeSelect.innerHTML = "";
+    const option = document.createElement("option");
+    option.value = "";
+    option.textContent = message || "Спочатку оберіть майстра та дату";
+    timeSelect.appendChild(option);
+  }
 
-  function showTimes(bookedTimes) {
+  function showTimes(rows) {
+    timeSelect.innerHTML = '<option value="">Оберіть час</option>';
+    if (!rows.length) {
+      resetTimes("Немає робочих годин на цю дату");
+      return;
+    }
 
-    timeSelect.innerHTML =
-      '<option value="">Оберіть час</option>';
-
-    times.forEach(function (time) {
-
+    rows.forEach((row) => {
+      const time = String(row.booking_time || "").slice(0, 5);
       const option = document.createElement("option");
       option.value = time;
-
-      if (bookedTimes.includes(time)) {
+      if (row.is_booked) {
         option.textContent = time + " — Зайнято";
         option.disabled = true;
         option.style.color = "#c62828";
+      } else if (row.is_blocked) {
+        option.textContent = time + " — Недоступно";
+        option.disabled = true;
+        option.style.color = "#8c857b";
       } else {
         option.textContent = time + " — Не зайнято";
       }
-
       timeSelect.appendChild(option);
     });
   }
 
   async function updateTimes() {
-
+    const currentRequest = ++requestNumber;
     const date = dateInput.value;
+    const masterId = masterSelect.value;
 
-    if (!date) {
-      showTimes([]);
+    if (!date || !masterId) {
+      resetTimes("Спочатку оберіть майстра та дату");
       return;
     }
 
-    const supabaseClient = window.amuletSupabase;
-
-    if (!supabaseClient) {
-      console.error("Supabase client not found");
+    const client = window.amuletSupabase;
+    if (!client) {
+      resetTimes("Запис тимчасово недоступний");
       return;
     }
 
-    const { data, error } =
-      await supabaseClient.rpc(
-        "get_public_booked_times",
-        {
-          p_booking_date: date,
-          p_master_id: document.getElementById("bookingMaster")?.value || null
-        }
-      );
+    resetTimes("Завантаження вільного часу…");
+    const { data, error } = await client.rpc("get_public_available_times", {
+      p_booking_date: date,
+      p_master_id: masterId
+    });
 
+    if (currentRequest !== requestNumber) return;
     if (error) {
-      console.error(error);
-      showTimes([]);
+      console.error("Availability error:", error);
+      resetTimes("Не вдалося завантажити час");
       return;
     }
-
-    const bookedTimes = (data || []).map(function (row) {
-      return String(row.booking_time).slice(0, 5);
-    });
-
-    showTimes(bookedTimes);
+    showTimes(data || []);
   }
 
   dateInput.addEventListener("change", updateTimes);
-
-  showTimes([]);
-
-})();
-</script>
-<script>
-(function () {
-
-  const form = document.getElementById("bookingForm");
-  if (!form) return;
-
-  const dateInput = form.querySelector('[name="date"]');
-  const timeSelect = form.querySelector('[name="time"]');
-
-  if (!dateInput || !timeSelect) return;
-
-  const times = [
-    "09:00",
-    "10:00",
-    "11:00",
-    "12:00",
-    "13:00",
-    "14:00",
-    "15:00",
-    "16:00",
-    "17:00",
-    "18:00",
-    "19:00",
-    "20:00"
-  ];
-
-  function showTimes(bookedTimes) {
-
-    timeSelect.innerHTML =
-      '<option value="">Оберіть час</option>';
-
-    times.forEach(function (time) {
-
-      const option = document.createElement("option");
-      option.value = time;
-
-      if (bookedTimes.includes(time)) {
-        option.textContent = time + " — Зайнято";
-        option.disabled = true;
-        option.style.color = "#c62828";
-      } else {
-        option.textContent = time + " — Не зайнято";
-      }
-
-      timeSelect.appendChild(option);
-    });
-  }
-
-  async function updateTimes() {
-
-    const date = dateInput.value;
-
-    if (!date) {
-      showTimes([]);
-      return;
-    }
-
-    const supabaseClient = window.amuletSupabase;
-
-    if (!supabaseClient) {
-      console.error("Supabase client not found");
-      return;
-    }
-
-    try {
-
-      const { data, error } =
-        await supabaseClient.rpc(
-          "get_public_booked_times",
-          {
-            p_booking_date: date,
-          p_master_id: document.getElementById("bookingMaster")?.value || null
-          }
-        );
-
-      if (error) {
-        console.error(error);
-        showTimes([]);
-        return;
-      }
-
-      const bookedTimes = (data || []).map(function (row) {
-        return String(row.booking_time).slice(0, 5);
-      });
-
-      showTimes(bookedTimes);
-
-    } catch (error) {
-      console.error(error);
-      showTimes([]);
-    }
-  }
-
-  dateInput.addEventListener("change", updateTimes);
-
-  showTimes([]);
-
+  masterSelect.addEventListener("change", updateTimes);
+  resetTimes();
 })();
 </script>
 
@@ -1184,8 +1074,8 @@ document.querySelectorAll('.gallery-item img').forEach(function(img){
     }
     const { data, error } = await client
       .from("public_masters")
-      .select("id, full_name, specialty")
-      .order("full_name", { ascending: true });
+      .select("id, slot_number, display_name, specialty")
+      .order("slot_number", { ascending: true });
 
     if (error || !data || !data.length) {
       console.error("Could not load masters", error);
@@ -1197,9 +1087,7 @@ document.querySelectorAll('.gallery-item img').forEach(function(img){
     data.forEach((master) => {
       const option = document.createElement("option");
       option.value = master.id;
-      option.textContent = master.specialty
-        ? master.full_name + " — " + master.specialty
-        : master.full_name;
+      option.textContent = "#" + master.slot_number + " " + master.display_name + (master.specialty ? " — " + master.specialty : "");
       select.appendChild(option);
     });
   }
