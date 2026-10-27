@@ -1,1157 +1,515 @@
 <!DOCTYPE html>
 <html lang="uk">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Амулет — Адмін-панель</title>
-
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-
-  <style>
-    * {
-      box-sizing: border-box;
-    }
-
-    body {
-      margin: 0;
-      font-family: Arial, sans-serif;
-      background: #f5f1eb;
-      color: #29241f;
-    }
-
-    .container {
-      max-width: 1200px;
-      margin: 0 auto;
-      padding: 24px;
-    }
-
-    .login {
-      max-width: 430px;
-      margin: 70px auto;
-      background: white;
-      padding: 30px;
-      border-radius: 20px;
-      box-shadow: 0 10px 35px rgba(0,0,0,.08);
-    }
-
-    h1 {
-      margin: 0 0 8px;
-    }
-
-    .subtitle {
-      color: #777;
-      margin-bottom: 25px;
-    }
-
-    input,
-    select {
-      width: 100%;
-      padding: 13px;
-      border: 1px solid #ddd;
-      border-radius: 10px;
-      font-size: 16px;
-      background: white;
-    }
-
-    input {
-      margin-bottom: 12px;
-    }
-
-    button {
-      border: 0;
-      border-radius: 10px;
-      padding: 12px 18px;
-      font-size: 15px;
-      cursor: pointer;
-    }
-
-    .login button {
-      width: 100%;
-      background: #9b7a50;
-      color: white;
-    }
-
-    .error {
-      color: #b42318;
-      margin-top: 12px;
-    }
-
-    .success {
-      color: #16803c;
-      margin-top: 12px;
-    }
-
-    .header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      gap: 15px;
-      margin-bottom: 25px;
-    }
-
-    .actions {
-      display: flex;
-      gap: 10px;
-    }
-
-    .refresh {
-      background: #9b7a50;
-      color: white;
-    }
-
-    .logout {
-      background: #29241f;
-      color: white;
-    }
-
-    .stats {
-      display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      gap: 15px;
-      margin-bottom: 25px;
-    }
-
-    .stat {
-      background: white;
-      border-radius: 15px;
-      padding: 18px;
-      box-shadow: 0 5px 20px rgba(0,0,0,.05);
-    }
-
-    .stat-number {
-      font-size: 28px;
-      font-weight: bold;
-      margin-top: 8px;
-    }
-
-    .booking {
-      background: white;
-      border-radius: 18px;
-      padding: 20px;
-      margin-bottom: 15px;
-      box-shadow: 0 5px 20px rgba(0,0,0,.05);
-    }
-
-    .booking-top {
-      display: flex;
-      justify-content: space-between;
-      gap: 15px;
-      align-items: flex-start;
-    }
-
-    .client {
-      font-size: 20px;
-      font-weight: bold;
-    }
-
-    .phone {
-      margin-top: 5px;
-      color: #666;
-    }
-
-    .details {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 15px;
-      margin-top: 20px;
-    }
-
-    .detail {
-      background: #f8f6f2;
-      padding: 13px;
-      border-radius: 10px;
-    }
-
-    .detail-title {
-      font-size: 12px;
-      color: #777;
-      margin-bottom: 5px;
-    }
-
-    .comment {
-      margin-top: 15px;
-      padding: 13px;
-      background: #faf8f5;
-      border-radius: 10px;
-    }
-
-    .status {
-      display: inline-block;
-      padding: 7px 11px;
-      border-radius: 20px;
-      font-size: 13px;
-      margin-bottom: 10px;
-    }
-
-    .status-new {
-      background: #fff0c7;
-    }
-
-    .status-confirmed {
-      background: #dff5e3;
-    }
-
-    .status-completed {
-      background: #e5e7eb;
-    }
-
-    .status-cancelled {
-      background: #ffe0e0;
-    }
-
-    .empty {
-      background: white;
-      padding: 45px;
-      text-align: center;
-      border-radius: 18px;
-      color: #777;
-    }
-
-    .loading {
-      padding: 20px;
-      text-align: center;
-      color: #777;
-    }
-
-    @media (max-width: 800px) {
-      .stats {
-        grid-template-columns: 1fr 1fr;
-      }
-
-      .details {
-        grid-template-columns: 1fr;
-      }
-
-      .booking-top {
-        flex-direction: column;
-      }
-    }
-
-    @media (max-width: 500px) {
-      .container {
-        padding: 15px;
-      }
-
-      .header {
-        flex-direction: column;
-        align-items: flex-start;
-      }
-
-      .actions {
-        width: 100%;
-      }
-
-      .actions button {
-        flex: 1;
-      }
-
-      .stats {
-        grid-template-columns: 1fr;
-      }
-    }
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#f5f1eb">
+<title>Амулет — майстри й записи</title>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<style>
+:root{--bg:#f5f1eb;--card:#fff;--text:#29241f;--muted:#70685f;--gold:#9b7a50;--line:#e5ded4;--green:#177245;--red:#b42318}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text);font:15px Arial,sans-serif}button,input,select{font:inherit}button{border:0;border-radius:10px;padding:11px 14px;cursor:pointer;background:var(--gold);color:#fff}button:disabled{opacity:.5;cursor:wait}.secondary{background:#ebe5dc;color:var(--text)}.danger{background:#b42318;color:#fff}.container{max-width:1200px;padding:20px;margin:0 auto}.login{max-width:430px;margin:7vh auto;background:#fff;padding:28px;border-radius:18px;box-shadow:0 8px 28px #0000000d}.login input,.field input,.field select,.master-form input,.master-form select,.block-form input,.block-form select{width:100%;padding:11px 12px;border:1px solid var(--line);border-radius:9px;background:white;color:var(--text)}.login input{margin:7px 0 12px}.subtitle,.muted{color:var(--muted)}.header{display:flex;gap:15px;justify-content:space-between;align-items:center;flex-wrap:wrap;margin-bottom:20px}.actions{display:flex;gap:8px;flex-wrap:wrap}.panel,.stat,.master-card,.booking,.block-card{background:var(--card);border:1px solid #eee8e0;border-radius:16px;padding:18px;margin-bottom:16px;box-shadow:0 4px 15px #00000005}.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:16px}.stat{margin:0}.stat-number{font-size:26px;font-weight:700;margin-top:7px}.message{padding:10px 13px;border-radius:10px;margin:12px 0}.message.ok{background:#e7f5eb;color:var(--green)}.message.err{background:#fff0ef;color:var(--red)}.master-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}.master-card{margin:0;padding:15px;min-width:0}.master-heading{display:flex;justify-content:space-between;gap:10px;align-items:center;margin-bottom:12px}.pill{font-size:12px;border-radius:999px;padding:5px 8px;background:#eee;color:#555;white-space:nowrap}.pill.on{background:#e7f5eb;color:var(--green)}.pill.off{background:#f5e8e7;color:var(--red)}.master-form{display:grid;grid-template-columns:1fr 1fr;gap:10px}.field{min-width:0}.field label{display:block;font-size:12px;color:var(--muted);margin-bottom:5px}.field.full{grid-column:1/-1}.toggle{display:flex;align-items:center;gap:8px;min-height:40px}.toggle input{width:18px;height:18px}.card-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}.details{margin-top:12px;border-top:1px solid var(--line);padding-top:10px}.details summary{cursor:pointer;font-weight:700;padding:5px 0 10px}.week-row{display:grid;grid-template-columns:minmax(90px,1fr) 1fr 1fr;gap:8px;align-items:center;margin:7px 0}.week-row input[type=time]{width:100%;padding:8px;border:1px solid var(--line);border-radius:8px}.dayoff{display:flex;gap:6px;align-items:center;font-size:13px}.tiny{font-size:12px;color:var(--muted);margin-top:6px}.account-box{background:#faf8f4;padding:12px;border-radius:10px;margin-top:10px}.account-box input{margin:5px 0 9px}.booking-top{display:flex;justify-content:space-between;gap:12px;align-items:flex-start}.client{font-weight:700;font-size:18px}.phone{color:var(--muted);margin-top:4px}.details-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;margin-top:14px}.detail{background:#f8f6f2;padding:10px;border-radius:8px;min-width:0;overflow-wrap:anywhere}.detail-title{font-size:12px;color:var(--muted);margin-bottom:5px}.status{display:inline-block;padding:6px 9px;border-radius:999px;font-size:12px;background:#eee;margin-bottom:8px}.status-new{background:#fff0c7}.status-confirmed{background:#dff5e3}.status-completed{background:#e5e7eb}.status-cancelled{background:#ffe0e0}.booking select{padding:8px;border-radius:8px;border:1px solid var(--line);background:#fff}.empty{text-align:center;padding:25px;background:#fff;border-radius:14px;color:var(--muted)}.schedule-list{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}.schedule-day{background:#faf8f4;padding:12px;border-radius:10px;display:flex;justify-content:space-between;gap:10px}.block-form{display:grid;grid-template-columns:1fr 1fr 2fr auto;gap:10px;align-items:end}.block-list{display:grid;gap:8px}.block-card{margin:0;display:flex;justify-content:space-between;align-items:center;gap:10px}.section-heading{margin:0 0 6px}.section-text{color:var(--muted);margin:0 0 15px;line-height:1.45}
+@media(max-width:850px){.master-grid{grid-template-columns:1fr}.stats{grid-template-columns:1fr 1fr}.details-grid{grid-template-columns:1fr 1fr}.block-form{grid-template-columns:1fr 1fr}.schedule-list{grid-template-columns:1fr}}@media(max-width:520px){.container{padding:12px}.login{margin:24px 12px;padding:20px}.stats{grid-template-columns:1fr 1fr}.master-form{grid-template-columns:1fr}.field.full{grid-column:auto}.week-row{grid-template-columns:1fr 1fr}.week-row .dayoff{grid-column:1/-1}.details-grid{grid-template-columns:1fr}.block-form{grid-template-columns:1fr}.header{align-items:flex-start}.actions{width:100%}.actions button{flex:1}.booking-top{flex-direction:column}.block-card{align-items:flex-start;flex-direction:column}}
+</style>
 </head>
-
 <body>
-
-<!-- LOGIN -->
 <div id="loginScreen" class="login">
-  <h1>Адмін-панель «Амулет»</h1>
-
-  <div class="subtitle">
-    Вхід адміністратора
-  </div>
-
-  <input
-    id="email"
-    type="email"
-    placeholder="Email"
-  >
-
-  <input
-    id="password"
-    type="password"
-    placeholder="Пароль"
-  >
-
-  <button onclick="login()">
-    Увійти
-  </button>
-
-  <div id="loginError" class="error"></div>
+  <h1>Амулет — вхід</h1>
+  <p class="subtitle">Увійдіть як адміністратор або майстер.</p>
+  <label for="email">Email</label>
+  <input id="email" type="email" autocomplete="username" placeholder="name@example.com">
+  <label for="password">Пароль</label>
+  <input id="password" type="password" autocomplete="current-password" placeholder="Пароль">
+  <button style="width:100%" onclick="login()">Увійти</button>
+  <div id="loginError" class="message err" style="display:none"></div>
 </div>
 
-
-<!-- ADMIN -->
-<div id="adminScreen" style="display:none;">
-
+<div id="adminScreen" style="display:none">
   <div class="container">
-
     <div class="header">
-
-      <div>
-        <h1>Заявки «Амулет»</h1>
-
-        <div class="subtitle">
-          Панель адміністратора
-        </div>
-      </div>
-
-      <div class="actions">
-
-        <button
-          class="refresh"
-          onclick="loadBookings()"
-        >
-          ↻ Оновити
-        </button>
-
-        <button
-          class="logout"
-          onclick="logout()"
-        >
-          Вийти
-        </button>
-
-      </div>
-
+      <div><h1 style="margin:0 0 5px">Адміністратор «Амулет»</h1><div class="subtitle">20 місць для майстрів • графіки • записи</div></div>
+      <div class="actions"><button class="secondary" onclick="refreshAdmin()">Оновити</button><button class="danger" onclick="logout()">Вийти</button></div>
     </div>
-
-
-    <!-- СТАТИСТИКА -->
-
     <div class="stats">
-
-      <div class="stat">
-        <div>Всього</div>
-        <div
-          id="totalCount"
-          class="stat-number"
-        >
-          0
-        </div>
-      </div>
-
-      <div class="stat">
-        <div>Нові</div>
-        <div
-          id="newCount"
-          class="stat-number"
-        >
-          0
-        </div>
-      </div>
-
-      <div class="stat">
-        <div>Підтверджені</div>
-        <div
-          id="confirmedCount"
-          class="stat-number"
-        >
-          0
-        </div>
-      </div>
-
-      <div class="stat">
-        <div>Завершені</div>
-        <div
-          id="completedCount"
-          class="stat-number"
-        >
-          0
-        </div>
-      </div>
-
+      <div class="stat"><div>Всього записів</div><div class="stat-number" id="totalCount">0</div></div>
+      <div class="stat"><div>Нові</div><div class="stat-number" id="newCount">0</div></div>
+      <div class="stat"><div>Підтверджені</div><div class="stat-number" id="confirmedCount">0</div></div>
+      <div class="stat"><div>Завершені</div><div class="stat-number" id="completedCount">0</div></div>
     </div>
-
-
-    <div id="message"></div>
-
-    <div id="bookings"></div>
-
+    <div id="adminMessage" aria-live="polite"></div>
+    <section class="panel">
+      <h2 class="section-heading">Майстри та вільні місця</h2>
+      <p class="section-text">Усього 20 місць. Увімкнене місце з акаунтом показується клієнтам у формі запису. Для кожного майстра можна змінити ім’я, телефон, спеціалізацію та графік. Щоб майстер входив до системи, створіть йому окремий акаунт.</p>
+      <div id="masterManager" class="master-grid"><div class="empty">Завантаження місць…</div></div>
+    </section>
+    <section>
+      <h2>Заявки клієнтів</h2>
+      <div id="bookings"><div class="empty">Завантаження заявок…</div></div>
+    </section>
   </div>
-
 </div>
 
+<div id="masterScreen" style="display:none">
+  <div class="container">
+    <div class="header">
+      <div><h1 style="margin:0 0 5px">Моє расписання</h1><div class="subtitle" id="masterWelcome"></div></div>
+      <div class="actions"><button class="secondary" onclick="loadMasterPortal()">Оновити</button><button class="danger" onclick="logout()">Вийти</button></div>
+    </div>
+    <div id="masterMessage" aria-live="polite"></div>
+    <section class="panel">
+      <h2 class="section-heading">Мій робочий графік</h2>
+      <p class="section-text">Тут видно лише ваш графік. Зміни звичайного робочого розкладу робить адміністратор.</p>
+      <div id="myWeeklySchedule" class="schedule-list"></div>
+    </section>
+    <section class="panel">
+      <h2 class="section-heading">Закрити вільний час</h2>
+      <p class="section-text">Позначте годину як зайняту — клієнти не зможуть записатися на цей час. Якщо час уже заброньований клієнтом, система не дозволить його закрити.</p>
+      <div class="block-form">
+        <div class="field"><label for="blockDate">Дата</label><input id="blockDate" type="date"></div>
+        <div class="field"><label for="blockTime">Час початку</label><select id="blockTime"></select></div>
+        <div class="field"><label for="blockReason">Примітка (необов’язково)</label><input id="blockReason" placeholder="Перерва, особисті справи…"></div>
+        <button onclick="blockTime()">Закрити час</button>
+      </div>
+    </section>
+    <section class="panel">
+      <h2 class="section-heading">Мої закриті години</h2>
+      <p class="section-text">Натисніть «Звільнити», щоб знову відкрити цей час для запису клієнтів.</p>
+      <div id="myBlockedSlots" class="block-list"></div>
+    </section>
+    <section class="panel">
+      <h2 class="section-heading">Мої клієнтські записи</h2>
+      <p class="section-text">Показуються лише записи, призначені вам.</p>
+      <div id="myBookings"></div>
+    </section>
+  </div>
+</div>
 
 <script>
-
-const SUPABASE_URL =
-  "https://hqbjlvryecmqemmajqyo.supabase.co";
-
-const SUPABASE_KEY =
-  "sb_publishable_o4SMwGNId-e5tqfTSrKWfQ_f2Ftn5j7";
-
-
-const supabaseClient =
-  window.supabase.createClient(
-    SUPABASE_URL,
-    SUPABASE_KEY
-  );
-
-
-/* =========================
-   ПРОВЕРКА АВТОРИЗАЦИИ
-========================= */
-
-async function checkAuth() {
-
-  const {
-    data: {
-      session
-    }
-  } =
-    await supabaseClient.auth.getSession();
-
-
-  if (session) {
-
-    showAdmin();
-
-    loadBookings();
-
-  } else {
-
-    showLogin();
-
-  }
-}
-
-
-/* =========================
-   ПОКАЗ ЭКРАНОВ
-========================= */
-
-function showLogin() {
-
-  document
-    .getElementById("loginScreen")
-    .style.display = "block";
-
-  document
-    .getElementById("adminScreen")
-    .style.display = "none";
-}
-
-
-function showAdmin() {
-
-  document
-    .getElementById("loginScreen")
-    .style.display = "none";
-
-  document
-    .getElementById("adminScreen")
-    .style.display = "block";
-}
-
-
-/* =========================
-   ВХОД
-========================= */
-
-async function login() {
-
-  const email =
-    document
-      .getElementById("email")
-      .value
-      .trim();
-
-  const password =
-    document
-      .getElementById("password")
-      .value;
-
-
-  const error =
-    document
-      .getElementById("loginError");
-
-
-  error.textContent = "";
-
-
-  if (!email || !password) {
-
-    error.textContent =
-      "Введіть email та пароль.";
-
-    return;
-  }
-
-
-  const {
-    error: authError
-  } =
-    await supabaseClient.auth.signInWithPassword({
-
-      email: email,
-
-      password: password
-
-    });
-
-
-  if (authError) {
-
-    error.textContent =
-      "Помилка входу: " +
-      authError.message;
-
-    return;
-  }
-
-
-  showAdmin();
-
-  loadBookings();
-}
-
-
-/* =========================
-   ВЫХОД
-========================= */
-
-async function logout() {
-
-  await supabaseClient.auth.signOut();
-
-  showLogin();
-}
-
-
-/* =========================
-   ЗАГРУЗКА ЗАЯВОК
-========================= */
-
-async function loadBookings() {
-
-  const box =
-    document.getElementById("bookings");
-
-  const message =
-    document.getElementById("message");
-
-
-  box.innerHTML =
-    '<div class="loading">Завантаження заявок...</div>';
-
-  message.textContent = "";
-
-
-  const {
-    data,
-    error
-  } =
-    await supabaseClient
-      .from("bookings")
-      .select("*")
-      .order(
-        "booking_date",
-        {
-          ascending: false
-        }
-      )
-      .order(
-        "booking_time",
-        {
-          ascending: false
-        }
-      );
-
-
-  if (error) {
-
-    box.innerHTML =
-      `<div class="empty">
-        Помилка завантаження заявок:<br><br>
-        ${escapeHtml(error.message)}
-      </div>`;
-
-    return;
-  }
-
-
-  updateStats(data);
-
-  renderBookings(data);
-}
-
-
-/* =========================
-   СТАТИСТИКА
-========================= */
-
-function updateStats(data) {
-
-  document
-    .getElementById("totalCount")
-    .textContent =
-      data.length;
-
-
-  document
-    .getElementById("newCount")
-    .textContent =
-      data.filter(
-        x => x.status === "new"
-      ).length;
-
-
-  document
-    .getElementById("confirmedCount")
-    .textContent =
-      data.filter(
-        x => x.status === "confirmed"
-      ).length;
-
-
-  document
-    .getElementById("completedCount")
-    .textContent =
-      data.filter(
-        x => x.status === "completed"
-      ).length;
-  loadSchedule();
-}
-/* =========================
-   РАСПИСАНИЕ
-========================= */
-
-async function loadSchedule() {
-
-  const oldSchedule =
-    document.getElementById("adminSchedule");
-
-  if (oldSchedule) {
-    oldSchedule.remove();
-  }
-
-  const box =
-    document.getElementById("bookings");
-
-  if (!box) return;
-
-  const { data: schedule, error: scheduleError } =
-    await supabaseClient
-      .from("work_schedule")
-      .select("*")
-      .order("weekday", { ascending: true });
-
-  if (scheduleError) {
-    console.error("Ошибка расписания:", scheduleError);
-    return;
-  }
-
-  const { data: bookings, error: bookingsError } =
-    await supabaseClient
-      .from("bookings")
-      .select("booking_date, booking_time, status")
-      .in("status", ["new", "confirmed"]);
-
-  if (bookingsError) {
-    console.error("Ошибка записей:", bookingsError);
-    return;
-  }
-
-  const scheduleBox = document.createElement("div");
-
-  scheduleBox.id = "adminSchedule";
-
-  scheduleBox.style.cssText = `
-    margin-top: 24px;
-    padding: 20px;
-    border-radius: 16px;
-    background: #ffffff;
-    box-shadow: 0 4px 18px rgba(0,0,0,.08);
-  `;
-
-  scheduleBox.innerHTML = `
-    <h2 style="
-      margin: 0 0 18px;
-      font-size: 22px;
-    ">
-      Розклад
-    </h2>
-  `;
-
-  const days = [
-    "Неділя",
-    "Понеділок",
-    "Вівторок",
-    "Середа",
-    "Четвер",
-    "П’ятниця",
-    "Субота"
-  ];
-
-  const today = new Date();
-
-  for (let i = 0; i < 7; i++) {
-
-    const date = new Date(today);
-
-    date.setDate(today.getDate() + i);
-
-    const weekday = date.getDay();
-
-    const dateString =
-      date.toISOString().split("T")[0];
-
-    const daySchedule =
-      schedule.find(
-        item => Number(item.weekday) === weekday
-      );
-
-    const dayBox = document.createElement("div");
-
-    dayBox.style.cssText = `
-      margin-bottom: 18px;
-      padding: 14px;
-      border: 1px solid #e5e5e5;
-      border-radius: 12px;
-    `;
-
-    const dateText =
-      date.toLocaleDateString("uk-UA", {
-        day: "2-digit",
-        month: "2-digit"
-      });
-
-    dayBox.innerHTML = `
-      <div style="
-        font-weight: 700;
-        font-size: 17px;
-        margin-bottom: 10px;
-      ">
-        ${days[weekday]} — ${dateText}
-      </div>
-    `;
-
-    if (!daySchedule || daySchedule.is_day_off) {
-
-      dayBox.innerHTML += `
-        <div style="
-          padding: 10px;
-          border-radius: 8px;
-          background: #f3f3f3;
-          color: #777;
-        ">
-          Вихідний
-        </div>
-      `;
-
-      scheduleBox.appendChild(dayBox);
-      continue;
-    }
-
-    const startHour =
-      Number(daySchedule.start_time.slice(0, 2));
-
-    const endHour =
-      Number(daySchedule.end_time.slice(0, 2));
-
-    for (
-      let hour = startHour;
-      hour < endHour;
-      hour++
-    ) {
-
-      const time =
-        String(hour).padStart(2, "0") + ":00";
-
-      const booking =
-        bookings.find(item => {
-
-          const bookingTime =
-            String(item.booking_time || "")
-              .slice(0, 5);
-
-          return (
-            item.booking_date === dateString &&
-            bookingTime === time
-          );
-        });
-
-      const slot = document.createElement("div");
-
-      const busy = Boolean(booking);
-
-      slot.style.cssText = `
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        padding: 10px 12px;
-        margin-top: 7px;
-        border-radius: 8px;
-        background: ${busy ? "#ffe1e1" : "#ffffff"};
-        border: 1px solid ${busy ? "#e53935" : "#dddddd"};
-        color: ${busy ? "#c62828" : "#333333"};
-      `;
-
-      slot.innerHTML = `
-        <strong>${time}</strong>
-        <span style="
-          font-weight: 700;
-          color: ${busy ? "#d32f2f" : "#555"};
-        ">
-          ${busy ? "Зайнято" : "Не зайнято"}
-        </span>
-      `;
-
-      dayBox.appendChild(slot);
-    }
-
-    scheduleBox.appendChild(dayBox);
-  }
-
-  box.parentElement.appendChild(scheduleBox);
-}
-
-/* =========================
-   ОТОБРАЖЕНИЕ ЗАЯВОК
-========================= */
-
-function renderBookings(data) {
-
-  const box =
-    document.getElementById("bookings");
-
-
-  if (!data.length) {
-
-    box.innerHTML =
-      `<div class="empty">
-        Заявок поки немає.
-      </div>`;
-
-    return;
-  }
-
-
-  box.innerHTML = "";
-
-
-  data.forEach(
-    booking => {
-
-      const card =
-        document.createElement("div");
-
-      card.className =
-        "booking";
-
-
-      const status =
-        booking.status || "new";
-
-
-      const time =
-        booking.booking_time
-          ? String(
-              booking.booking_time
-            ).slice(0, 5)
-          : "—";
-
-
-      card.innerHTML = `
-
-        <div class="booking-top">
-
-          <div>
-
-            <div class="client">
-              ${escapeHtml(
-                booking.client_name
-              )}
-            </div>
-
-            <div class="phone">
-              ${escapeHtml(
-                booking.phone
-              )}
-            </div>
-
-          </div>
-
-
-          <div>
-
-            <div class="
-              status
-              status-${escapeHtml(status)}
-            ">
-              ${statusName(status)}
-            </div>
-
-
-            <select
-              onchange="
-                changeStatus(
-                  '${booking.id}',
-                  this.value
-                )
-              "
-            >
-
-              <option
-                value="new"
-                ${status === "new"
-                  ? "selected"
-                  : ""}
-              >
-                Нова
-              </option>
-
-
-              <option
-                value="confirmed"
-                ${status === "confirmed"
-                  ? "selected"
-                  : ""}
-              >
-                Підтверджена
-              </option>
-
-
-              <option
-                value="completed"
-                ${status === "completed"
-                  ? "selected"
-                  : ""}
-              >
-                Завершена
-              </option>
-
-
-              <option
-                value="cancelled"
-                ${status === "cancelled"
-                  ? "selected"
-                  : ""}
-              >
-                Скасована
-              </option>
-
-            </select>
-
-          </div>
-
-        </div>
-
-
-        <div class="details">
-
-          <div class="detail">
-
-            <div class="detail-title">
-              Послуга
-            </div>
-
-            <strong>
-              ${escapeHtml(
-                booking.service_name ||
-                "Не вказана"
-              )}
-            </strong>
-
-          </div>
-
-
-          <div class="detail">
-
-            <div class="detail-title">
-              Дата
-            </div>
-
-            <strong>
-              ${escapeHtml(
-                booking.booking_date ||
-                "—"
-              )}
-            </strong>
-
-          </div>
-
-
-          <div class="detail">
-
-            <div class="detail-title">
-              Час
-            </div>
-
-            <strong>
-              ${escapeHtml(time)}
-            </strong>
-
-          </div>
-
-        </div>
-
-
-        ${
-          booking.comment
-            ? `
-              <div class="comment">
-                <strong>
-                  Коментар:
-                </strong>
-                <br>
-                ${escapeHtml(
-                  booking.comment
-                )}
-              </div>
-            `
-            : ""
-        }
-
-      `;
-
-
-      box.appendChild(card);
-
-    }
-  );
-}
-
-
-/* =========================
-   ИЗМЕНЕНИЕ СТАТУСА
-========================= */
-
-async function changeStatus(
-  id,
-  status
-) {
-
-  const {
-    error
-  } =
-    await supabaseClient
-      .from("bookings")
-      .update({
-
-        status: status,
-
-        updated_at:
-          new Date()
-            .toISOString()
-
-      })
-      .eq(
-        "id",
-        id
-      );
-
-
-  if (error) {
-
-    alert(
-      "Не вдалося змінити статус:\n\n" +
-      error.message
-    );
-
-    return;
-  }
-
-
-  loadBookings();
-}
-
-
-/* =========================
-   НАЗВАНИЯ СТАТУСОВ
-========================= */
-
-function statusName(status) {
-
-  const names = {
-
-    new:
-      "Нова",
-
-    confirmed:
-      "Підтверджена",
-
-    completed:
-      "Завершена",
-
-    cancelled:
-      "Скасована"
-
-  };
-
-
-  return (
-    names[status] ||
-    status
-  );
-}
-
-
-/* =========================
-   ЗАЩИТА HTML
-========================= */
+const SUPABASE_URL = "https://hqbjlvryecmqemmajqyo.supabase.co";
+const SUPABASE_KEY = "sb_publishable_o4SMwGNId-e5tqfTSrKWfQ_f2Ftn5j7";
+const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+let currentProfile = null;
+let currentSession = null;
+let masterSlots = [];
+let masterProfiles = [];
+let scheduleRows = [];
+const DAY_NAMES = ["Неділя","Понеділок","Вівторок","Середа","Четвер","П’ятниця","Субота"];
 
 function escapeHtml(value) {
-
-  return String(
-    value ?? ""
-  )
-    .replaceAll(
-      "&",
-      "&amp;"
-    )
-    .replaceAll(
-      "<",
-      "&lt;"
-    )
-    .replaceAll(
-      ">",
-      "&gt;"
-    )
-    .replaceAll(
-      '"',
-      "&quot;"
-    )
-    .replaceAll(
-      "'",
-      "&#039;"
-    );
+  return String(value == null ? "" : value)
+    .replaceAll("&","&amp;").replaceAll("<","&lt;").replaceAll(">","&gt;")
+    .replaceAll('"',"&quot;").replaceAll("'","&#039;");
+}
+function localDateISO(date) {
+  const d = date || new Date();
+  return d.getFullYear() + "-" + String(d.getMonth()+1).padStart(2,"0") + "-" + String(d.getDate()).padStart(2,"0");
+}
+function showMessage(id, message, ok) {
+  const el = document.getElementById(id);
+  if (!el) return;
+  if (!message) { el.innerHTML = ""; return; }
+  el.innerHTML = '<div class="message ' + (ok ? "ok" : "err") + '">' + escapeHtml(message) + "</div>";
+}
+function showScreen(which) {
+  document.getElementById("loginScreen").style.display = which === "login" ? "block" : "none";
+  document.getElementById("adminScreen").style.display = which === "admin" ? "block" : "none";
+  document.getElementById("masterScreen").style.display = which === "master" ? "block" : "none";
+}
+function showLoginError(message) {
+  const el = document.getElementById("loginError");
+  el.textContent = message || "";
+  el.style.display = message ? "block" : "none";
 }
 
-
-/* =========================
-   СЛЕДИМ ЗА AUTH
-========================= */
-
-supabaseClient.auth.onAuthStateChange(
-  (_event, session) => {
-
-    if (session) {
-
-      showAdmin();
-
-      loadBookings();
-
-    } else {
-
-      showLogin();
-
-    }
-
+async function routeSession(session) {
+  currentSession = session || null;
+  if (!session) {
+    currentProfile = null;
+    showScreen("login");
+    return;
   }
-);
+  const result = await supabaseClient.from("profiles")
+    .select("id,full_name,role,is_admin,active,master_slot_id,salon_id,phone,specialty")
+    .eq("id", session.user.id).maybeSingle();
+  if (result.error || !result.data) {
+    showScreen("login");
+    showLoginError("Для цього акаунта ще не налаштований профіль. Зверніться до адміністратора.");
+    return;
+  }
+  currentProfile = result.data;
+  if (!currentProfile.active) {
+    await supabaseClient.auth.signOut();
+    showScreen("login");
+    showLoginError("Цей акаунт вимкнений. Зверніться до адміністратора.");
+    return;
+  }
+  if (currentProfile.is_admin || currentProfile.role === "admin") {
+    showScreen("admin");
+    await Promise.all([loadBookings(), loadMasterManager()]);
+  } else if (currentProfile.role === "master" && currentProfile.master_slot_id) {
+    showScreen("master");
+    document.getElementById("masterWelcome").textContent = currentProfile.full_name || "Майстер";
+    await loadMasterPortal();
+  } else {
+    await supabaseClient.auth.signOut();
+    showScreen("login");
+    showLoginError("Для цього акаунта не призначено роль адміністратора або майстра.");
+  }
+}
+async function checkAuth() {
+  const { data } = await supabaseClient.auth.getSession();
+  if (data.session) await routeSession(data.session);
+  else showScreen("login");
+}
+async function login() {
+  showLoginError("");
+  const email = document.getElementById("email").value.trim();
+  const password = document.getElementById("password").value;
+  if (!email || !password) return showLoginError("Введіть email і пароль.");
+  const { error } = await supabaseClient.auth.signInWithPassword({ email, password });
+  if (error) return showLoginError("Не вдалося увійти: " + error.message);
+  const { data } = await supabaseClient.auth.getSession();
+  await routeSession(data.session);
+}
+async function logout() {
+  await supabaseClient.auth.signOut();
+  currentProfile = null;
+  showScreen("login");
+  showLoginError("");
+}
+function refreshAdmin() {
+  loadBookings();
+  loadMasterManager();
+}
 
+/* ADMIN: 20 master slots */
+async function loadMasterManager() {
+  const container = document.getElementById("masterManager");
+  if (!container || !(currentProfile && (currentProfile.is_admin || currentProfile.role === "admin"))) return;
+  container.innerHTML = '<div class="empty">Завантаження місць…</div>';
+  const results = await Promise.all([
+    supabaseClient.from("master_slots").select("*").order("slot_number"),
+    supabaseClient.from("profiles").select("id,full_name,role,is_admin,active,master_slot_id,salon_id,phone,specialty"),
+    supabaseClient.from("work_schedule").select("*").order("weekday")
+  ]);
+  const slotRes = results[0], profileRes = results[1], scheduleRes = results[2];
+  if (slotRes.error || profileRes.error || scheduleRes.error) {
+    container.innerHTML = '<div class="empty">Не вдалося завантажити майстрів: ' +
+      escapeHtml((slotRes.error || profileRes.error || scheduleRes.error).message) + '</div>';
+    return;
+  }
+  masterSlots = slotRes.data || [];
+  masterProfiles = profileRes.data || [];
+  scheduleRows = scheduleRes.data || [];
+  renderMasterManager();
+}
+function renderMasterManager() {
+  const container = document.getElementById("masterManager");
+  if (!masterSlots.length) {
+    container.innerHTML = '<div class="empty">Місця не знайдено.</div>';
+    return;
+  }
+  container.innerHTML = masterSlots.map(function(slot) {
+    const profile = masterProfiles.find(function(p){ return p.id === slot.profile_id; });
+    const active = Boolean(slot.enabled);
+    const statusText = !active ? "Вимкнено" : (profile ? "Підключено" : "Потрібен акаунт");
+    const statusClass = active && profile ? "pill on" : "pill off";
+    const schedule = scheduleRows.filter(function(row){ return row.master_id === slot.id; });
+    const identityNote = profile
+      ? '<p class="tiny">Окремий акаунт майстра прив’язаний. ' + (profile.is_admin ? 'Цей профіль також має права адміністратора.' : 'Майстер бачить лише власний графік і записи.') + '</p>'
+      : '<p class="tiny">Щоб місце з’явилося в записі клієнта, створіть для майстра окремий акаунт.</p>';
+    let scheduleHtml = '<details class="details"><summary>Робочий графік на тиждень</summary>';
+    for (let day = 0; day < 7; day++) {
+      const row = schedule.find(function(r){ return Number(r.weekday) === day; });
+      const start = row && row.start_time ? String(row.start_time).slice(0,5) : "09:00";
+      const end = row && row.end_time ? String(row.end_time).slice(0,5) : "21:00";
+      const dayOff = row ? Boolean(row.is_day_off) : day === 0;
+      scheduleHtml += '<div class="week-row" data-weekday="' + day + '">' +
+        '<label class="dayoff"><input data-day-off type="checkbox" ' + (dayOff ? "checked" : "") + '> ' + DAY_NAMES[day] + '</label>' +
+        '<input data-start type="time" value="' + escapeHtml(start) + '" aria-label="Початок ' + DAY_NAMES[day] + '">' +
+        '<input data-end type="time" value="' + escapeHtml(end) + '" aria-label="Кінець ' + DAY_NAMES[day] + '">' +
+        '</div>';
+    }
+    scheduleHtml += '<button type="button" onclick="saveMasterSchedule(\\'' + slot.id + '\\')">Зберегти графік</button></details>';
 
-/* =========================
-   СТАРТ
-========================= */
+    let accountHtml = "";
+    if (!profile) {
+      accountHtml = '<details class="details"><summary>Створити вхід для майстра</summary>' +
+        '<div class="account-box"><label class="field">Email<input data-email type="email" autocomplete="off" placeholder="майстер@example.com"></label>' +
+        '<label class="field">Тимчасовий пароль<input data-password type="password" autocomplete="new-password" placeholder="Не менше 8 символів"></label>' +
+        '<p class="tiny">Після створення передайте email і пароль майстру окремо.</p>' +
+        '<button type="button" onclick="createMasterAccount(\\'' + slot.id + '\\')">Створити акаунт</button></div></details>';
+    }
+    return '<article class="master-card" id="slot-' + slot.id + '">' +
+      '<div class="master-heading"><strong>Місце №' + slot.slot_number + '</strong><span class="' + statusClass + '">' + statusText + '</span></div>' +
+      '<div class="master-form">' +
+      '<div class="field full"><label>Ім’я майстра</label><input data-display-name value="' + escapeHtml(slot.display_name) + '" maxlength="120"></div>' +
+      '<div class="field"><label>Номер телефону</label><input data-phone value="' + escapeHtml(slot.phone || "") + '" placeholder="+380..." maxlength="40"></div>' +
+      '<div class="field"><label>Спеціалізація</label><input data-specialty value="' + escapeHtml(slot.specialty || "") + '" placeholder="Перукар, манікюр…" maxlength="120"></div>' +
+      '<label class="toggle field full"><input data-enabled type="checkbox" ' + (active ? "checked" : "") + '> Підключити місце для запису</label>' +
+      '</div>' +
+      '<div class="card-actions"><button type="button" onclick="saveMasterSlot(\\'' + slot.id + '\\')">Зберегти дані</button></div>' +
+      identityNote + accountHtml + scheduleHtml + '</article>';
+  }).join("");
+}
+async function saveMasterSlot(slotId, options) {
+  options = options || {};
+  const card = document.getElementById("slot-" + slotId);
+  const slot = masterSlots.find(function(s){ return s.id === slotId; });
+  if (!card || !slot) return false;
+  const display_name = card.querySelector("[data-display-name]").value.trim();
+  const phone = card.querySelector("[data-phone]").value.trim();
+  const specialty = card.querySelector("[data-specialty]").value.trim();
+  const enabled = card.querySelector("[data-enabled]").checked;
+  if (!display_name) {
+    if (!options.silent) showMessage("adminMessage", "Укажіть ім’я або назву місця.", false);
+    return false;
+  }
+  const slotUpdate = await supabaseClient.from("master_slots").update({
+    display_name: display_name, phone: phone || null, specialty: specialty || null,
+    enabled: enabled, updated_at: new Date().toISOString()
+  }).eq("id", slotId);
+  if (slotUpdate.error) {
+    if (!options.silent) showMessage("adminMessage", slotUpdate.error.message, false);
+    return false;
+  }
+  const profile = masterProfiles.find(function(p){ return p.id === slot.profile_id; });
+  if (profile) {
+    const patch = { full_name: display_name, phone: phone || null, specialty: specialty || null };
+    if (!profile.is_admin && profile.role !== "admin") patch.active = enabled;
+    const profileUpdate = await supabaseClient.from("profiles").update(patch).eq("id", profile.id);
+    if (profileUpdate.error) {
+      if (!options.silent) showMessage("adminMessage", "Дані місця збережено, але профіль не оновився: " + profileUpdate.error.message, false);
+      return false;
+    }
+  }
+  if (!options.silent) showMessage("adminMessage", enabled && !profile ? "Місце увімкнено. Створіть акаунт, щоб воно стало доступним для запису." : "Дані місця збережено.", true);
+  if (options.refresh !== false) await loadMasterManager();
+  return true;
+}
+async function createMasterAccount(slotId) {
+  const card = document.getElementById("slot-" + slotId);
+  if (!card) return;
+  const email = card.querySelector("[data-email]").value.trim();
+  const password = card.querySelector("[data-password]").value;
+  const full_name = card.querySelector("[data-display-name]").value.trim();
+  const phone = card.querySelector("[data-phone]").value.trim();
+  const specialty = card.querySelector("[data-specialty]").value.trim();
+  if (!email || !password || !full_name) {
+    showMessage("adminMessage", "Для акаунта заповніть ім’я, email і тимчасовий пароль.", false);
+    return;
+  }
+  const saved = await saveMasterSlot(slotId, {silent:true, refresh:false});
+  if (!saved) return;
+  const { data, error } = await supabaseClient.functions.invoke("manage-masters", {
+    body: { action: "create_master", slot_id: slotId, email: email, password: password,
+      full_name: full_name, phone: phone, specialty: specialty }
+  });
+  if (error || !data || data.ok !== true) {
+    let message = data && data.error ? data.error : "Не вдалося створити акаунт.";
+    if (error && error.context && typeof error.context.json === "function") {
+      try { const body = await error.context.json(); if (body && body.error) message = body.error; } catch (_) {}
+    }
+    showMessage("adminMessage", message, false);
+    return;
+  }
+  showMessage("adminMessage", data.message + " Пароль не показуватиметься повторно.", true);
+  await loadMasterManager();
+}
+async function saveMasterSchedule(slotId) {
+  const card = document.getElementById("slot-" + slotId);
+  if (!card) return;
+  const rows = Array.from(card.querySelectorAll(".week-row")).map(function(row) {
+    return {
+      master_id: slotId,
+      weekday: Number(row.dataset.weekday),
+      is_day_off: row.querySelector("[data-day-off]").checked,
+      start_time: row.querySelector("[data-start]").value || "09:00",
+      end_time: row.querySelector("[data-end]").value || "21:00"
+    };
+  });
+  for (const row of rows) {
+    if (!row.is_day_off && row.start_time >= row.end_time) {
+      showMessage("adminMessage", "У графіку час завершення має бути пізніше часу початку.", false);
+      return;
+    }
+  }
+  const { error } = await supabaseClient.from("work_schedule")
+    .upsert(rows, { onConflict: "master_id,weekday" });
+  if (error) {
+    showMessage("adminMessage", "Не вдалося зберегти графік: " + error.message, false);
+    return;
+  }
+  showMessage("adminMessage", "Робочий графік збережено.", true);
+  await loadMasterManager();
+}
 
+/* ADMIN: client bookings */
+async function loadBookings() {
+  const box = document.getElementById("bookings");
+  box.innerHTML = '<div class="empty">Завантаження заявок…</div>';
+  const [bookingRes, slotsRes] = await Promise.all([
+    supabaseClient.from("bookings").select("*").order("booking_date", {ascending:false}).order("booking_time", {ascending:false}),
+    supabaseClient.from("master_slots").select("id,slot_number,display_name")
+  ]);
+  if (bookingRes.error || slotsRes.error) {
+    box.innerHTML = '<div class="empty">Не вдалося завантажити записи: ' + escapeHtml((bookingRes.error || slotsRes.error).message) + '</div>';
+    return;
+  }
+  const data = bookingRes.data || [];
+  const slotRows = slotsRes.data || [];
+  document.getElementById("totalCount").textContent = data.length;
+  document.getElementById("newCount").textContent = data.filter(function(x){return x.status === "new";}).length;
+  document.getElementById("confirmedCount").textContent = data.filter(function(x){return x.status === "confirmed";}).length;
+  document.getElementById("completedCount").textContent = data.filter(function(x){return x.status === "completed";}).length;
+  if (!data.length) {
+    box.innerHTML = '<div class="empty">Заявок поки немає.</div>';
+    return;
+  }
+  box.innerHTML = data.map(function(booking) {
+    const status = booking.status || "new";
+    const slot = slotRows.find(function(s){return s.id === booking.master_id;});
+    const masterName = slot ? ("Місце №" + slot.slot_number + " — " + slot.display_name) : "Не призначено";
+    return '<article class="booking"><div class="booking-top"><div><div class="client">' + escapeHtml(booking.client_name) + '</div><div class="phone">' + escapeHtml(booking.phone) + '</div></div><div><div class="status status-' + escapeHtml(status) + '">' + escapeHtml(statusName(status)) + '</div><br><select aria-label="Статус запису" onchange="changeStatus(\\'' + booking.id + '\\',this.value)">' +
+      ['new','confirmed','completed','cancelled'].map(function(value){
+        const names = {new:"Нова",confirmed:"Підтверджена",completed:"Завершена",cancelled:"Скасована"};
+        return '<option value="' + value + '" ' + (status === value ? "selected" : "") + '>' + names[value] + '</option>';
+      }).join("") + '</select></div></div><div class="details-grid">' +
+      '<div class="detail"><div class="detail-title">Послуга</div><strong>' + escapeHtml(booking.service_name || "Не вказана") + '</strong></div>' +
+      '<div class="detail"><div class="detail-title">Дата</div><strong>' + escapeHtml(booking.booking_date || "—") + '</strong></div>' +
+      '<div class="detail"><div class="detail-title">Час</div><strong>' + escapeHtml(String(booking.booking_time || "—").slice(0,5)) + '</strong></div>' +
+      '<div class="detail"><div class="detail-title">Майстер</div><strong>' + escapeHtml(masterName) + '</strong></div></div>' +
+      (booking.comment ? '<p class="muted">' + escapeHtml(booking.comment) + '</p>' : '') + '</article>';
+  }).join("");
+}
+async function changeStatus(id, status) {
+  const { error } = await supabaseClient.from("bookings")
+    .update({status:status,updated_at:new Date().toISOString()}).eq("id",id);
+  if (error) showMessage("adminMessage", "Не вдалося змінити статус: " + error.message, false);
+  else { showMessage("adminMessage", "Статус запису оновлено.", true); await loadBookings(); }
+}
+function statusName(status) {
+  return ({new:"Нова",confirmed:"Підтверджена",completed:"Завершена",cancelled:"Скасована"})[status] || status;
+}
+
+/* MASTER: personal timetable, own appointments, and blocked/unblocked hour windows */
+function fillBlockTimeOptions() {
+  const select = document.getElementById("blockTime");
+  select.innerHTML = '<option value="">Оберіть час</option>';
+  for (let h=9; h<=20; h++) {
+    const time = String(h).padStart(2,"0") + ":00";
+    const option = document.createElement("option");
+    option.value = time;
+    option.textContent = time;
+    select.appendChild(option);
+  }
+}
+async function loadMasterPortal() {
+  if (!currentProfile || !currentProfile.master_slot_id) return;
+  const slotId = currentProfile.master_slot_id;
+  document.getElementById("masterWelcome").textContent = currentProfile.full_name || "Майстер";
+  const today = localDateISO();
+  const dateInput = document.getElementById("blockDate");
+  dateInput.min = today;
+  if (!dateInput.value || dateInput.value < today) dateInput.value = today;
+  if (!document.getElementById("blockTime").options.length) fillBlockTimeOptions();
+
+  const results = await Promise.all([
+    supabaseClient.from("work_schedule").select("*").eq("master_id",slotId).order("weekday"),
+    supabaseClient.from("bookings").select("id,client_name,phone,service_name,booking_date,booking_time,status,comment")
+      .eq("master_id",slotId).gte("booking_date",today).order("booking_date").order("booking_time").limit(50),
+    supabaseClient.from("blocked_slots").select("*").eq("master_id",slotId).gt("ends_at",new Date().toISOString()).order("starts_at")
+  ]);
+  const error = results.find(function(r){return r.error;});
+  if (error) {
+    showMessage("masterMessage", "Не вдалося завантажити ваші дані: " + error.error.message, false);
+    return;
+  }
+  renderWeeklySchedule(results[0].data || []);
+  renderMyBookings(results[1].data || []);
+  renderMyBlockedSlots(results[2].data || []);
+}
+function renderWeeklySchedule(rows) {
+  const box = document.getElementById("myWeeklySchedule");
+  box.innerHTML = DAY_NAMES.map(function(day,index) {
+    const row = rows.find(function(r){return Number(r.weekday)===index;});
+    const text = !row || row.is_day_off ? "Вихідний" :
+      String(row.start_time).slice(0,5) + "–" + String(row.end_time).slice(0,5);
+    return '<div class="schedule-day"><strong>' + day + '</strong><span>' + escapeHtml(text) + '</span></div>';
+  }).join("");
+}
+function renderMyBookings(rows) {
+  const box = document.getElementById("myBookings");
+  if (!rows.length) { box.innerHTML = '<div class="empty">Майбутніх записів поки немає.</div>'; return; }
+  box.innerHTML = rows.map(function(b) {
+    return '<article class="booking"><div class="booking-top"><div><div class="client">' + escapeHtml(b.client_name) +
+      '</div><div class="phone">' + escapeHtml(b.phone) + '</div></div><span class="status status-' + escapeHtml(b.status) + '">' +
+      escapeHtml(statusName(b.status)) + '</span></div><div class="details-grid"><div class="detail"><div class="detail-title">Дата</div><strong>' +
+      escapeHtml(b.booking_date) + '</strong></div><div class="detail"><div class="detail-title">Час</div><strong>' +
+      escapeHtml(String(b.booking_time).slice(0,5)) + '</strong></div><div class="detail"><div class="detail-title">Послуга</div><strong>' +
+      escapeHtml(b.service_name || "Не вказана") + '</strong></div></div>' +
+      (b.comment ? '<p class="muted">' + escapeHtml(b.comment) + '</p>' : '') + '</article>';
+  }).join("");
+}
+function renderMyBlockedSlots(rows) {
+  const box = document.getElementById("myBlockedSlots");
+  if (!rows.length) { box.innerHTML = '<div class="empty">Ви ще не закривали години.</div>'; return; }
+  box.innerHTML = rows.map(function(row) {
+    const start = new Date(row.starts_at).toLocaleString("uk-UA",{timeZone:"Europe/Kyiv",dateStyle:"short",timeStyle:"short"});
+    const end = new Date(row.ends_at).toLocaleTimeString("uk-UA",{timeZone:"Europe/Kyiv",hour:"2-digit",minute:"2-digit"});
+    return '<div class="block-card"><div><strong>' + escapeHtml(start) + '–' + escapeHtml(end) + '</strong>' +
+      (row.reason ? '<div class="tiny">' + escapeHtml(row.reason) + '</div>' : '') + '</div><button class="secondary" type="button" onclick="unblockTime(\\'' + row.id + '\\')">Звільнити час</button></div>';
+  }).join("");
+}
+async function blockTime() {
+  if (!currentProfile || !currentProfile.master_slot_id) return;
+  const date = document.getElementById("blockDate").value;
+  const time = document.getElementById("blockTime").value;
+  const reason = document.getElementById("blockReason").value.trim();
+  if (!date || !time) { showMessage("masterMessage","Оберіть дату й час.",false); return; }
+  const start = new Date(date + "T" + time + ":00");
+  const end = new Date(start.getTime() + 60*60*1000);
+  if (start.getTime() <= Date.now()) { showMessage("masterMessage","Можна закрити лише майбутній час.",false); return; }
+
+  const slotId = currentProfile.master_slot_id;
+  const booking = await supabaseClient.from("bookings").select("id")
+    .eq("master_id",slotId).eq("booking_date",date).eq("booking_time",time + ":00")
+    .in("status",["new","confirmed"]).limit(1);
+  if (booking.error) { showMessage("masterMessage",booking.error.message,false); return; }
+  if (booking.data && booking.data.length) { showMessage("masterMessage","На цей час уже записаний клієнт. Зверніться до адміністратора, якщо потрібно змінити запис.",false); return; }
+
+  const startIso = start.toISOString(), endIso = end.toISOString();
+  const overlap = await supabaseClient.from("blocked_slots").select("id")
+    .eq("master_id",slotId).lt("starts_at",endIso).gt("ends_at",startIso).limit(1);
+  if (overlap.error) { showMessage("masterMessage",overlap.error.message,false); return; }
+  if (overlap.data && overlap.data.length) { showMessage("masterMessage","Цей час уже закритий.",false); return; }
+
+  const result = await supabaseClient.from("blocked_slots").insert({
+    master_id:slotId, starts_at:startIso, ends_at:endIso, reason:reason || null
+  });
+  if (result.error) { showMessage("masterMessage","Не вдалося закрити час: " + result.error.message,false); return; }
+  document.getElementById("blockReason").value = "";
+  showMessage("masterMessage","Час закрито для клієнтського запису.",true);
+  await loadMasterPortal();
+}
+async function unblockTime(id) {
+  if (!currentProfile || !currentProfile.master_slot_id) return;
+  const { error } = await supabaseClient.from("blocked_slots").delete()
+    .eq("id",id).eq("master_id",currentProfile.master_slot_id);
+  if (error) { showMessage("masterMessage","Не вдалося звільнити час: " + error.message,false); return; }
+  showMessage("masterMessage","Час знову доступний за робочим графіком.",true);
+  await loadMasterPortal();
+}
+
+supabaseClient.auth.onAuthStateChange(function(event, session) {
+  if (event === "SIGNED_IN" || event === "TOKEN_REFRESHED" || event === "INITIAL_SESSION") {
+    if (session) routeSession(session);
+  } else if (event === "SIGNED_OUT") {
+    currentProfile = null;
+    showScreen("login");
+  }
+});
 checkAuth();
-
 </script>
-
 </body>
-  </html>
+</html>
