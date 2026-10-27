@@ -8,7 +8,7 @@
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
 :root{--bg:#f5f1eb;--card:#fff;--text:#29241f;--muted:#70685f;--gold:#9b7a50;--line:#e5ded4;--green:#177245;--red:#b42318}
-*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text);font:15px Arial,sans-serif}button,input,select{font:inherit}button{border:0;border-radius:10px;padding:11px 14px;cursor:pointer;background:var(--gold);color:#fff}button:disabled{opacity:.5;cursor:wait}.secondary{background:#ebe5dc;color:var(--text)}.danger{background:#b42318;color:#fff}.container{max-width:1200px;padding:20px;margin:0 auto}.login{max-width:430px;margin:7vh auto;background:#fff;padding:28px;border-radius:18px;box-shadow:0 8px 28px #0000000d}.login input,.field input,.field select,.master-form input,.master-form select,.block-form input,.block-form select{width:100%;padding:11px 12px;border:1px solid var(--line);border-radius:9px;background:white;color:var(--text)}.login input{margin:7px 0 12px}.subtitle,.muted{color:var(--muted)}.header{display:flex;gap:15px;justify-content:space-between;align-items:center;flex-wrap:wrap;margin-bottom:20px}.actions{display:flex;gap:8px;flex-wrap:wrap}.panel,.stat,.master-card,.booking,.block-card{background:var(--card);border:1px solid #eee8e0;border-radius:16px;padding:18px;margin-bottom:16px;box-shadow:0 4px 15px #00000005}.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:16px}.stat{margin:0}.stat-number{font-size:26px;font-weight:700;margin-top:7px}.message{padding:10px 13px;border-radius:10px;margin:12px 0}.message.ok{background:#e7f5eb;color:var(--green)}.message.err{background:#fff0ef;color:var(--red)}.master-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}.master-card{margin:0;padding:15px;min-width:0}.booking-master-group{background:var(--master-bg,#f4eee4);border:2px solid var(--master-border,#c8b08c);border-radius:16px;padding:16px;margin:0 0 18px;box-shadow:0 4px 14px #00000008}.booking-master-group>.master-group-title{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;margin:0 0 12px;padding-bottom:10px;border-bottom:1px solid var(--master-border,#c8b08c)}.booking-master-group .booking{border:1px solid var(--master-border,#e5ded4);background:var(--master-card,#fff);margin-bottom:10px}.booking-master-group .empty{background:var(--master-card,#fff)}.booking-master-group:nth-child(6n+1){--master-bg:#f7f3ed;--master-border:#e2d7c8;--master-card:#fffdfa}.booking-master-group:nth-child(6n+2){--master-bg:#f1f5f8;--master-border:#d6e1e9;--master-card:#fcfdfe}.booking-master-group:nth-child(6n+3){--master-bg:#f2f6ef;--master-border:#d9e4d2;--master-card:#fdfffb}.booking-master-group:nth-child(6n+4){--master-bg:#f8f1f4;--master-border:#ead8e0;--master-card:#fffdfd}.booking-master-group:nth-child(6n+5){--master-bg:#f8f5eb;--master-border:#e9e0c8;--master-card:#fffefa}.booking-master-group:nth-child(6n){--master-bg:#f4f2f9;--master-border:#dfdaed;--master-card:#fefeff}.master-heading{display:flex;justify-content:space-between;gap:10px;align-items:center;margin-bottom:12px}.pill{font-size:12px;border-radius:999px;padding:5px 8px;background:#eee;color:#555;white-space:nowrap}.pill.on{background:#e7f5eb;color:var(--green)}.pill.off{background:#f5e8e7;color:var(--red)}.master-form{display:grid;grid-template-columns:1fr 1fr;gap:10px}.field{min-width:0}.field label{display:block;font-size:12px;color:var(--muted);margin-bottom:5px}.field.full{grid-column:1/-1}.toggle{display:flex;align-items:center;gap:8px;min-height:40px}.toggle input{width:18px;height:18px}.card-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}.details{margin-top:12px;border-top:1px solid var(--line);padding-top:10px}.details summary{cursor:pointer;font-weight:700;padding:5px 0 10px}.week-row{display:grid;grid-template-columns:minmax(90px,1fr) 1fr 1fr;gap:8px;align-items:center;margin:7px 0}.week-row input[type=time]{width:100%;padding:8px;border:1px solid var(--line);border-radius:8px}.dayoff{display:flex;gap:6px;align-items:center;font-size:13px}.tiny{font-size:12px;color:var(--muted);margin-top:6px}.account-box{background:#faf8f4;padding:12px;border-radius:10px;margin-top:10px}.account-box input{margin:5px 0 9px}.booking-top{display:flex;justify-content:space-between;gap:12px;align-items:flex-start}.client{font-weight:700;font-size:18px}.phone{color:var(--muted);margin-top:4px}.details-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;margin-top:14px}.detail{background:#f8f6f2;padding:10px;border-radius:8px;min-width:0;overflow-wrap:anywhere}.detail-title{font-size:12px;color:var(--muted);margin-bottom:5px}.status{display:inline-block;padding:6px 9px;border-radius:999px;font-size:12px;background:#eee;margin-bottom:8px}.status-new{background:#fff0c7}.status-confirmed{background:#dff5e3}.status-completed{background:#e5e7eb}.status-cancelled{background:#ffe0e0}.booking select{padding:8px;border-radius:8px;border:1px solid var(--line);background:#fff}.empty{text-align:center;padding:25px;background:#fff;border-radius:14px;color:var(--muted)}.schedule-list{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}.schedule-day{background:#faf8f4;padding:12px;border-radius:10px;display:flex;justify-content:space-between;gap:10px}.block-form{display:grid;grid-template-columns:1fr 1fr 2fr auto;gap:10px;align-items:end}.block-list{display:grid;gap:8px}.block-card{margin:0;display:flex;justify-content:space-between;align-items:center;gap:10px}.section-heading{margin:0 0 6px}.section-text{color:var(--muted);margin:0 0 15px;line-height:1.45}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text);font:15px Arial,sans-serif}button,input,select{font:inherit}button{border:0;border-radius:10px;padding:11px 14px;cursor:pointer;background:var(--gold);color:#fff}button:disabled{opacity:.5;cursor:wait}.secondary{background:#ebe5dc;color:var(--text)}.danger{background:#b42318;color:#fff}.container{max-width:1200px;padding:20px;margin:0 auto}.login{max-width:430px;margin:7vh auto;background:#fff;padding:28px;border-radius:18px;box-shadow:0 8px 28px #0000000d}.login input,.field input,.field select,.master-form input,.master-form select,.block-form input,.block-form select{width:100%;padding:11px 12px;border:1px solid var(--line);border-radius:9px;background:white;color:var(--text)}.login input{margin:7px 0 12px}.subtitle,.muted{color:var(--muted)}.header{display:flex;gap:15px;justify-content:space-between;align-items:center;flex-wrap:wrap;margin-bottom:20px}.actions{display:flex;gap:8px;flex-wrap:wrap}.panel,.stat,.master-card,.booking,.block-card{background:var(--card);border:1px solid #eee8e0;border-radius:16px;padding:18px;margin-bottom:16px;box-shadow:0 4px 15px #00000005}.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:16px}.stat{margin:0}.stat-number{font-size:26px;font-weight:700;margin-top:7px}.message{padding:10px 13px;border-radius:10px;margin:12px 0}.message.ok{background:#e7f5eb;color:var(--green)}.message.err{background:#fff0ef;color:var(--red)}.master-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}.master-card{margin:0;padding:15px;min-width:0}.booking-master-group{background:var(--master-bg,#f4eee4);border:2px solid var(--master-border,#c8b08c);border-radius:16px;padding:16px;margin:0 0 18px;box-shadow:0 4px 14px #00000008}.booking-master-group>.master-group-title{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;margin:0 0 12px;padding-bottom:10px;border-bottom:1px solid var(--master-border,#c8b08c)}.booking-master-group .booking{border:1px solid var(--master-border,#e5ded4);background:var(--master-card,#fff);margin-bottom:10px}.booking-master-group .empty{background:var(--master-card,#fff)}.calendar-toolbar{display:flex;gap:8px;align-items:center;justify-content:space-between;flex-wrap:wrap;margin:12px 0 16px}.calendar-toolbar .calendar-nav{display:flex;gap:8px;flex-wrap:wrap}.calendar-week-label{font-weight:700}.calendar-grid{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:8px}.calendar-day{min-width:0;background:#fbfaf7;border:1px solid var(--line);border-radius:12px;padding:10px}.calendar-day.today{border:2px solid #b9a17d;background:#fffdf8}.calendar-day-head{padding-bottom:8px;margin-bottom:8px;border-bottom:1px solid var(--line);font-weight:700}.calendar-date{font-size:12px;color:var(--muted);margin-top:4px}.calendar-event{background:#fff;border:1px solid #e8e1d7;border-left:3px solid #b9a17d;border-radius:8px;padding:8px;margin-bottom:7px;overflow-wrap:anywhere}.calendar-event-time{font-weight:700;font-size:13px}.calendar-event-client{font-weight:600;margin-top:3px}.calendar-event-meta{font-size:12px;color:var(--muted);margin-top:3px}.calendar-empty{font-size:12px;color:var(--muted);padding:8px 2px}@media(max-width:900px){.calendar-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}@media(max-width:520px){.calendar-grid{grid-template-columns:1fr}.calendar-day{padding:12px}}.booking-master-group:nth-child(6n+1){--master-bg:#f7f3ed;--master-border:#e2d7c8;--master-card:#fffdfa}.booking-master-group:nth-child(6n+2){--master-bg:#f1f5f8;--master-border:#d6e1e9;--master-card:#fcfdfe}.booking-master-group:nth-child(6n+3){--master-bg:#f2f6ef;--master-border:#d9e4d2;--master-card:#fdfffb}.booking-master-group:nth-child(6n+4){--master-bg:#f8f1f4;--master-border:#ead8e0;--master-card:#fffdfd}.booking-master-group:nth-child(6n+5){--master-bg:#f8f5eb;--master-border:#e9e0c8;--master-card:#fffefa}.booking-master-group:nth-child(6n){--master-bg:#f4f2f9;--master-border:#dfdaed;--master-card:#fefeff}.master-heading{display:flex;justify-content:space-between;gap:10px;align-items:center;margin-bottom:12px}.pill{font-size:12px;border-radius:999px;padding:5px 8px;background:#eee;color:#555;white-space:nowrap}.pill.on{background:#e7f5eb;color:var(--green)}.pill.off{background:#f5e8e7;color:var(--red)}.master-form{display:grid;grid-template-columns:1fr 1fr;gap:10px}.field{min-width:0}.field label{display:block;font-size:12px;color:var(--muted);margin-bottom:5px}.field.full{grid-column:1/-1}.toggle{display:flex;align-items:center;gap:8px;min-height:40px}.toggle input{width:18px;height:18px}.card-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}.details{margin-top:12px;border-top:1px solid var(--line);padding-top:10px}.details summary{cursor:pointer;font-weight:700;padding:5px 0 10px}.week-row{display:grid;grid-template-columns:minmax(90px,1fr) 1fr 1fr;gap:8px;align-items:center;margin:7px 0}.week-row input[type=time]{width:100%;padding:8px;border:1px solid var(--line);border-radius:8px}.dayoff{display:flex;gap:6px;align-items:center;font-size:13px}.tiny{font-size:12px;color:var(--muted);margin-top:6px}.account-box{background:#faf8f4;padding:12px;border-radius:10px;margin-top:10px}.account-box input{margin:5px 0 9px}.booking-top{display:flex;justify-content:space-between;gap:12px;align-items:flex-start}.client{font-weight:700;font-size:18px}.phone{color:var(--muted);margin-top:4px}.details-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;margin-top:14px}.detail{background:#f8f6f2;padding:10px;border-radius:8px;min-width:0;overflow-wrap:anywhere}.detail-title{font-size:12px;color:var(--muted);margin-bottom:5px}.status{display:inline-block;padding:6px 9px;border-radius:999px;font-size:12px;background:#eee;margin-bottom:8px}.status-new{background:#fff0c7}.status-confirmed{background:#dff5e3}.status-completed{background:#e5e7eb}.status-cancelled{background:#ffe0e0}.booking select{padding:8px;border-radius:8px;border:1px solid var(--line);background:#fff}.empty{text-align:center;padding:25px;background:#fff;border-radius:14px;color:var(--muted)}.schedule-list{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}.schedule-day{background:#faf8f4;padding:12px;border-radius:10px;display:flex;justify-content:space-between;gap:10px}.block-form{display:grid;grid-template-columns:1fr 1fr 2fr auto;gap:10px;align-items:end}.block-list{display:grid;gap:8px}.block-card{margin:0;display:flex;justify-content:space-between;align-items:center;gap:10px}.section-heading{margin:0 0 6px}.section-text{color:var(--muted);margin:0 0 15px;line-height:1.45}
 @media(max-width:850px){.master-grid{grid-template-columns:1fr}.stats{grid-template-columns:1fr 1fr}.details-grid{grid-template-columns:1fr 1fr}.block-form{grid-template-columns:1fr 1fr}.schedule-list{grid-template-columns:1fr}}@media(max-width:520px){.container{padding:12px}.login{margin:24px 12px;padding:20px}.stats{grid-template-columns:1fr 1fr}.master-form{grid-template-columns:1fr}.field.full{grid-column:auto}.week-row{grid-template-columns:1fr 1fr}.week-row .dayoff{grid-column:1/-1}.details-grid{grid-template-columns:1fr}.block-form{grid-template-columns:1fr}.header{align-items:flex-start}.actions{width:100%}.actions button{flex:1}.booking-top{flex-direction:column}.block-card{align-items:flex-start;flex-direction:column}}
 </style>
 </head>
@@ -37,6 +37,19 @@
       <div class="stat"><div>Завершені</div><div class="stat-number" id="completedCount">0</div></div>
     </div>
     <div id="adminMessage" aria-live="polite"></div>
+    <section class="panel">
+      <h2 class="section-heading">Календар записів</h2>
+      <p class="section-text">Перегляд записів за тиждень, розподілених за днями та часом.</p>
+      <div class="calendar-toolbar">
+        <div class="calendar-nav">
+          <button class="secondary" onclick="changeCalendarWeek(-1)">← Попередній</button>
+          <button class="secondary" onclick="resetCalendarWeek()">Цей тиждень</button>
+          <button class="secondary" onclick="changeCalendarWeek(1)">Наступний →</button>
+        </div>
+        <div id="calendarWeekLabel" class="calendar-week-label"></div>
+      </div>
+      <div id="bookingCalendar"><div class="empty">Завантаження календаря…</div></div>
+    </section>
     <section>
       <h2>Заявки клієнтів</h2>
       <div id="bookings"><div class="empty">Завантаження заявок…</div></div>
@@ -180,6 +193,7 @@ async function logout() {
 }
 function refreshAdmin() {
   loadBookings();
+  loadCalendar();
   loadMasterManager();
 }
 
@@ -351,6 +365,61 @@ async function saveMasterSchedule(slotId) {
 }
 
 /* ADMIN: client bookings */
+let calendarWeekOffset = 0;
+function dateKey(date) {
+  return date.getFullYear() + "-" + String(date.getMonth()+1).padStart(2,"0") + "-" + String(date.getDate()).padStart(2,"0");
+}
+function getCalendarWeekStart() {
+  const now = new Date();
+  now.setHours(12,0,0,0);
+  const day = (now.getDay() + 6) % 7;
+  now.setDate(now.getDate() - day + calendarWeekOffset * 7);
+  return now;
+}
+function changeCalendarWeek(amount) {
+  calendarWeekOffset += amount;
+  loadCalendar();
+}
+function resetCalendarWeek() {
+  calendarWeekOffset = 0;
+  loadCalendar();
+}
+async function loadCalendar() {
+  const box = document.getElementById("bookingCalendar");
+  if (!box) return;
+  box.innerHTML = '<div class="empty">Завантаження календаря…</div>';
+  const [bookingRes, slotsRes] = await Promise.all([
+    supabaseClient.from("bookings").select("*").order("booking_time"),
+    supabaseClient.from("master_slots").select("id,slot_number,display_name").order("slot_number")
+  ]);
+  if (bookingRes.error || slotsRes.error) {
+    box.innerHTML = '<div class="empty">Не вдалося завантажити календар: ' + escapeHtml((bookingRes.error || slotsRes.error).message) + '</div>';
+    return;
+  }
+  const bookings = (bookingRes.data || []).filter(function(b){return b.status !== "cancelled";});
+  const slots = slotsRes.data || [];
+  const start = getCalendarWeekStart();
+  const end = new Date(start);
+  end.setDate(start.getDate()+6);
+  const formatDate = function(d){return d.toLocaleDateString("uk-UA",{day:"numeric",month:"short"});};
+  document.getElementById("calendarWeekLabel").textContent = formatDate(start) + " — " + formatDate(end);
+  const days = ["Понеділок","Вівторок","Середа","Четвер","П’ятниця","Субота","Неділя"];
+  const todayKey = dateKey(new Date());
+  const dayMarkup = [];
+  for (let i=0;i<7;i++) {
+    const date = new Date(start);
+    date.setDate(start.getDate()+i);
+    const key = dateKey(date);
+    const dayBookings = bookings.filter(function(b){return b.booking_date === key;}).sort(function(a,b){return String(a.booking_time||"").localeCompare(String(b.booking_time||""));});
+    const events = dayBookings.map(function(b){
+      const slot = slots.find(function(s){return s.id === b.master_id || s.id === b.master_slot_id;});
+      const masterName = b.master_name || (slot ? slot.display_name : "Майстер не призначений");
+      return '<div class="calendar-event"><div class="calendar-event-time">' + escapeHtml(String(b.booking_time||"—").slice(0,5)) + '</div><div class="calendar-event-client">' + escapeHtml(b.client_name||"Клієнт") + '</div><div class="calendar-event-meta">' + escapeHtml(masterName) + '</div><div class="calendar-event-meta">' + escapeHtml(b.service_name||"Послуга не вказана") + ' · ' + escapeHtml(statusName(b.status||"new")) + '</div></div>';
+    }).join("");
+    dayMarkup.push('<div class="calendar-day' + (key===todayKey ? ' today' : '') + '"><div class="calendar-day-head">' + days[i] + '<div class="calendar-date">' + formatDate(date) + '</div></div>' + (events || '<div class="calendar-empty">Немає записів</div>') + '</div>');
+  }
+  box.innerHTML = '<div class="calendar-grid">' + dayMarkup.join("") + '</div>';
+}
 async function loadBookings() {
   const box = document.getElementById("bookings");
   box.innerHTML = '<div class="empty">Завантаження заявок…</div>';
