@@ -418,7 +418,7 @@ async function loadCalendar() {
   const box = document.getElementById("bookingCalendar");
   if (!box) return;
   box.innerHTML = '<div class="empty">Завантаження календаря…</div>';
-  const [bookingRes, slotsRes] = await Promise.all([
+  const [bookingRes, slotsRes, profilesRes] = await Promise.all([
     supabaseClient.from("bookings").select("*").order("booking_time"),
     supabaseClient.from("master_slots").select("id,slot_number,display_name").order("slot_number")
   ]);
@@ -564,6 +564,8 @@ function syncBookingNotificationUI() {
   if (!enabled && bookingNotificationTimer) {
     clearInterval(bookingNotificationTimer);
     bookingNotificationTimer = null;
+  } else if (enabled && !bookingNotificationTimer) {
+    startBookingNotifications(false);
   }
   return enabled;
 }
