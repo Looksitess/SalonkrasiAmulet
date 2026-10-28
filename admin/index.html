@@ -492,7 +492,7 @@ function renderBookingGroups() {
     const status = booking.status || "new";
     const slot = adminBookingSlots.find(function(s){return s.id === booking.master_id || s.id === booking.master_slot_id;});
     const masterName = booking.master_name || (slot && slot.display_name) || "Не призначений";
-    return '<article class="booking"><div class="booking-top"><div><div class="client">' + escapeHtml(booking.client_name) + '</div><div class="phone">' + escapeHtml(booking.phone) + '</div></div><div><div class="status status-' + escapeHtml(status) + '">' + escapeHtml(statusName(status)) + '</div><br><select aria-label="Статус запису" onchange="changeStatus(\\'' + booking.id + '\\',this.value)">' +
+    return '<article class="booking"><div class="booking-top"><div><div class="client">' + escapeHtml(booking.client_name) + '</div><div class="phone">' + escapeHtml(booking.phone) + '</div></div><div><div class="status status-' + escapeHtml(status) + '">' + escapeHtml(statusName(status)) + '</div><br><select aria-label="Статус запису" onchange="changeStatus(&quot;' + booking.id + '&quot;,this.value)">' +
       ['new','confirmed','completed','cancelled'].map(function(value){
         const names = {new:"Нова",confirmed:"Підтверджена",completed:"Завершена",cancelled:"Скасована"};
         return '<option value="' + value + '" ' + (status === value ? "selected" : "") + '>' + names[value] + '</option>';
