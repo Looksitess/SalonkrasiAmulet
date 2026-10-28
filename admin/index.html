@@ -28,7 +28,7 @@
   <div class="container">
     <div class="header">
       <div><h1 style="margin:0 0 5px">Адміністратор «Амулет»</h1><div class="subtitle">20 місць для майстрів • графіки • записи</div></div>
-      <div class="actions"><button class="secondary" onclick="enableBookingNotifications()">Увімкнути сповіщення</button><button class="secondary" onclick="refreshAdmin()">Оновити</button><button class="danger" onclick="logout()">Вийти</button></div>
+      <div class="actions"><button id="bookingNotificationsToggle" class="secondary" onclick="toggleBookingNotifications()">Увімкнути сповіщення</button><span id="bookingNotificationsStatus" class="pill off" aria-live="polite">Сповіщення вимкнено</span><button class="secondary" onclick="refreshAdmin()">Оновити</button><button class="danger" onclick="logout()">Вийти</button></div>
     </div>
     <div class="stats">
       <div class="stat"><div>Усього записів</div><div class="stat-number" id="totalCount">0</div></div>
@@ -171,7 +171,7 @@ async function routeSession(session) {
   if (currentProfile.is_admin || currentProfile.role === "admin") {
     showScreen("admin");
     await Promise.all([loadBookings(), loadCalendar(), loadMasterManager()]);
-    startBookingNotifications();
+    syncBookingNotificationUI();
   } else if (currentProfile.role === "master" && currentProfile.master_slot_id) {
     showScreen("master");
     document.getElementById("masterWelcome").textContent = currentProfile.full_name || "Майстер";
@@ -457,14 +457,19 @@ async function loadBookings() {
   box.innerHTML = '<div class="empty">Завантаження заявок…</div>';
   const [bookingRes, slotsRes] = await Promise.all([
     supabaseClient.from("bookings").select("*").order("booking_date", {ascending:false}).order("booking_time", {ascending:false}),
-    supabaseClient.from("master_slots").select("id,slot_number,display_name").order("slot_number")
+    supabaseClient.from("master_slots").select("id,slot_number,display_name,profile_id,enabled").order("slot_number"),
+    supabaseClient.from("profiles").select("id,active,role,is_admin")
   ]);
-  if (bookingRes.error || slotsRes.error) {
-    box.innerHTML = '<div class="empty">Не вдалося завантажити записи: ' + escapeHtml((bookingRes.error || slotsRes.error).message) + '</div>';
+  if (bookingRes.error || slotsRes.error || profilesRes.error) {
+    box.innerHTML = '<div class="empty">Не вдалося завантажити записи: ' + escapeHtml((bookingRes.error || slotsRes.error || profilesRes.error).message) + '</div>';
     return;
   }
   adminBookingData = bookingRes.data || [];
-  adminBookingSlots = slotsRes.data || [];
+  const connectedProfiles = profilesRes.data || [];
+  adminBookingSlots = (slotsRes.data || []).filter(function(slot) {
+    const profile = connectedProfiles.find(function(p) { return p.id === slot.profile_id; });
+    return !!slot.enabled && !!slot.profile_id && !!profile && !!profile.active && (profile.role === "master" || (!profile.is_admin && profile.role !== "admin"));
+  });
   const data = adminBookingData;
   document.getElementById("totalCount").textContent = data.length;
   document.getElementById("newCount").textContent = data.filter(function(x){return x.status === "new";}).length;
@@ -545,17 +550,47 @@ function renderBookingGroups() {
 }
 let bookingNotificationTimer = null;
 let knownBookingIds = null;
-async function enableBookingNotifications() {
+const BOOKING_NOTIFICATIONS_KEY = "amulet_booking_notifications_enabled";
+function syncBookingNotificationUI() {
+  const enabled = localStorage.getItem(BOOKING_NOTIFICATIONS_KEY) === "true" &&
+    ("Notification" in window) && Notification.permission === "granted";
+  const button = document.getElementById("bookingNotificationsToggle");
+  const status = document.getElementById("bookingNotificationsStatus");
+  if (button) button.textContent = enabled ? "Вимкнути сповіщення" : "Увімкнути сповіщення";
+  if (status) {
+    status.textContent = enabled ? "Сповіщення активні" : "Сповіщення вимкнено";
+    status.className = enabled ? "pill on" : "pill off";
+  }
+  if (!enabled && bookingNotificationTimer) {
+    clearInterval(bookingNotificationTimer);
+    bookingNotificationTimer = null;
+  }
+  return enabled;
+}
+async function toggleBookingNotifications() {
+  if (bookingNotificationTimer || localStorage.getItem(BOOKING_NOTIFICATIONS_KEY) === "true") {
+    localStorage.setItem(BOOKING_NOTIFICATIONS_KEY, "false");
+    if (bookingNotificationTimer) clearInterval(bookingNotificationTimer);
+    bookingNotificationTimer = null;
+    syncBookingNotificationUI();
+    showMessage("adminMessage", "Сповіщення вимкнено. Дозвіл браузера можна змінити окремо в налаштуваннях сайту.", true);
+    return;
+  }
   if (!("Notification" in window)) {
     showMessage("adminMessage", "Цей браузер не підтримує сповіщення.", false);
     return;
   }
-  const permission = await Notification.requestPermission();
+  const permission = Notification.permission === "granted" ? "granted" : await Notification.requestPermission();
   if (permission === "granted") {
-    showMessage("adminMessage", "Сповіщення увімкнено для цього браузера.", true);
+    localStorage.setItem(BOOKING_NOTIFICATIONS_KEY, "true");
+    knownBookingIds = null;
     startBookingNotifications(true);
+    syncBookingNotificationUI();
+    showMessage("adminMessage", "Сповіщення увімкнено. Перевірка нових заявок — раз на хвилину, поки адмінка відкрита.", true);
   } else {
-    showMessage("adminMessage", "Сповіщення не дозволені. Їх можна увімкнути в налаштуваннях браузера.", false);
+    localStorage.setItem(BOOKING_NOTIFICATIONS_KEY, "false");
+    syncBookingNotificationUI();
+    showMessage("adminMessage", "Сповіщення не дозволені. Увімкніть їх у налаштуваннях браузера.", false);
   }
 }
 function startBookingNotifications(sendExisting) {
