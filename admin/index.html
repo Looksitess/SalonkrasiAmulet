@@ -276,7 +276,7 @@ function renderMasterManager() {
       '<div class="field"><label>Спеціалізація</label><input data-specialty value="' + escapeHtml(slot.specialty || "") + '" placeholder="Перукар, манікюр…" maxlength="120"></div>' +
       '<label class="toggle field full"><input data-enabled type="checkbox" ' + (active ? "checked" : "") + '> Підключити місце для запису</label>' +
       '</div>' +
-      '<div class="card-actions"><button type="button" onclick="saveMasterSlot(\'' + slot.id + '\')">Зберегти дані</button>' + (profile && profile.role === "master" && !profile.is_admin ? '<button type="button" class="danger" onclick="removeMaster(\\'' + slot.id + '\\')">Видалити майстра</button>' : '') + '</div>' +
+      '<div class="card-actions"><button type="button" onclick="saveMasterSlot(\'' + slot.id + '\')">Зберегти дані</button>' + (profile && profile.role === "master" && !profile.is_admin ? '<button type="button" class="danger" onclick="removeMaster(\'' + slot.id + '\')">Видалити майстра</button>' : '') + '</div>' +
       identityNote + accountHtml + scheduleHtml + '</article>';
   }).join("");
 }
