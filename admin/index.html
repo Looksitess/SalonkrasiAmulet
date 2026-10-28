@@ -276,7 +276,7 @@ function renderMasterManager() {
       '<div class="field"><label>Спеціалізація</label><input data-specialty value="' + escapeHtml(slot.specialty || "") + '" placeholder="Перукар, манікюр…" maxlength="120"></div>' +
       '<label class="toggle field full"><input data-enabled type="checkbox" ' + (active ? "checked" : "") + '> Підключити місце для запису</label>' +
       '</div>' +
-      '<div class="card-actions"><button type="button" onclick="saveMasterSlot(\'' + slot.id + '\')">Зберегти дані</button></div>' +
+      '<div class="card-actions"><button type="button" onclick="saveMasterSlot(\'' + slot.id + '\')">Зберегти дані</button>' + (profile && profile.role === "master" && !profile.is_admin ? '<button type="button" class="danger" onclick="removeMaster(\\'' + slot.id + '\\')">Видалити майстра</button>' : '') + '</div>' +
       identityNote + accountHtml + scheduleHtml + '</article>';
   }).join("");
 }
@@ -348,6 +348,24 @@ async function createMasterAccount(slotId) {
   showMessage("adminMessage", data.message + " Пароль не показуватиметься повторно.", true);
   await loadMasterManager();
 }
+async function removeMaster(slotId) {
+  const slot = masterSlots.find(function(s){ return s.id === slotId; });
+  if (!slot) return;
+  const typed = prompt("Щоб видалити акаунт майстра з місця №" + slot.slot_number + " і звільнити місце, введіть DELETE:");
+  if (typed !== "DELETE") { showMessage("adminMessage", "Видалення скасовано.", false); return; }
+  if (!confirm("Акаунт майстра буде видалено. Історія записів залишиться, а графік і закриті години буде очищено. Продовжити?")) return;
+  const { data, error } = await supabaseClient.functions.invoke("manage-masters", { body: { action: "remove_master", slot_id: slotId } });
+  if (error || !data || data.ok !== true) {
+    let message = data && data.error ? data.error : "Не вдалося видалити майстра.";
+    if (error && error.context && typeof error.context.json === "function") {
+      try { const body = await error.context.json(); if (body && body.error) message = body.error; } catch (_) {}
+    }
+    showMessage("adminMessage", message, false); return;
+  }
+  showMessage("adminMessage", data.message || "Майстра видалено. Місце знову вільне.", true);
+  await Promise.all([loadMasterManager(), loadBookings(), loadCalendar()]);
+}
+
 async function saveMasterSchedule(slotId) {
   const card = document.getElementById("slot-" + slotId);
   if (!card) return;
