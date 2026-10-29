@@ -694,12 +694,7 @@ window.AMULET_CONFIG = {
         $('#bookingClose')?.addEventListener('click', closeModal);
         modal?.addEventListener('click', e => { if(e.target === modal) closeModal(); });
         document.addEventListener('keydown', e => { if(e.key === 'Escape') closeModal(); });
-        form?.addEventListener('submit', e => {
-          e.preventDefault();
-          success.style.display='block';
-          form.reset();
-          setTimeout(closeModal, 3500);
-        });
+        // Booking submission is handled by the Supabase integration below.
 
         // Back to top
         topBtn?.addEventListener('click', e => { e.preventDefault(); scrollTo({top:0,behavior:'smooth'}); });
@@ -770,61 +765,7 @@ window.AMULET_CONFIG = {
   lb?.addEventListener('click', e=>{ if(e.target===lb) closeLb(); });
   document.addEventListener('keydown', e=>{ if(e.key==='Escape') closeLb(); });
 
-  // Booking summary + safe validation
-  const form = $('#bookingForm');
-  const summary = $('#bookingSummary');
-  const date = form?.querySelector('[name="date"]');
-  const service = form?.querySelector('[name="service"]');
-  const name = form?.querySelector('[name="name"]');
-  const phone = form?.querySelector('[name="phone"]');
-  const comment = form?.querySelector('[name="comment"]');
-  if(date){
-    const d = new Date();
-    d.setMinutes(d.getMinutes()-d.getTimezoneOffset());
-    date.min = d.toISOString().slice(0,10);
-  }
-  function updateSummary(){
-    if(!summary) return;
-    const s = service?.value || 'послугу не обрано';
-    const d = date?.value ? new Date(date.value+'T00:00:00').toLocaleDateString('uk-UA') : 'дату не обрано';
-    summary.textContent = `Заявка: ${s}. Бажана дата: ${d}. Після відправлення потрібно підтвердити час із салоном.`;
-  }
-  service?.addEventListener('change', updateSummary);
-  date?.addEventListener('change', updateSummary);
-
-  form?.addEventListener('submit', e=>{
-    e.preventDefault();
-    if(!form.checkValidity()){ form.reportValidity(); return; }
-    const submit = form.querySelector('[type="submit"]');
-    if(submit) submit.disabled = true;
-
-    // This static site cannot securely send data to Telegram/email without a backend.
-    // Keep a local copy only on this device so no secret token is exposed in the browser.
-    const payload = {
-      name: name?.value.trim(),
-      phone: phone?.value.trim(),
-      service: service?.value,
-      date: date?.value,
-      comment: comment?.value.trim(),
-      createdAt: new Date().toISOString()
-    };
-    try{
-      const key='amulet_booking_requests';
-      const list=JSON.parse(localStorage.getItem(key)||'[]');
-      list.push(payload);
-      localStorage.setItem(key, JSON.stringify(list.slice(-20)));
-    }catch(_){}
-
-    const success = $('#formSuccess');
-    if(success){
-      success.style.display='block';
-      success.textContent='Заявку збережено на цьому пристрої. Для реального отримання заявки салоном потрібне підключення Telegram, email або CRM.';
-    }
-    const toast=$('#toast');
-    if(toast){ toast.textContent='Заявку підготовлено'; toast.classList.add('show'); setTimeout(()=>toast.classList.remove('show'),2600); }
-    form.reset(); updateSummary();
-    setTimeout(()=>{ if(success) success.style.display='none'; if(submit) submit.disabled=false; }, 3500);
-  });
+  // Booking submission is handled by the Supabase integration below.
 
   // Respect reduced motion
   if(window.matchMedia('(prefers-reduced-motion: reduce)').matches){
