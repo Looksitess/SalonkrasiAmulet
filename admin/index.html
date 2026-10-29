@@ -25,6 +25,24 @@ button{background:var(--gold)}
 .calendar-day.today{border-color:#c9b79d;background:#fffefa}
 .calendar-event{border-color:#eee6dc;border-left-color:#c9b79d}
 
+
+/* Seasonal admin appearance — coordinated with the public site, without moving controls */
+:root{--bg:#f7f3ec;--card:#fffefa;--text:#302c27;--muted:#7b7267;--gold:#b49a78;--line:#e8ddcf}
+body{background:linear-gradient(145deg,var(--admin-season-bg,#f7f3ec),#fffdf9 72%) fixed!important}
+button{background:linear-gradient(135deg,var(--admin-season-button,#c9b391),var(--admin-season-button-dark,#aa8e69))}
+.secondary{background:var(--admin-season-soft,#f0e8dc);color:var(--text);border:1px solid var(--line)}
+.panel,.stat,.master-card,.booking,.block-card{border-color:var(--admin-season-line,#e8ddcf);box-shadow:0 7px 22px rgba(72,56,38,.055)}
+.header h1,.header h2,.section-heading{color:var(--admin-season-heading,#62513e)}
+.calendar-day.today{border:2px solid var(--admin-season-button-dark,#aa8e69);box-shadow:0 0 0 3px var(--admin-season-soft,#f0e8dc)}
+.calendar-event{border-left-color:var(--admin-season-button-dark,#aa8e69);background:var(--admin-season-card,#fff)}
+.booking-master-group{box-shadow:0 7px 18px rgba(72,56,38,.045)}
+body[data-season="winter"]{--admin-season-bg:#f0f5f8;--admin-season-button:#c6d8e5;--admin-season-button-dark:#7e9fb8;--admin-season-soft:#e5eef4;--admin-season-line:#d4e1ea;--admin-season-heading:#506d83;--admin-season-card:#fbfdff}
+body[data-season="spring"]{--admin-season-bg:#f8f0f4;--admin-season-button:#e3c4d1;--admin-season-button-dark:#b8869d;--admin-season-soft:#f3e2e9;--admin-season-line:#ead3de;--admin-season-heading:#80586c;--admin-season-card:#fffafd}
+body[data-season="late-spring"]{--admin-season-bg:#f1f6ed;--admin-season-button:#c7d9b8;--admin-season-button-dark:#849f70;--admin-season-soft:#e7f0df;--admin-season-line:#d9e6ce;--admin-season-heading:#58724a;--admin-season-card:#fcfff9}
+body[data-season="summer"]{--admin-season-bg:#edf7f5;--admin-season-button:#b6dcd8;--admin-season-button-dark:#639f9a;--admin-season-soft:#dff0ed;--admin-season-line:#cce5e1;--admin-season-heading:#477a76;--admin-season-card:#fafffe}
+body[data-season="autumn"]{--admin-season-bg:#faf2e9;--admin-season-button:#e4c4a3;--admin-season-button-dark:#b78358;--admin-season-soft:#f5e6d6;--admin-season-line:#ead8c3;--admin-season-heading:#805d3e;--admin-season-card:#fffdf9}
+body[data-season="newyear"]{--admin-season-bg:#f9eff0;--admin-season-button:#e0b8bb;--admin-season-button-dark:#ad6e75;--admin-season-soft:#f2dfe1;--admin-season-line:#e8ced1;--admin-season-heading:#824e55;--admin-season-card:#fffafb}
+
 </style>
 </head>
 <body>
@@ -771,5 +789,7 @@ supabaseClient.auth.onAuthStateChange(function(event, session) {
 });
 checkAuth();
 </script>
+
+<script id="admin-seasonal-theme">(function(){const m=new Date().getMonth()+1;let s="winter";if(m===3||m===4)s="spring";else if(m===5)s="late-spring";else if(m>=6&&m<=8)s="summer";else if(m>=9&&m<=11)s="autumn";else if(m===12)s="newyear";document.body.dataset.season=s;})();</script>
 </body>
 </html>
