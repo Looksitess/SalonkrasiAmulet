@@ -283,6 +283,31 @@ window.AMULET_CONFIG = {
 };
 </script>
 
+<!-- AMULET SEASONAL DESIGN START -->
+<style id="amulet-seasonal-design">
+  :root{--season-primary:#c5a880;--season-primary-dark:#b3946a;--season-glow:rgba(197,168,128,.18);--season-soft:rgba(197,168,128,.10);--season-line:rgba(197,168,128,.25)}
+  body{transition:background-color .6s ease,color .4s ease}
+  header,.glass-card,.newsletter-card,.rating-badge{transition:background .6s ease,border-color .6s ease,box-shadow .6s ease}
+  .seasonal-mark{position:fixed;right:18px;top:92px;z-index:1400;pointer-events:none;width:42px;height:42px;border-radius:50%;display:grid;place-items:center;font-size:20px;background:rgba(255,255,255,.76);backdrop-filter:blur(10px);border:1px solid var(--season-line);box-shadow:0 8px 25px rgba(0,0,0,.08);opacity:.9;animation:seasonFloat 4s ease-in-out infinite}
+  body[data-season="winter"]{--season-primary:#7c9bb8;--season-primary-dark:#587d9f;--season-glow:rgba(124,155,184,.18);--season-soft:rgba(124,155,184,.10);--season-line:rgba(124,155,184,.28)}
+  body[data-season="spring"]{--season-primary:#b58a9e;--season-primary-dark:#956a7f;--season-glow:rgba(181,138,158,.18);--season-soft:rgba(181,138,158,.10);--season-line:rgba(181,138,158,.28)}
+  body[data-season="late-spring"]{--season-primary:#87a96b;--season-primary-dark:#668b4d;--season-glow:rgba(135,169,107,.18);--season-soft:rgba(135,169,107,.10);--season-line:rgba(135,169,107,.28)}
+  body[data-season="summer"]{--season-primary:#2f9f9a;--season-primary-dark:#207b77;--season-glow:rgba(47,159,154,.18);--season-soft:rgba(47,159,154,.10);--season-line:rgba(47,159,154,.28)}
+  body[data-season="autumn"]{--season-primary:#c27b45;--season-primary-dark:#9d5c2d;--season-glow:rgba(194,123,69,.18);--season-soft:rgba(194,123,69,.10);--season-line:rgba(194,123,69,.28)}
+  body[data-season="newyear"]{--season-primary:#b33b43;--season-primary-dark:#8d2630;--season-glow:rgba(179,59,67,.20);--season-soft:rgba(179,59,67,.10);--season-line:rgba(179,59,67,.28)}
+  .logo i,.services-category h3 i,.contact-item i,.trust-row i{color:var(--season-primary)!important}
+  .section-title::after{background:var(--season-primary)!important}
+  .btn-primary,.fab.primary{background:linear-gradient(135deg,var(--season-primary),var(--season-primary-dark))!important;box-shadow:0 5px 18px var(--season-glow)!important}
+  .btn-outline{border-color:var(--season-primary)!important}.btn-outline:hover{background:var(--season-soft)!important}
+  .feature-icon{background:var(--season-soft)!important;color:var(--season-primary-dark)!important}.service-filter.active{background:var(--season-primary)!important;border-color:var(--season-primary)!important}
+  .service-price,.offers-content h3{color:var(--season-primary-dark)!important}.step-num{background:var(--season-soft)!important;color:var(--season-primary-dark)!important}
+  .form-grid input:focus,.form-grid select:focus,.form-grid textarea:focus{border-color:var(--season-primary)!important;box-shadow:0 0 0 3px var(--season-soft)!important}
+  header,.glass-card{border-color:var(--season-line)}.progress-bar{background:linear-gradient(90deg,var(--season-primary-dark),var(--season-primary),var(--season-primary-dark))!important}
+  @keyframes seasonFloat{0%,100%{transform:translateY(0)}50%{transform:translateY(-5px)}}
+  @media(max-width:600px){.seasonal-mark{right:10px;top:82px;width:36px;height:36px;font-size:17px}}
+</style>
+<!-- AMULET SEASONAL DESIGN END -->
+
 </head>
 <body><a class="skip-link" href="#main">Перейти до основного вмісту</a>
     <header>
@@ -440,6 +465,7 @@ window.AMULET_CONFIG = {
     </div>
   </div>
 </section>
+
 
 
 
@@ -1126,6 +1152,22 @@ document.querySelectorAll('.gallery-item img').forEach(function(img){
   loadMasters();
 })();
 </script>
+
+<!-- AMULET SEASONAL LOGIC START -->
+<script id="amulet-seasonal-logic">
+(function(){
+  const month=new Date().getMonth()+1;
+  let season='winter',icon='❄️',label='Зима';
+  if(month===3||month===4){season='spring';icon='🌸';label='Весна'}
+  else if(month===5){season='late-spring';icon='🌿';label='Кінець весни'}
+  else if(month>=6&&month<=8){season='summer';icon='☀️';label='Літо'}
+  else if(month>=9&&month<=11){season='autumn';icon='🍂';label='Осінь'}
+  else if(month===12){season='newyear';icon='🎄';label='Новорічний сезон'}
+  document.body.dataset.season=season;
+  const mark=document.createElement('div');mark.className='seasonal-mark';mark.textContent=icon;mark.title=label;mark.setAttribute('aria-label',label);document.body.appendChild(mark);
+})();
+</script>
+<!-- AMULET SEASONAL LOGIC END -->
 
 </body>
 </html>
