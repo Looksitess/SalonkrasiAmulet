@@ -305,6 +305,20 @@ window.AMULET_CONFIG = {
   header,.glass-card{border-color:var(--season-line)}.progress-bar{background:linear-gradient(90deg,var(--season-primary-dark),var(--season-primary),var(--season-primary-dark))!important}
   @keyframes seasonFloat{0%,100%{transform:translateY(0)}50%{transform:translateY(-5px)}}
   @media(max-width:600px){.seasonal-mark{right:10px;top:82px;width:36px;height:36px;font-size:17px}}
+
+/* Soft seasonal palette: preserve the existing layout and visual identity */
+:root{--primary:#cbb99f;--primary-dark:#b9a489;--glass-border:rgba(197,180,153,.22)}
+body{background-image:linear-gradient(135deg,rgba(255,253,250,.90) 0%,rgba(250,247,242,.86) 100%),url('https://images.unsplash.com/photo-1560066984-138dadb4c035?auto=format&fit=crop&q=80&w=1920')}
+.btn-primary{box-shadow:0 4px 13px rgba(185,164,137,.24)}
+.btn-primary:hover{box-shadow:0 6px 17px rgba(185,164,137,.30)}
+.seasonal-mark{background:rgba(255,253,250,.88)!important;border-color:rgba(190,174,151,.28)!important}
+body[data-season="winter"]{--season-primary:#a8bbcc;--season-primary-dark:#8fa7bc;--season-glow:rgba(168,187,204,.13);--season-soft:rgba(168,187,204,.07);--season-line:rgba(168,187,204,.22)}
+body[data-season="spring"]{--season-primary:#c9a9b7;--season-primary-dark:#b78fa1;--season-glow:rgba(201,169,183,.13);--season-soft:rgba(201,169,183,.07);--season-line:rgba(201,169,183,.22)}
+body[data-season="late-spring"]{--season-primary:#a9bd98;--season-primary-dark:#8eaa79;--season-glow:rgba(169,189,152,.13);--season-soft:rgba(169,189,152,.07);--season-line:rgba(169,189,152,.22)}
+body[data-season="summer"]{--season-primary:#91c4c0;--season-primary-dark:#77aca8;--season-glow:rgba(145,196,192,.13);--season-soft:rgba(145,196,192,.07);--season-line:rgba(145,196,192,.22)}
+body[data-season="autumn"]{--season-primary:#d4b08d;--season-primary-dark:#bd9875;--season-glow:rgba(212,176,141,.13);--season-soft:rgba(212,176,141,.07);--season-line:rgba(212,176,141,.22)}
+body[data-season="newyear"]{--season-primary:#c78f94;--season-primary-dark:#b57980;--season-glow:rgba(199,143,148,.14);--season-soft:rgba(199,143,148,.07);--season-line:rgba(199,143,148,.22)}
+
 </style>
 <!-- AMULET SEASONAL DESIGN END -->
 
