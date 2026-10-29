@@ -136,7 +136,19 @@
 .facade-caption p{color:#6e675f;font-size:14px}
 @media(max-width:768px){.facade-section{padding:10px 0 40px}.facade-card img{max-height:360px}.facade-caption h2{font-size:25px}}
 
-    </style>
+    
+/* Salon photo gallery */
+.gallery-section{padding-top:34px;padding-bottom:46px}
+.gallery-heading{text-align:center;margin-bottom:24px}
+.gallery-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:18px}
+.gallery-item{display:block;position:relative;overflow:hidden;border-radius:18px;aspect-ratio:4/3;background:var(--card-bg,#f5f0e8);text-decoration:none}
+.gallery-item img{display:block;width:100%;height:100%;object-fit:cover;transition:transform .35s ease}
+.gallery-item:hover img{transform:scale(1.045)}
+.gallery-zoom{position:absolute;right:12px;bottom:12px;width:36px;height:36px;border-radius:50%;display:grid;place-items:center;background:rgba(255,255,255,.9);color:#243b53;font-size:25px;line-height:1;box-shadow:0 3px 12px rgba(0,0,0,.12)}
+@media(max-width:760px){.gallery-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}.gallery-section{padding-top:24px;padding-bottom:32px}}
+@media(max-width:420px){.gallery-grid{gap:9px}.gallery-item{border-radius:13px}}
+
+</style>
 
     <meta name="description" content="Сімейний салон краси «Амулет» у Києві: перукарські послуги, манікюр, педикюр, косметологія та догляд. Запис за телефоном 068 000 6311.">
     <meta name="theme-color" content="#1a1917">
@@ -492,6 +504,40 @@ body[data-season="newyear"]{--season-primary:#e0b6b8;--season-primary-dark:#ad6e
         </div>
       </div>
     </section>
+
+<section id="gallery" class="gallery-section container">
+  <div class="gallery-heading">
+    <h2 class="section-title">Галерея салону</h2>
+    <p class="section-subtitle">Зазирніть до «Амулету» та познайомтеся з атмосферою нашого салону</p>
+  </div>
+  <div class="gallery-grid">
+    <a class="gallery-item glass-card" href="images/ANWiy9RSMaRwGCN77XhIert7TZp16y0jVduRsCjzq80wo-8HUSCtdNA-P8JJdRyui9Glrg_oM6a24tlhGQrlfhTDFDAIph2cZyzllS2bcE6dmisq-WgUwcjSAwn1C8wzBAvmvgkCJRW7z-a2R6UJw1600-h1200-k-no.jpg" target="_blank" rel="noopener" aria-label="Відкрити фото салону 1">
+      <img src="images/ANWiy9RSMaRwGCN77XhIert7TZp16y0jVduRsCjzq80wo-8HUSCtdNA-P8JJdRyui9Glrg_oM6a24tlhGQrlfhTDFDAIph2cZyzllS2bcE6dmisq-WgUwcjSAwn1C8wzBAvmvgkCJRW7z-a2R6UJw1600-h1200-k-no.jpg" alt="Фото салону краси «Амулет» 1" loading="lazy">
+      <span class="gallery-zoom" aria-hidden="true">⌕</span>
+    </a>
+    <a class="gallery-item glass-card" href="images/ANWiy9RzbSxUM2i_KziL0_NVCfcoHwT7pYJ4d2fpgdLI5Ui7IMC7_ltS6f4NSFMAxUNxu18RAf69PYiGijjL9YQYCkglb-aoHeqtUhYtjVd6aUmIZSex8lnJQwQUkAK16KkzYmgAQM4Jw1200-h1600-k-no.jpg" target="_blank" rel="noopener" aria-label="Відкрити фото салону 2">
+      <img src="images/ANWiy9RzbSxUM2i_KziL0_NVCfcoHwT7pYJ4d2fpgdLI5Ui7IMC7_ltS6f4NSFMAxUNxu18RAf69PYiGijjL9YQYCkglb-aoHeqtUhYtjVd6aUmIZSex8lnJQwQUkAK16KkzYmgAQM4Jw1200-h1600-k-no.jpg" alt="Фото салону краси «Амулет» 2" loading="lazy">
+      <span class="gallery-zoom" aria-hidden="true">⌕</span>
+    </a>
+    <a class="gallery-item glass-card" href="images/ANWiy9S0cd2CUHwveVKoHELP5k2KbFt7h6mp_FewkkfNwxJJ6kKFzSjIwy_OR1zu5yGSeyhDlwLAgnD85ennH6gWdLuWj1UvBL8Twgm2b5GWnFAJ9r792hLnkrkVfFOnHOy4D46iwqH82gw1280-h960-k-no.jpg" target="_blank" rel="noopener" aria-label="Відкрити фото салону 3">
+      <img src="images/ANWiy9S0cd2CUHwveVKoHELP5k2KbFt7h6mp_FewkkfNwxJJ6kKFzSjIwy_OR1zu5yGSeyhDlwLAgnD85ennH6gWdLuWj1UvBL8Twgm2b5GWnFAJ9r792hLnkrkVfFOnHOy4D46iwqH82gw1280-h960-k-no.jpg" alt="Фото салону краси «Амулет» 3" loading="lazy">
+      <span class="gallery-zoom" aria-hidden="true">⌕</span>
+    </a>
+    <a class="gallery-item glass-card" href="images/ANWiy9S2oDi6844KvFdcXWzRo1OsgLbC3yMQLmb768Kiyz1Vj6e-nJwnzazY5dT0Mj2qnaaN6p1TNkxygcSHfUI61fO4tmPT2IAievIQks-y92G5tuXoRyt2Rn4MMSe0dHjL7zw9v-YZw4032-h3024-k-no.jpg" target="_blank" rel="noopener" aria-label="Відкрити фото салону 4">
+      <img src="images/ANWiy9S2oDi6844KvFdcXWzRo1OsgLbC3yMQLmb768Kiyz1Vj6e-nJwnzazY5dT0Mj2qnaaN6p1TNkxygcSHfUI61fO4tmPT2IAievIQks-y92G5tuXoRyt2Rn4MMSe0dHjL7zw9v-YZw4032-h3024-k-no.jpg" alt="Фото салону краси «Амулет» 4" loading="lazy">
+      <span class="gallery-zoom" aria-hidden="true">⌕</span>
+    </a>
+    <a class="gallery-item glass-card" href="images/ANWiy9SL1XPM3U9s-1Ef_bAYHtxuKCb7HYGBwWPUswMWUcVqfTmrsHXX_xksb4drE-ChjMthMnzDJsnf6V-fx6RZDgPzq2ejOjUDM4OyPZgWh0X7tfxVXbTVWXObuxEeZi_8BwtbAk6Rw1600-h1200-k-no.jpg" target="_blank" rel="noopener" aria-label="Відкрити фото салону 5">
+      <img src="images/ANWiy9SL1XPM3U9s-1Ef_bAYHtxuKCb7HYGBwWPUswMWUcVqfTmrsHXX_xksb4drE-ChjMthMnzDJsnf6V-fx6RZDgPzq2ejOjUDM4OyPZgWh0X7tfxVXbTVWXObuxEeZi_8BwtbAk6Rw1600-h1200-k-no.jpg" alt="Фото салону краси «Амулет» 5" loading="lazy">
+      <span class="gallery-zoom" aria-hidden="true">⌕</span>
+    </a>
+    <a class="gallery-item glass-card" href="images/ANWiy9TNaxvt1MKU6ICVear_8fffE-GuOHvn6vCyHrEZyhGMv4JdOhaYSsFAWLfg94zi1texolRkffpEwlKtjZLfIPsQFaT620m85JQM71XjEfjCYiQVLmc3Vk5AD5idW-DOd9X4fsDip0xd2zAew1200-h1600-k-no.jpg" target="_blank" rel="noopener" aria-label="Відкрити фото салону 6">
+      <img src="images/ANWiy9TNaxvt1MKU6ICVear_8fffE-GuOHvn6vCyHrEZyhGMv4JdOhaYSsFAWLfg94zi1texolRkffpEwlKtjZLfIPsQFaT620m85JQM71XjEfjCYiQVLmc3Vk5AD5idW-DOd9X4fsDip0xd2zAew1200-h1600-k-no.jpg" alt="Фото салону краси «Амулет» 6" loading="lazy">
+      <span class="gallery-zoom" aria-hidden="true">⌕</span>
+    </a>
+  </div>
+</section>
+
 <section id="facade" class="facade-section container">
   <div class="facade-card glass-card">
     <img src="images/salon-facade.jpg" alt="Фасад сімейного салону краси «Амулет»">
