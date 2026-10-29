@@ -144,14 +144,13 @@
 .gallery-item{display:block;position:relative;overflow:hidden;border-radius:18px;aspect-ratio:4/3;background:var(--card-bg,#f5f0e8);text-decoration:none}
 .gallery-item img{display:block;width:100%;height:100%;object-fit:cover;transition:transform .35s ease}
 .gallery-item:first-child img{object-position:center 35%}
-/* Keep the salon gallery independent from the site's older portfolio gallery styles */
-#gallery .gallery-grid{display:grid!important;grid-template-columns:repeat(3,minmax(0,1fr))!important;grid-template-rows:auto!important;align-items:stretch;gap:18px}
-#gallery .gallery-item{position:relative!important;top:auto!important;transform:none!important;grid-row:auto!important;grid-column:auto!important;display:block;aspect-ratio:4/3;min-width:0;overflow:hidden}
-#gallery .gallery-item img{width:100%;height:100%;object-fit:cover;display:block}
+/* Stable responsive layout for salon photo gallery */
+#gallery{clear:both;position:relative;isolation:isolate}
+#gallery .gallery-grid{display:grid!important;grid-template-columns:repeat(3,minmax(0,1fr))!important;grid-auto-rows:auto!important;align-items:stretch;gap:18px}
+#gallery .gallery-item{position:relative!important;top:auto!important;left:auto!important;right:auto!important;bottom:auto!important;transform:none!important;grid-row:auto!important;grid-column:auto!important;display:block;width:100%;height:auto;aspect-ratio:4/3;min-width:0;overflow:hidden;margin:0!important;float:none!important}
+#gallery .gallery-item img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:block}
 #gallery .gallery-item:first-child img{object-position:center 35%}
 #gallery .gallery-item:nth-child(6) img{object-position:center 35%}
-@media(max-width:760px){#gallery .gallery-grid{grid-template-columns:repeat(2,minmax(0,1fr))!important;grid-template-rows:auto!important;gap:12px}#gallery .gallery-item{grid-row:auto!important;grid-column:auto!important;aspect-ratio:4/3}#gallery .gallery-item:first-child{top:auto!important}}
-@media(max-width:420px){#gallery .gallery-grid{gap:9px}#gallery .gallery-item{aspect-ratio:3/4}}
 .gallery-item:hover img{transform:scale(1.045)}
 .gallery-zoom{position:absolute;right:12px;bottom:12px;width:36px;height:36px;border-radius:50%;display:grid;place-items:center;background:rgba(255,255,255,.9);color:#243b53;font-size:25px;line-height:1;box-shadow:0 3px 12px rgba(0,0,0,.12)}
 @media(max-width:760px){.gallery-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}.gallery-section{padding-top:24px;padding-bottom:32px}}
@@ -513,23 +512,6 @@ body[data-season="newyear"]{--season-primary:#e0b6b8;--season-primary-dark:#ad6e
         </div>
       </div>
     </section>
-<section id="facade" class="facade-section container">
-  <div class="facade-card glass-card">
-    <img src="images/salon-facade.jpg" alt="Фасад сімейного салону краси «Амулет»">
-    <div class="facade-caption">
-      <h2>Наш салон «Амулет»</h2>
-      <p>Саме так виглядає наш салон зовні</p>
-    </div>
-  </div>
-</section>
-
-
-
-
-
-
-
-
 <section id="gallery" class="gallery-section container">
   <div class="gallery-heading">
     <h2 class="section-title">Галерея салону</h2>
