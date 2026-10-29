@@ -319,6 +319,28 @@ body[data-season="summer"]{--season-primary:#91c4c0;--season-primary-dark:#77aca
 body[data-season="autumn"]{--season-primary:#d4b08d;--season-primary-dark:#bd9875;--season-glow:rgba(212,176,141,.13);--season-soft:rgba(212,176,141,.07);--season-line:rgba(212,176,141,.22)}
 body[data-season="newyear"]{--season-primary:#c78f94;--season-primary-dark:#b57980;--season-glow:rgba(199,143,148,.14);--season-soft:rgba(199,143,148,.07);--season-line:rgba(199,143,148,.22)}
 
+
+/* Visible seasonal redesign — same layout, clearer seasonal identity */
+body{background-color:#f4f0e9;background-image:linear-gradient(135deg,rgba(255,252,247,.78),rgba(247,242,234,.68)),url('https://images.unsplash.com/photo-1560066984-138dadb4c035?auto=format&fit=crop&q=80&w=1920')!important}
+.glass-card{border-color:var(--season-line,rgba(197,180,153,.35));box-shadow:0 14px 36px rgba(67,54,39,.075)}
+header{border-bottom:2px solid var(--season-line,rgba(197,180,153,.35))}
+.section-title::after{width:72px;height:3px;border-radius:5px;background:var(--season-primary,var(--primary))}
+.feature-icon{background:var(--season-soft,rgba(197,180,153,.16));color:var(--season-primary-dark,var(--primary-dark));border:1px solid var(--season-line,rgba(197,180,153,.35))}
+.btn-primary,.fab.primary,.service-filter.active{background:linear-gradient(135deg,var(--season-primary,var(--primary)),var(--season-primary-dark,var(--primary-dark)))!important;border-color:var(--season-primary-dark,var(--primary-dark))!important;box-shadow:0 7px 18px var(--season-glow,rgba(185,164,137,.22))!important}
+.btn-outline{border:1.5px solid var(--season-primary-dark,var(--primary-dark))}
+.service-filter{border-color:var(--season-line,#ded4c7);background:rgba(255,255,255,.9)}
+.offers-banner{background:linear-gradient(120deg,rgba(255,253,249,.97),rgba(247,241,232,.96))!important;color:var(--dark)!important;border:1px solid var(--season-line,rgba(197,180,153,.35))}
+.offers-content h3{color:var(--season-primary-dark,var(--primary-dark))!important}
+.offers-content p{color:#71685d!important}
+.facade-card{border:1.5px solid var(--season-line,rgba(197,180,153,.35))}
+.seasonal-mark{width:48px;height:48px;font-size:23px;background:linear-gradient(145deg,#fffdf8,#f0e6d8)!important;border:1.5px solid var(--season-line,rgba(190,174,151,.4))!important;box-shadow:0 6px 20px rgba(60,48,35,.12)!important}
+body[data-season="winter"]{--season-primary:#c1d2df;--season-primary-dark:#829fb6;--season-glow:rgba(130,159,182,.24);--season-soft:rgba(193,210,223,.26);--season-line:rgba(130,159,182,.42)}
+body[data-season="spring"]{--season-primary:#e0c1ce;--season-primary-dark:#b9859d;--season-glow:rgba(185,133,157,.22);--season-soft:rgba(224,193,206,.28);--season-line:rgba(185,133,157,.40)}
+body[data-season="late-spring"]{--season-primary:#c3d5b4;--season-primary-dark:#819f6b;--season-glow:rgba(129,159,107,.22);--season-soft:rgba(195,213,180,.30);--season-line:rgba(129,159,107,.40)}
+body[data-season="summer"]{--season-primary:#b2d9d5;--season-primary-dark:#639f9a;--season-glow:rgba(99,159,154,.22);--season-soft:rgba(178,217,213,.30);--season-line:rgba(99,159,154,.40)}
+body[data-season="autumn"]{--season-primary:#e5c5a5;--season-primary-dark:#b78358;--season-glow:rgba(183,131,88,.22);--season-soft:rgba(229,197,165,.30);--season-line:rgba(183,131,88,.40)}
+body[data-season="newyear"]{--season-primary:#e0b6b8;--season-primary-dark:#ad6e75;--season-glow:rgba(173,110,117,.22);--season-soft:rgba(224,182,184,.28);--season-line:rgba(173,110,117,.40)}
+
 </style>
 <!-- AMULET SEASONAL DESIGN END -->
 
