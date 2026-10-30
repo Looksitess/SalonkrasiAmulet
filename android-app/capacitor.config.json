@@ -1,0 +1,12 @@
+{
+  "appId": "ua.amulet.salon.admin",
+  "appName": "Амулет — Адмінка",
+  "webDir": "www",
+  "backgroundColor": "#f7f3ec",
+  "plugins": {
+    "SplashScreen": {
+      "launchShowDuration": 0,
+      "backgroundColor": "#f7f3ec"
+    }
+  }
+}
