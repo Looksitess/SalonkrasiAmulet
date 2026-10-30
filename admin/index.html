@@ -3,7 +3,12 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="theme-color" content="#f5f1eb">
+<meta name="theme-color" content="#f7f3ec">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="Амулет">
+<link rel="manifest" href="./manifest.webmanifest">
 <title>Амулет — майстри й записи</title>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
@@ -61,7 +66,7 @@ body[data-season="newyear"]{--admin-season-bg:#f9eff0;--admin-season-button:#e0b
   <div class="container">
     <div class="header">
       <div><h1 style="margin:0 0 5px">Адміністратор «Амулет»</h1><div class="subtitle">20 місць для майстрів • графіки • записи</div></div>
-      <div class="actions"><button id="bookingNotificationsToggle" class="secondary" onclick="toggleBookingNotifications()">Увімкнути сповіщення</button><span id="bookingNotificationsStatus" class="pill off" aria-live="polite">Сповіщення вимкнено</span><button class="secondary" onclick="refreshAdmin()">Оновити</button><button class="danger" onclick="logout()">Вийти</button></div>
+      <div class="actions"><button id="installAppButton" class="secondary" style="display:none" type="button" onclick="installAdminApp()">Установить приложение</button><button id="bookingNotificationsToggle" class="secondary" onclick="toggleBookingNotifications()">Увімкнути сповіщення</button><span id="bookingNotificationsStatus" class="pill off" aria-live="polite">Сповіщення вимкнено</span><button class="secondary" onclick="refreshAdmin()">Оновити</button><button class="danger" onclick="logout()">Вийти</button></div>
     </div>
     <div class="stats">
       <div class="stat"><div>Усього записів</div><div class="stat-number" id="totalCount">0</div></div>
@@ -791,5 +796,35 @@ checkAuth();
 </script>
 
 <script id="admin-seasonal-theme">(function(){const m=new Date().getMonth()+1;let s="winter";if(m===3||m===4)s="spring";else if(m===5)s="late-spring";else if(m>=6&&m<=8)s="summer";else if(m>=9&&m<=11)s="autumn";else if(m===12)s="newyear";document.body.dataset.season=s;})();</script>
+<script id="pwa-registration">
+let deferredAdminInstallPrompt = null;
+const adminInstallButton = document.getElementById("installAppButton");
+
+window.addEventListener("beforeinstallprompt", function(event) {
+  event.preventDefault();
+  deferredAdminInstallPrompt = event;
+  if (adminInstallButton) adminInstallButton.style.display = "inline-block";
+});
+
+async function installAdminApp() {
+  if (!deferredAdminInstallPrompt) return;
+  deferredAdminInstallPrompt.prompt();
+  await deferredAdminInstallPrompt.userChoice;
+  deferredAdminInstallPrompt = null;
+  if (adminInstallButton) adminInstallButton.style.display = "none";
+}
+
+window.addEventListener("appinstalled", function() {
+  deferredAdminInstallPrompt = null;
+  if (adminInstallButton) adminInstallButton.style.display = "none";
+});
+
+if ("serviceWorker" in navigator) {
+  window.addEventListener("load", function() {
+    navigator.serviceWorker.register("./sw.js", { scope: "./" })
+      .catch(function(error) { console.error("Admin app setup failed:", error); });
+  });
+}
+</script>
 </body>
 </html>
