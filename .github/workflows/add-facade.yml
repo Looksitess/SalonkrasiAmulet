@@ -1,8 +1,7 @@
 name: Add salon facade
 
 on:
-  push:
-    branches: [main]
+  workflow_dispatch:
 
 permissions:
   contents: write
@@ -13,57 +12,5 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-
-      - name: Update homepage
-        run: |
-          python - <<'PY'
-          from pathlib import Path
-          p = Path('index.html')
-          s = p.read_text(encoding='utf-8')
-
-          s = s.replace(
-              'rgba(255, 253, 250, 0.78) 0%, rgba(250, 246, 240, 0.72)',
-              'rgba(255, 253, 250, 0.86) 0%, rgba(250, 246, 240, 0.80)',
-              1
-          )
-
-          css = '''
-          .facade-section{padding:20px 0 60px}
-          .facade-card{overflow:hidden;padding:0}
-          .facade-card img{display:block;width:100%;height:auto;max-height:520px;object-fit:cover;object-position:center;border-radius:16px}
-          .facade-caption{padding:20px 24px 24px;text-align:center}
-          .facade-caption h2{font-family:'Playfair Display',serif;font-size:30px;margin-bottom:6px}
-          .facade-caption p{color:#6e675f;font-size:14px}
-          @media(max-width:768px){.facade-section{padding:10px 0 40px}.facade-card img{max-height:360px}.facade-caption h2{font-size:25px}}
-          '''
-          if '.facade-section' not in s:
-              s = s.replace('</style>', css + '\n    </style>', 1)
-
-          section = '''
-          <section id="facade" class="facade-section container">
-            <div class="facade-card glass-card">
-              <img src="images/salon-facade.jpg" alt="Фасад сімейного салону краси «Амулет»">
-              <div class="facade-caption">
-                <h2>Наш салон «Амулет»</h2>
-                <p>Саме так виглядає наш салон зовні</p>
-              </div>
-            </div>
-          </section>
-          '''
-          if 'id="facade"' not in s:
-              if '</main>' in s:
-                  s = s.replace('</main>', section + '\n</main>', 1)
-              else:
-                  s = s.replace('</body>', section + '\n</body>', 1)
-
-          p.write_text(s, encoding='utf-8')
-          PY
-
-      - name: Commit changes
-        run: |
-          git config user.name "github-actions[bot]"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add index.html
-          git diff --cached --quiet && exit 0
-          git commit -m "Show salon facade on homepage"
-          git push
+      - name: Disabled automatic site modification
+        run: echo "This workflow is manual-only to prevent unexpected homepage changes."
