@@ -2,10 +2,6 @@ name: Build Amulet Admin Android
 
 on:
   workflow_dispatch:
-  push:
-    paths:
-      - 'android-admin/**'
-      - '.github/workflows/build-android-admin.yml'
 
 permissions:
   contents: read
@@ -37,12 +33,62 @@ jobs:
         with:
           gradle-version: '8.9'
 
-      - name: Build release bundle
+      - name: Create private Play upload key
+        id: signing
+        working-directory: android-admin
+        shell: bash
+        run: |
+          set -euo pipefail
+          KEYSTORE="$RUNNER_TEMP/amulet-upload-key.jks"
+          PASSWORD="$(openssl rand -hex 24)"
+          ALIAS="amuletUpload"
+          keytool -genkeypair -v \
+            -keystore "$KEYSTORE" \
+            -storepass "$PASSWORD" \
+            -keypass "$PASSWORD" \
+            -alias "$ALIAS" \
+            -keyalg RSA \
+            -keysize 2048 \
+            -validity 10000 \
+            -dname "CN=Amulet Admin, OU=Amulet, O=Looksitess, L=Kyiv, ST=Kyiv, C=UA"
+          echo "keystore=$KEYSTORE" >> "$GITHUB_OUTPUT"
+          echo "password=$PASSWORD" >> "$GITHUB_OUTPUT"
+          echo "alias=$ALIAS" >> "$GITHUB_OUTPUT"
+
+      - name: Build signed Play Store bundle
+        env:
+          AMULET_KEYSTORE_PATH: ${{ steps.signing.outputs.keystore }}
+          AMULET_KEYSTORE_PASSWORD: ${{ steps.signing.outputs.password }}
+          AMULET_KEY_ALIAS: ${{ steps.signing.outputs.alias }}
+          AMULET_KEY_PASSWORD: ${{ steps.signing.outputs.password }}
         run: gradle bundleRelease --no-daemon
 
-      - name: Upload AAB artifact
+      - name: Prepare Play upload package
+        shell: bash
+        env:
+          KEYSTORE: ${{ steps.signing.outputs.keystore }}
+          PASSWORD: ${{ steps.signing.outputs.password }}
+          ALIAS: ${{ steps.signing.outputs.alias }}
+        run: |
+          set -euo pipefail
+          mkdir -p play-package
+          cp app/build/outputs/bundle/release/app-release.aab play-package/Amulet-Admin.aab
+          cp "$KEYSTORE" play-package/Amulet-Admin-upload-key.jks
+          cat > play-package/KEEP-THIS-KEY.txt <<EOF
+          Amulet Admin — Google Play upload key
+
+          File: Amulet-Admin-upload-key.jks
+          Alias: $ALIAS
+          Password: $PASSWORD
+
+          IMPORTANT: keep this JKS file and password safe. You need the same upload key for future app updates.
+          Application ID: com.looksitess.amuletadmin
+          Version: 1.0.0 (versionCode 1)
+          EOF
+
+      - name: Upload signed bundle and upload key
         uses: actions/upload-artifact@v4
         with:
-          name: amulet-admin-release-aab
-          path: android-admin/app/build/outputs/bundle/release/app-release.aab
+          name: amulet-admin-play-package
+          path: android-admin/play-package/
           if-no-files-found: error
