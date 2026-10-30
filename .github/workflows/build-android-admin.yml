@@ -1,6 +1,12 @@
 name: Build Amulet Admin Android
 
 on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'android-admin/**'
+      - '.github/workflows/build-android-admin.yml'
   workflow_dispatch:
 
 permissions:
@@ -32,7 +38,12 @@ jobs:
 
       - name: Accept Android SDK licences
         shell: bash
-        run: yes | sdkmanager --licenses
+        run: |
+          set +e
+          yes | sdkmanager --licenses
+          status=${PIPESTATUS[1]}
+          set -e
+          exit "$status"
 
       - name: Install Android SDK packages
         shell: bash
