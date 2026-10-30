@@ -4,6 +4,7 @@
 
     <application
         android:allowBackup="false"
+        android:icon="@drawable/ic_launcher"
         android:label="Амулет"
         android:theme="@style/Theme.AmuletAdmin"
         android:usesCleartextTraffic="false">
