@@ -6,17 +6,22 @@ on:
 permissions:
   contents: read
 
+concurrency:
+  group: amulet-admin-android-build
+  cancel-in-progress: false
+
 jobs:
   build:
+    name: Build signed Android app
     runs-on: ubuntu-latest
     defaults:
       run:
         working-directory: android-admin
     steps:
-      - name: Checkout
+      - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Set up Java
+      - name: Set up Java 17
         uses: actions/setup-java@v4
         with:
           distribution: temurin
@@ -25,70 +30,142 @@ jobs:
       - name: Set up Android SDK
         uses: android-actions/setup-android@v3
 
-      - name: Install Android SDK packages
-        run: sdkmanager "platforms;android-35" "build-tools;35.0.0"
+      - name: Accept Android SDK licences
+        shell: bash
+        run: yes | sdkmanager --licenses
 
-      - name: Set up Gradle
+      - name: Install Android SDK packages
+        shell: bash
+        run: sdkmanager "platform-tools" "platforms;android-35" "build-tools;35.0.0"
+
+      - name: Set up Gradle 8.9
         uses: gradle/actions/setup-gradle@v4
         with:
           gradle-version: '8.9'
+          cache-provider: basic
 
-      - name: Create private Play upload key
-        id: signing
-        working-directory: android-admin
+      - name: Verify Android project files
         shell: bash
         run: |
           set -euo pipefail
+          test -f settings.gradle
+          test -f build.gradle
+          test -f app/build.gradle
+          test -f app/src/main/AndroidManifest.xml
+          test -f app/src/main/java/com/looksitess/amuletadmin/MainActivity.java
+          echo "Android project files are present."
+
+      - name: Prepare or reuse Play upload key
+        id: signing
+        shell: bash
+        env:
+          STORED_KEY_BASE64: ${{ secrets.AMULET_UPLOAD_KEYSTORE_BASE64 }}
+          STORED_KEY_PASSWORD: ${{ secrets.AMULET_UPLOAD_KEYSTORE_PASSWORD }}
+          STORED_KEY_ALIAS: ${{ secrets.AMULET_UPLOAD_KEY_ALIAS }}
+          STORED_PRIVATE_KEY_PASSWORD: ${{ secrets.AMULET_UPLOAD_KEY_PASSWORD }}
+        run: |
+          set -euo pipefail
           KEYSTORE="$RUNNER_TEMP/amulet-upload-key.jks"
-          PASSWORD="$(openssl rand -hex 24)"
-          ALIAS="amuletUpload"
-          keytool -genkeypair -v \
-            -keystore "$KEYSTORE" \
-            -storepass "$PASSWORD" \
-            -keypass "$PASSWORD" \
-            -alias "$ALIAS" \
-            -keyalg RSA \
-            -keysize 2048 \
-            -validity 10000 \
-            -dname "CN=Amulet Admin, OU=Amulet, O=Looksitess, L=Kyiv, ST=Kyiv, C=UA"
+
+          if [[ -n "$STORED_KEY_BASE64" || -n "$STORED_KEY_PASSWORD" || -n "$STORED_KEY_ALIAS" || -n "$STORED_PRIVATE_KEY_PASSWORD" ]]; then
+            if [[ -z "$STORED_KEY_BASE64" || -z "$STORED_KEY_PASSWORD" || -z "$STORED_KEY_ALIAS" || -z "$STORED_PRIVATE_KEY_PASSWORD" ]]; then
+              echo "Upload-key secrets are incomplete. Set all four AMULET_UPLOAD_KEYSTORE_* secrets, or remove all four to create the first key." >&2
+              exit 1
+            fi
+            printf '%s' "$STORED_KEY_BASE64" | base64 --decode > "$KEYSTORE"
+            ALIAS="$STORED_KEY_ALIAS"
+            STORE_PASSWORD="$STORED_KEY_PASSWORD"
+            KEY_PASSWORD="$STORED_PRIVATE_KEY_PASSWORD"
+            echo "Reusing the saved Play upload key."
+          else
+            STORE_PASSWORD="$(openssl rand -hex 24)"
+            KEY_PASSWORD="$STORE_PASSWORD"
+            ALIAS="amuletUpload"
+            keytool -genkeypair -noprompt -v \
+              -keystore "$KEYSTORE" \
+              -storepass "$STORE_PASSWORD" \
+              -keypass "$KEY_PASSWORD" \
+              -alias "$ALIAS" \
+              -keyalg RSA \
+              -keysize 2048 \
+              -validity 10000 \
+              -dname "CN=Amulet Admin, OU=Amulet, O=Looksitess, L=Kyiv, ST=Kyiv, C=UA"
+            echo "::warning::First upload key generated. Download and securely save Amulet-Admin-upload-key.jks and KEEP-THIS-KEY.txt. For future updates, save the four values listed in the instructions as GitHub Actions secrets."
+          fi
+
+          test -s "$KEYSTORE"
+          keytool -list -keystore "$KEYSTORE" -storepass "$STORE_PASSWORD" -alias "$ALIAS" >/dev/null
           echo "keystore=$KEYSTORE" >> "$GITHUB_OUTPUT"
-          echo "password=$PASSWORD" >> "$GITHUB_OUTPUT"
+          echo "store_password=$STORE_PASSWORD" >> "$GITHUB_OUTPUT"
+          echo "key_password=$KEY_PASSWORD" >> "$GITHUB_OUTPUT"
           echo "alias=$ALIAS" >> "$GITHUB_OUTPUT"
 
-      - name: Build signed Play Store bundle
+      - name: Build signed Android App Bundle and APK
         env:
           AMULET_KEYSTORE_PATH: ${{ steps.signing.outputs.keystore }}
-          AMULET_KEYSTORE_PASSWORD: ${{ steps.signing.outputs.password }}
+          AMULET_KEYSTORE_PASSWORD: ${{ steps.signing.outputs.store_password }}
           AMULET_KEY_ALIAS: ${{ steps.signing.outputs.alias }}
-          AMULET_KEY_PASSWORD: ${{ steps.signing.outputs.password }}
-        run: gradle bundleRelease --no-daemon
+          AMULET_KEY_PASSWORD: ${{ steps.signing.outputs.key_password }}
+        shell: bash
+        run: gradle --no-daemon --stacktrace clean bundleRelease assembleRelease
 
-      - name: Prepare Play upload package
+      - name: Prepare download package
         shell: bash
         env:
           KEYSTORE: ${{ steps.signing.outputs.keystore }}
-          PASSWORD: ${{ steps.signing.outputs.password }}
+          STORE_PASSWORD: ${{ steps.signing.outputs.store_password }}
+          KEY_PASSWORD: ${{ steps.signing.outputs.key_password }}
           ALIAS: ${{ steps.signing.outputs.alias }}
         run: |
           set -euo pipefail
           mkdir -p play-package
           cp app/build/outputs/bundle/release/app-release.aab play-package/Amulet-Admin.aab
+          cp app/build/outputs/apk/release/app-release.apk play-package/Amulet-Admin.apk
           cp "$KEYSTORE" play-package/Amulet-Admin-upload-key.jks
           cat > play-package/KEEP-THIS-KEY.txt <<EOF
-          Amulet Admin — Google Play upload key
+          AMULET ADMIN — GOOGLE PLAY UPLOAD KEY
 
-          File: Amulet-Admin-upload-key.jks
-          Alias: $ALIAS
-          Password: $PASSWORD
-
-          IMPORTANT: keep this JKS file and password safe. You need the same upload key for future app updates.
           Application ID: com.looksitess.amuletadmin
           Version: 1.0.0 (versionCode 1)
+
+          Keep these files and passwords private and safe:
+          - Amulet-Admin-upload-key.jks
+          - this text file
+
+          Key alias: $ALIAS
+          Keystore password: $STORE_PASSWORD
+          Key password: $KEY_PASSWORD
+
+          IMPORTANT:
+          Never lose this key. Future app updates must use the same upload key.
+
+          To reuse this key in future GitHub Actions builds, add these repository Actions secrets:
+          AMULET_UPLOAD_KEYSTORE_BASE64 = Base64 text of Amulet-Admin-upload-key.jks
+          AMULET_UPLOAD_KEYSTORE_PASSWORD = Keystore password above
+          AMULET_UPLOAD_KEY_ALIAS = Key alias above
+          AMULET_UPLOAD_KEY_PASSWORD = Key password above
+
+          On Linux/macOS, get the Base64 value with:
+          base64 -w 0 Amulet-Admin-upload-key.jks
+          On Windows PowerShell:
+          [Convert]::ToBase64String([IO.File]::ReadAllBytes("Amulet-Admin-upload-key.jks"))
           EOF
 
-      - name: Upload signed bundle and upload key
+      - name: Upload Android app package
         uses: actions/upload-artifact@v4
         with:
           name: amulet-admin-play-package
           path: android-admin/play-package/
           if-no-files-found: error
+          retention-days: 30
+
+      - name: Upload build reports if build fails
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: amulet-admin-build-reports
+          path: |
+            android-admin/app/build/reports/
+            android-admin/app/build/outputs/logs/
+          if-no-files-found: ignore
+          retention-days: 7
