@@ -89,6 +89,23 @@
         .author-info h4 { font-size: 15px; font-weight: 600; }
         .author-info span { font-size: 12px; color: var(--text-muted); }
         .google-verified { font-size: 12px; color: #28a745; display: flex; align-items: center; gap: 4px; background: rgba(40, 167, 69, 0.08); padding: 4px 8px; border-radius: 20px; }
+        .review-form-wrap { max-width: 760px; margin: 42px auto 0; padding: 30px; }
+        .review-form-title { font-family: 'Playfair Display', serif; font-size: 26px; text-align: center; margin-bottom: 8px; }
+        .review-form-note { color: var(--text-muted); text-align: center; font-size: 14px; margin-bottom: 24px; }
+        .review-form { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+        .review-field { min-width: 0; }
+        .review-field.full { grid-column: 1 / -1; }
+        .review-field label { display: block; font-size: 13px; font-weight: 600; margin-bottom: 7px; color: #51483d; }
+        .review-field input, .review-field select, .review-field textarea { width: 100%; border: 1px solid rgba(197,168,128,.42); border-radius: 12px; background: rgba(255,255,255,.88); color: var(--dark); padding: 13px 14px; font: inherit; outline: none; transition: border-color .2s, box-shadow .2s; }
+        .review-field input:focus, .review-field select:focus, .review-field textarea:focus { border-color: var(--primary-dark); box-shadow: 0 0 0 3px rgba(197,168,128,.15); }
+        .review-field textarea { min-height: 130px; resize: vertical; }
+        .review-submit-row { grid-column: 1 / -1; display: flex; flex-direction: column; align-items: center; gap: 12px; }
+        .review-submit-row .btn { min-width: 210px; }
+        .review-feedback { min-height: 22px; font-size: 14px; text-align: center; color: #287447; }
+        .review-feedback.error { color: #b42318; }
+        .community-reviews { margin-top: 28px; }
+        .community-review-card .review-stars { letter-spacing: 2px; }
+        .review-honeypot { position: absolute !important; left: -10000px !important; width: 1px !important; height: 1px !important; overflow: hidden !important; }
         .contacts { padding: 60px 0 80px 0; }
         .contacts-wrapper { display: grid; grid-template-columns: 1fr 1.2fr; gap: 40px; align-items: start; }
         .contacts-info { padding: 40px; height: 100%; display: flex; flex-direction: column; justify-content: center; }
@@ -646,6 +663,41 @@ body[data-season="newyear"]{--season-primary:#e0b6b8;--season-primary-dark:#ad6e
                 </div>
             </div>
         </div>
+        <div id="communityReviews" class="reviews-grid community-reviews" aria-live="polite"></div>
+
+        <div class="review-form-wrap glass-card">
+            <h3 class="review-form-title">Залишити відгук</h3>
+            <p class="review-form-note">Поділіться враженнями про наш салон. Дякуємо за вашу думку!</p>
+            <form id="customerReviewForm" class="review-form">
+                <div class="review-field">
+                    <label for="reviewCustomerName">Ваше ім’я</label>
+                    <input id="reviewCustomerName" name="customer_name" type="text" minlength="2" maxlength="60" autocomplete="name" placeholder="Як до вас звертатися?" required>
+                </div>
+                <div class="review-field">
+                    <label for="reviewRating">Ваша оцінка</label>
+                    <select id="reviewRating" name="rating" required>
+                        <option value="">Оберіть оцінку</option>
+                        <option value="5">★★★★★ — Чудово</option>
+                        <option value="4">★★★★☆ — Добре</option>
+                        <option value="3">★★★☆☆ — Нормально</option>
+                        <option value="2">★★☆☆☆ — Є зауваження</option>
+                        <option value="1">★☆☆☆☆ — Не сподобалося</option>
+                    </select>
+                </div>
+                <div class="review-field full">
+                    <label for="reviewMessage">Ваш відгук</label>
+                    <textarea id="reviewMessage" name="review_text" minlength="5" maxlength="1500" placeholder="Розкажіть, що вам сподобалося або що можна покращити…" required></textarea>
+                </div>
+                <div class="review-honeypot" aria-hidden="true">
+                    <label for="reviewCompany">Не заповнюйте це поле</label>
+                    <input id="reviewCompany" name="company" type="text" tabindex="-1" autocomplete="off">
+                </div>
+                <div class="review-submit-row">
+                    <button class="btn btn-primary" type="submit"><i class="fa-solid fa-paper-plane"></i> Надіслати відгук</button>
+                    <p id="reviewFeedback" class="review-feedback" role="status" aria-live="polite"></p>
+                </div>
+            </form>
+        </div>
     </section>
     <section id="contacts" class="contacts container">
         <h2 class="section-title">Як нас знайти</h2>
@@ -1055,6 +1107,128 @@ body[data-season="newyear"]{--season-primary:#e0b6b8;--season-primary-dark:#ad6e
   }, true);
 })();
 </script>
+
+<script>
+(function () {
+  const form = document.getElementById("customerReviewForm");
+  const feedback = document.getElementById("reviewFeedback");
+  const submit = form && form.querySelector('button[type="submit"]');
+  const reviewsContainer = document.getElementById("communityReviews");
+  if (!form) return;
+
+  function setFeedback(message, isError) {
+    if (!feedback) return;
+    feedback.textContent = message;
+    feedback.classList.toggle("error", Boolean(isError));
+  }
+
+  async function loadApprovedReviews() {
+    const client = window.amuletSupabase;
+    if (!client || !reviewsContainer) return;
+
+    const { data, error } = await client
+      .from("customer_reviews")
+      .select("id,customer_name,rating,review_text,created_at")
+      .eq("status", "approved")
+      .order("created_at", { ascending: false })
+      .limit(9);
+
+    if (error) {
+      console.warn("Could not load approved customer reviews:", error.message);
+      return;
+    }
+
+    reviewsContainer.replaceChildren();
+    (data || []).forEach(function (review) {
+      const card = document.createElement("article");
+      card.className = "review-card glass-card community-review-card";
+
+      const stars = document.createElement("div");
+      stars.className = "review-stars";
+      stars.textContent = "★".repeat(Number(review.rating) || 0);
+      stars.setAttribute("aria-label", "Оцінка: " + review.rating + " з 5");
+
+      const text = document.createElement("p");
+      text.className = "review-text";
+      text.textContent = review.review_text || "";
+
+      const author = document.createElement("div");
+      author.className = "review-author";
+
+      const info = document.createElement("div");
+      info.className = "author-info";
+
+      const name = document.createElement("h4");
+      name.textContent = review.customer_name || "Відвідувач";
+
+      const date = document.createElement("span");
+      date.textContent = review.created_at
+        ? new Date(review.created_at).toLocaleDateString("uk-UA")
+        : "";
+
+      info.append(name, date);
+      author.append(info);
+      card.append(stars, text, author);
+      reviewsContainer.appendChild(card);
+    });
+  }
+
+  form.addEventListener("submit", async function (event) {
+    event.preventDefault();
+    setFeedback("", false);
+
+    const values = new FormData(form);
+    if (String(values.get("company") || "").trim()) {
+      form.reset();
+      return;
+    }
+
+    const payload = {
+      customer_name: String(values.get("customer_name") || "").trim(),
+      rating: Number(values.get("rating")),
+      review_text: String(values.get("review_text") || "").trim()
+    };
+
+    if (payload.customer_name.length < 2 || payload.customer_name.length > 60 ||
+        !Number.isInteger(payload.rating) || payload.rating < 1 || payload.rating > 5 ||
+        payload.review_text.length < 5 || payload.review_text.length > 1500) {
+      setFeedback("Перевірте ім’я, оцінку та текст відгуку.", true);
+      return;
+    }
+
+    const client = window.amuletSupabase;
+    if (!client) {
+      setFeedback("Форма тимчасово недоступна. Спробуйте трохи пізніше.", true);
+      return;
+    }
+
+    const oldLabel = submit ? submit.innerHTML : "";
+    if (submit) {
+      submit.disabled = true;
+      submit.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Надсилання…';
+    }
+
+    try {
+      const { error } = await client.from("customer_reviews").insert(payload);
+      if (error) throw error;
+
+      form.reset();
+      setFeedback("Дякуємо! Відгук надіслано й він з’явиться на сайті після перевірки.", false);
+    } catch (error) {
+      console.error("Review submission failed:", error);
+      setFeedback("Не вдалося надіслати відгук. Спробуйте ще раз пізніше.", true);
+    } finally {
+      if (submit) {
+        submit.disabled = false;
+        submit.innerHTML = oldLabel;
+      }
+    }
+  });
+
+  loadApprovedReviews();
+})();
+</script>
+
 <script>
 (function () {
   const form = document.getElementById("bookingForm");
