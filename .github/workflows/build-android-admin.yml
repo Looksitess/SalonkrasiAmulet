@@ -1,0 +1,48 @@
+name: Build Amulet Admin Android
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - 'android-admin/**'
+      - '.github/workflows/build-android-admin.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: android-admin
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+
+      - name: Set up Android SDK
+        uses: android-actions/setup-android@v3
+
+      - name: Install Android SDK packages
+        run: sdkmanager "platforms;android-35" "build-tools;35.0.0"
+
+      - name: Set up Gradle
+        uses: gradle/actions/setup-gradle@v4
+        with:
+          gradle-version: '8.9'
+
+      - name: Build release bundle
+        run: gradle bundleRelease --no-daemon
+
+      - name: Upload AAB artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: amulet-admin-release-aab
+          path: android-admin/app/build/outputs/bundle/release/app-release.aab
+          if-no-files-found: error
