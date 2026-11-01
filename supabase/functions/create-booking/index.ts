@@ -1,5 +1,5 @@
 import { createClient } from "npm:@supabase/supabase-js@2";
-import { validateBookingPayload } from "./validation.ts";
+import { bookingRateLimitKey, validateBookingPayload } from "./validation.ts";
 
 const cors = {
   "Access-Control-Allow-Origin": "*",
@@ -113,6 +113,25 @@ Deno.serve(async (req) => {
       }
     }
 
+    const rateLimitKey = await bookingRateLimitKey(salon_slug, phone, secretKey);
+    const { data: rateAllowed, error: rateLimitError } = await supabase.rpc(
+      "consume_booking_rate_limit",
+      {
+        p_key_hash: rateLimitKey,
+        p_limit: 5,
+        p_window_seconds: 600,
+      },
+    );
+
+    if (rateLimitError) throw rateLimitError;
+    if (rateAllowed !== true) {
+      return json(
+        { ok: false, error: "Забагато заявок із цього номера. Спробуйте трохи пізніше." },
+        429,
+        { "Retry-After": "600" },
+      );
+    }
+
     const { data: availability, error: availabilityError } = await supabase.rpc(
       "get_public_available_times",
       { p_booking_date: booking_date, p_master_id: slot.id, p_salon_slug: salon_slug },
@@ -166,6 +185,13 @@ Deno.serve(async (req) => {
   }
 });
 
-function json(data: unknown, status = 200) {
-  return new Response(JSON.stringify(data), { status, headers: cors });
+function json(
+  data: unknown,
+  status = 200,
+  extraHeaders: Record<string, string> = {},
+) {
+  return new Response(JSON.stringify(data), {
+    status,
+    headers: { ...cors, ...extraHeaders },
+  });
 }
