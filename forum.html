@@ -43,7 +43,7 @@
 <section class="panel" id="forumFilters">
 <h2>Знайти обговорення</h2>
 <div class="filters">
-<div class="field search-field"><label for="searchInput">Пошук</label><input id="searchInput" type="search" maxlength="80" placeholder="Назва, текст теми або автор…"></div>
+<div class="field search-field"><label for="searchInput">Пошук</label><input id="searchInput" type="search" maxlength="80" placeholder="Назва, текст теми, відповіді або автор…"></div>
 <div class="field"><label for="categoryFilter">Категорія</label><select id="categoryFilter"><option value="">Усі категорії</option><option>Загальне</option><option>Догляд і краса</option><option>Питання майстрам</option><option>Манікюр і педикюр</option><option>Волосся</option></select></div>
 <div class="field"><label for="sortFilter">Сортування</label><select id="sortFilter"><option value="active">Остання активність</option><option value="newest">Спочатку нові</option><option value="oldest">Спочатку старі</option><option value="popular">Найбільше відповідей</option></select></div>
 </div>
@@ -75,18 +75,18 @@ async function logout(){await db.auth.signOut();session=null;document.getElement
 async function createTopic(){if(!session)return;const title=document.getElementById("topicTitle").value.trim(),body=document.getElementById("topicBody").value.trim(),category=document.getElementById("topicCategory").value;if(title.length<4||body.length<10){msg("accountMessage","Назва має містити від 4 символів, повідомлення — від 10.",false);return}const b=document.getElementById("topicSubmit");b.disabled=true;try{const r=await db.from("forum_topics").insert({title,body,category,author_id:session.user.id,author_name:currentName,status:"published"});if(r.error)throw r.error;document.getElementById("topicTitle").value="";document.getElementById("topicBody").value="";msg("accountMessage","Тему опубліковано.",true);page=1;await loadTopics()}catch(e){msg("accountMessage","Не вдалося опублікувати тему: "+e.message,false)}finally{b.disabled=false}}
 async function replyTo(id){if(!session){document.getElementById("accountPanel").scrollIntoView({behavior:"smooth"});msg("accountMessage","Увійдіть або створіть акаунт, щоб відповісти.",false);return}const form=document.getElementById("replyForm-"+id);if(!form)return;form.classList.toggle("open");if(form.classList.contains("open"))form.querySelector("textarea").focus()}
 async function sendReply(id){if(!session)return;const form=document.getElementById("replyForm-"+id),area=form.querySelector("textarea"),body=area.value.trim();if(body.length<2){area.focus();return}const btn=form.querySelector("button");btn.disabled=true;try{const r=await db.from("forum_posts").insert({topic_id:id,body,author_id:session.user.id,author_name:currentName,status:"published"});if(r.error)throw r.error;area.value="";form.classList.remove("open");delete replyCache[id];await loadTopics();await toggleReplies(id,true)}catch(e){msg("accountMessage","Не вдалося додати відповідь: "+e.message,false)}finally{btn.disabled=false}}
-function safeSearchValue(value){return value.replace(/[,%()_*]/g," ").replace(/\s+/g," ").trim().slice(0,80)}
+function safeSearchValue(value){return value.replace(/[,%()_*"']/g," ").replace(/\s+/g," ").trim().slice(0,80)}
 function sortRows(rows,mode){const copy=rows.slice();if(mode==="oldest")copy.sort((a,b)=>new Date(a.created_at)-new Date(b.created_at));else if(mode==="popular")copy.sort((a,b)=>(postCounts[b.id]||0)-(postCounts[a.id]||0)||new Date(b.updated_at)-new Date(a.updated_at));else if(mode==="newest")copy.sort((a,b)=>new Date(b.created_at)-new Date(a.created_at));else copy.sort((a,b)=>new Date(b.updated_at)-new Date(a.updated_at));return copy}
 async function loadTopics(){if(loading)return;loading=true;const box=document.getElementById("topics");box.classList.add("loading");box.innerHTML='<div class="empty">Шукаємо обговорення…</div>';document.getElementById("pager").innerHTML="";try{
 let query=db.from("forum_topics").select("id,title,category,body,author_id,author_name,created_at,updated_at,is_locked,forum_posts(count)",{count:"exact"}).eq("status","published");
 const category=document.getElementById("categoryFilter").value;
 const search=safeSearchValue(document.getElementById("searchInput").value);
 if(category)query=query.eq("category",category);
-if(search){const pattern="%"+search+"%";query=query.or("title.ilike."+pattern+",body.ilike."+pattern+",author_name.ilike."+pattern)}
 if(document.getElementById("mineFilter").checked&&session)query=query.eq("author_id",session.user.id);
 if(document.getElementById("sortFilter").value==="oldest")query=query.order("created_at",{ascending:true});else query=query.order("updated_at",{ascending:false});
 const r=await query.range(0,TOPIC_CAP-1);if(r.error)throw r.error;
-topicRows=r.data||[];postCounts={};
+let replyMatches=new Set();if(search){const pattern="%"+search+"%";const pr=await db.from("forum_posts").select("topic_id").eq("status","published").or("body.ilike."+pattern+",author_name.ilike."+pattern).limit(3000);if(pr.error)throw pr.error;replyMatches=new Set((pr.data||[]).map(p=>p.topic_id))}
+topicRows=r.data||[];if(search)topicRows=topicRows.filter(t=>[t.title,t.body,t.author_name].some(v=>String(v||"").toLocaleLowerCase("uk-UA").includes(search.toLocaleLowerCase("uk-UA")))||replyMatches.has(t.id));postCounts={};
 topicRows.forEach(t=>{postCounts[t.id]=Number((t.forum_posts||[])[0]?.count||0)});
 if(document.getElementById("unansweredFilter").checked)topicRows=topicRows.filter(t=>(postCounts[t.id]||0)===0);
 topicRows=sortRows(topicRows,document.getElementById("sortFilter").value);
