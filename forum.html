@@ -173,27 +173,33 @@ button:hover,.button:hover{
 .message.err{box-shadow:0 0 14px rgba(233,79,139,.28)}
 
 
-/* Background only: soft underwater violet sun rays */
+
+/* Background only: dense, saturated violet underwater rays from page center */
 body{
-  background-color:#0b0a10 !important;
+  background-color:#09070f !important;
   background-image:
-    radial-gradient(ellipse 52% 34% at 67% -5%,
-      rgba(205,151,255,.34) 0%,
-      rgba(160,91,225,.20) 24%,
-      rgba(111,55,164,.08) 53%,
-      transparent 78%),
+    radial-gradient(ellipse 25% 21% at 50% 45%,
+      rgba(239,195,255,.70) 0%,
+      rgba(210,118,255,.58) 15%,
+      rgba(165,62,255,.34) 38%,
+      rgba(111,37,199,.12) 66%,
+      transparent 100%),
     repeating-conic-gradient(
-      from 208deg at 67% -7%,
-      transparent 0deg 10deg,
-      rgba(195,130,255,.105) 10.6deg 11.3deg,
-      rgba(155,91,225,.045) 11.8deg 13deg,
-      transparent 14deg 22deg
+      from 0deg at 50% 45%,
+      transparent 0deg 2.4deg,
+      rgba(220,155,255,.25) 2.55deg 2.95deg,
+      rgba(174,90,255,.17) 3.05deg 3.35deg,
+      transparent 3.55deg 4.0deg,
+      rgba(193,116,255,.12) 4.1deg 4.25deg,
+      transparent 4.45deg 5.0deg
     ),
-    radial-gradient(ellipse 44% 54% at 88% 38%,
-      rgba(112,61,159,.12), transparent 76%),
-    radial-gradient(ellipse 48% 58% at 8% 84%,
-      rgba(91,53,139,.10), transparent 76%),
-    linear-gradient(180deg,#111019 0%,#0d0b12 58%,#09080d 100%) !important;
+    radial-gradient(ellipse 70% 62% at 50% 45%,
+      rgba(116,43,195,.22), transparent 76%),
+    radial-gradient(ellipse 58% 50% at 8% 82%,
+      rgba(95,39,163,.14), transparent 76%),
+    radial-gradient(ellipse 58% 50% at 92% 16%,
+      rgba(135,47,211,.17), transparent 78%),
+    linear-gradient(180deg,#100b18 0%,#0b0811 54%,#08070d 100%) !important;
   background-attachment:fixed !important;
   background-size:cover !important;
 }
