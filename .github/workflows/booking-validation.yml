@@ -1,0 +1,30 @@
+name: Booking validation tests
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "supabase/functions/create-booking/**"
+      - ".github/workflows/booking-validation.yml"
+  pull_request:
+    paths:
+      - "supabase/functions/create-booking/**"
+      - ".github/workflows/booking-validation.yml"
+
+permissions:
+  contents: read
+
+jobs:
+  booking-validation:
+    name: Validate public booking payloads
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+      - name: Set up Deno
+        uses: denoland/setup-deno@v2
+        with:
+          deno-version: v2.x
+          cache: true
+      - name: Run booking validation tests
+        run: deno test supabase/functions/create-booking/index_test.ts
