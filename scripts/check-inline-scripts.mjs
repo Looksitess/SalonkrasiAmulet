@@ -6,6 +6,7 @@ const htmlFiles = [
   "admin/index.html",
   "admin/reviews.html",
   "admin/forum.html",
+  "admin/services.html",
   "forum.html",
 ];
 const jsFiles = ["community-reviews.js"];
