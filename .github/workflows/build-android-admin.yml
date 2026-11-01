@@ -96,6 +96,8 @@ jobs:
 
           test -s "$KEYSTORE"
           keytool -list -keystore "$KEYSTORE" -storepass "$STORE_PASSWORD" -alias "$ALIAS" >/dev/null
+          echo "::add-mask::$STORE_PASSWORD"
+          echo "::add-mask::$KEY_PASSWORD"
           echo "keystore=$KEYSTORE" >> "$GITHUB_OUTPUT"
           echo "store_password=$STORE_PASSWORD" >> "$GITHUB_OUTPUT"
           echo "key_password=$KEY_PASSWORD" >> "$GITHUB_OUTPUT"
@@ -158,7 +160,7 @@ jobs:
           name: amulet-admin-play-package
           path: android-admin/play-package/
           if-no-files-found: error
-          retention-days: 30
+          retention-days: 1
 
       - name: Upload build reports if build fails
         if: failure()
