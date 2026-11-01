@@ -2,6 +2,7 @@ import { validateBookingPayload } from "./validation.ts";
 
 const now = new Date("2026-11-01T08:00:00.000Z"); // 10:00 in Europe/Kyiv
 const validPayload = {
+  salon_slug: "amulet",
   client_name: "Олена",
   phone: "+380 67 123 45 67",
   service_name: "Манікюр / педикюр",
@@ -62,4 +63,9 @@ Deno.test("rejects a too-long client name instead of silently truncating it", ()
 Deno.test("rejects a too-long comment instead of silently truncating it", () => {
   const result = validateBookingPayload({ ...validPayload, comment: "x".repeat(501) }, now);
   assert(!result.ok && result.status === 400, "Expected overlong comment to fail");
+});
+
+Deno.test("rejects a malformed salon slug", () => {
+  const result = validateBookingPayload({ ...validPayload, salon_slug: "../other-salon" }, now);
+  assert(!result.ok && result.status === 400, "Expected invalid salon slug to fail");
 });
