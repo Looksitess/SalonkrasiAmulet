@@ -31,6 +31,7 @@ Deno.serve(async (req) => {
     }
 
     const {
+      salon_slug,
       client_name,
       phone,
       service_name,
@@ -54,7 +55,7 @@ Deno.serve(async (req) => {
     const { data: salon, error: salonError } = await supabase
       .from("salons")
       .select("id")
-      .eq("slug", "amulet")
+      .eq("slug", salon_slug)
       .single();
 
     if (salonError || !salon) throw new Error("Configured salon was not found");
@@ -84,9 +85,37 @@ Deno.serve(async (req) => {
       return json({ ok: false, error: "Цей майстер зараз не приймає записи." }, 409);
     }
 
+    const { data: configuredServices, error: servicesError } = await supabase
+      .from("services")
+      .select("id, name")
+      .eq("salon_id", salon.id)
+      .eq("active", true);
+    if (servicesError) throw servicesError;
+
+    let selectedService: { id: string; name: string } | null = null;
+    if ((configuredServices ?? []).length > 0) {
+      selectedService = configuredServices.find((service: { id: string; name: string }) =>
+        service.name === service_name
+      ) ?? null;
+      if (!selectedService) {
+        return json({ ok: false, error: "Оберіть послугу з актуального каталогу салону." }, 400);
+      }
+    } else {
+      const legacyCategories = [
+        "Перукарський зал",
+        "Манікюр / педикюр",
+        "Косметологія та догляд",
+        "SPA-масаж",
+        "Інше",
+      ];
+      if (!legacyCategories.includes(service_name)) {
+        return json({ ok: false, error: "Послуга недоступна для цього салону." }, 400);
+      }
+    }
+
     const { data: availability, error: availabilityError } = await supabase.rpc(
       "get_public_available_times",
-      { p_booking_date: booking_date, p_master_id: slot.id },
+      { p_booking_date: booking_date, p_master_id: slot.id, p_salon_slug: salon_slug },
     );
 
     if (availabilityError) throw availabilityError;
@@ -112,6 +141,7 @@ Deno.serve(async (req) => {
         master_id: slot.id,
         client_name,
         phone,
+        service_id: selectedService?.id ?? null,
         service_name,
         booking_date,
         booking_time,
