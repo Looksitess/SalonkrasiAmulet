@@ -115,7 +115,7 @@ Deno.serve(async (req) => {
       if (userError) throw userError;
 
       return json({ ok: true, slot_number: slot.slot_number,
-        message: "Майстра видалено. Місце №" + slot.slot_number + " знову вільне; для нового майстра створіть акаунт з новим email і паролем." });
+        message: "Майстра видалено. Місце №" + slot.slot_number + " очищено та вимкнено. Увімкніть його в адмінці, щоб додати нового майстра." });
     }
 
     if (!slot.enabled) {
