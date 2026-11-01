@@ -56,7 +56,7 @@ jobs:
           test -f app/src/main/java/com/looksitess/amuletadmin/MainActivity.java
           echo "Android project files are present."
 
-      - name: Prepare or reuse Play upload key
+      - name: Verify protected Play upload key secrets
         id: signing
         shell: bash
         env:
@@ -66,101 +66,53 @@ jobs:
           STORED_PRIVATE_KEY_PASSWORD: ${{ secrets.AMULET_UPLOAD_KEY_PASSWORD }}
         run: |
           set -euo pipefail
-          KEYSTORE="$RUNNER_TEMP/amulet-upload-key.jks"
-
-          if [[ -n "$STORED_KEY_BASE64" || -n "$STORED_KEY_PASSWORD" || -n "$STORED_KEY_ALIAS" || -n "$STORED_PRIVATE_KEY_PASSWORD" ]]; then
-            if [[ -z "$STORED_KEY_BASE64" || -z "$STORED_KEY_PASSWORD" || -z "$STORED_KEY_ALIAS" || -z "$STORED_PRIVATE_KEY_PASSWORD" ]]; then
-              echo "Upload-key secrets are incomplete. Set all four AMULET_UPLOAD_KEYSTORE_* secrets, or remove all four to create the first key." >&2
-              exit 1
-            fi
-            printf '%s' "$STORED_KEY_BASE64" | base64 --decode > "$KEYSTORE"
-            ALIAS="$STORED_KEY_ALIAS"
-            STORE_PASSWORD="$STORED_KEY_PASSWORD"
-            KEY_PASSWORD="$STORED_PRIVATE_KEY_PASSWORD"
-            echo "Reusing the saved Play upload key."
-          else
-            STORE_PASSWORD="$(openssl rand -hex 24)"
-            KEY_PASSWORD="$STORE_PASSWORD"
-            ALIAS="amuletUpload"
-            keytool -genkeypair -noprompt -v \
-              -keystore "$KEYSTORE" \
-              -storepass "$STORE_PASSWORD" \
-              -keypass "$KEY_PASSWORD" \
-              -alias "$ALIAS" \
-              -keyalg RSA \
-              -keysize 2048 \
-              -validity 10000 \
-              -dname "CN=Amulet Admin, OU=Amulet, O=Looksitess, L=Kyiv, ST=Kyiv, C=UA"
-            echo "::warning::First upload key generated. Download and securely save Amulet-Admin-upload-key.jks and KEEP-THIS-KEY.txt. For future updates, save the four values listed in the instructions as GitHub Actions secrets."
+          if [[ -z "$STORED_KEY_BASE64" || -z "$STORED_KEY_PASSWORD" || -z "$STORED_KEY_ALIAS" || -z "$STORED_PRIVATE_KEY_PASSWORD" ]]; then
+            echo "Android release build is blocked until all four AMULET_UPLOAD_KEYSTORE_* GitHub Actions secrets are configured." >&2
+            echo "This workflow will not generate or publish a signing key in a public repository." >&2
+            exit 1
           fi
 
+          KEYSTORE="$RUNNER_TEMP/amulet-upload-key.jks"
+          printf '%s' "$STORED_KEY_BASE64" | base64 --decode > "$KEYSTORE"
           test -s "$KEYSTORE"
-          keytool -list -keystore "$KEYSTORE" -storepass "$STORE_PASSWORD" -alias "$ALIAS" >/dev/null
-          echo "::add-mask::$STORE_PASSWORD"
-          echo "::add-mask::$KEY_PASSWORD"
+          keytool -list -keystore "$KEYSTORE" -storepass "$STORED_KEY_PASSWORD" -alias "$STORED_KEY_ALIAS" >/dev/null
+
+          echo "::add-mask::$STORED_KEY_PASSWORD"
+          echo "::add-mask::$STORED_PRIVATE_KEY_PASSWORD"
           echo "keystore=$KEYSTORE" >> "$GITHUB_OUTPUT"
-          echo "store_password=$STORE_PASSWORD" >> "$GITHUB_OUTPUT"
-          echo "key_password=$KEY_PASSWORD" >> "$GITHUB_OUTPUT"
-          echo "alias=$ALIAS" >> "$GITHUB_OUTPUT"
+          echo "Play upload key loaded and validated from protected Actions secrets."
 
       - name: Build signed Android App Bundle and APK
         env:
           AMULET_KEYSTORE_PATH: ${{ steps.signing.outputs.keystore }}
-          AMULET_KEYSTORE_PASSWORD: ${{ steps.signing.outputs.store_password }}
-          AMULET_KEY_ALIAS: ${{ steps.signing.outputs.alias }}
-          AMULET_KEY_PASSWORD: ${{ steps.signing.outputs.key_password }}
+          AMULET_KEYSTORE_PASSWORD: ${{ secrets.AMULET_UPLOAD_KEYSTORE_PASSWORD }}
+          AMULET_KEY_ALIAS: ${{ secrets.AMULET_UPLOAD_KEY_ALIAS }}
+          AMULET_KEY_PASSWORD: ${{ secrets.AMULET_UPLOAD_KEY_PASSWORD }}
         shell: bash
         run: gradle --no-daemon --stacktrace clean bundleRelease assembleRelease
 
-      - name: Prepare download package
+      - name: Prepare app-only download package
         shell: bash
-        env:
-          KEYSTORE: ${{ steps.signing.outputs.keystore }}
-          STORE_PASSWORD: ${{ steps.signing.outputs.store_password }}
-          KEY_PASSWORD: ${{ steps.signing.outputs.key_password }}
-          ALIAS: ${{ steps.signing.outputs.alias }}
         run: |
           set -euo pipefail
           mkdir -p play-package
           cp app/build/outputs/bundle/release/app-release.aab play-package/Amulet-Admin.aab
           cp app/build/outputs/apk/release/app-release.apk play-package/Amulet-Admin.apk
-          cp "$KEYSTORE" play-package/Amulet-Admin-upload-key.jks
-          cat > play-package/KEEP-THIS-KEY.txt <<EOF
-          AMULET ADMIN — GOOGLE PLAY UPLOAD KEY
+          cat > play-package/README.txt <<'EOF'
+          Amulet Admin signed Android package.
 
-          Application ID: com.looksitess.amuletadmin
-          Version: 1.0.0 (versionCode 1)
-
-          Keep these files and passwords private and safe:
-          - Amulet-Admin-upload-key.jks
-          - this text file
-
-          Key alias: $ALIAS
-          Keystore password: $STORE_PASSWORD
-          Key password: $KEY_PASSWORD
-
-          IMPORTANT:
-          Never lose this key. Future app updates must use the same upload key.
-
-          To reuse this key in future GitHub Actions builds, add these repository Actions secrets:
-          AMULET_UPLOAD_KEYSTORE_BASE64 = Base64 text of Amulet-Admin-upload-key.jks
-          AMULET_UPLOAD_KEYSTORE_PASSWORD = Keystore password above
-          AMULET_UPLOAD_KEY_ALIAS = Key alias above
-          AMULET_UPLOAD_KEY_PASSWORD = Key password above
-
-          On Linux/macOS, get the Base64 value with:
-          base64 -w 0 Amulet-Admin-upload-key.jks
-          On Windows PowerShell:
-          [Convert]::ToBase64String([IO.File]::ReadAllBytes("Amulet-Admin-upload-key.jks"))
+          This package contains the APK and Android App Bundle only.
+          The private upload keystore and its passwords are intentionally
+          excluded and must remain in protected GitHub Actions secrets.
           EOF
 
-      - name: Upload Android app package
+      - name: Upload app-only Android package
         uses: actions/upload-artifact@v4
         with:
           name: amulet-admin-play-package
           path: android-admin/play-package/
           if-no-files-found: error
-          retention-days: 1
+          retention-days: 7
 
       - name: Upload build reports if build fails
         if: failure()
