@@ -105,6 +105,15 @@
         .review-feedback.error { color: #b42318; }
         .community-reviews { margin-top: 28px; }
         .community-review-card .review-stars { letter-spacing: 2px; }
+        .community-review-card .review-actions,.review-comment-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
+        .community-review-card .review-comments{margin-top:16px;padding-top:12px;border-top:1px solid var(--season-line)}
+        .review-comment{padding:12px;margin:9px 0;border:1px solid var(--season-line);border-radius:12px;background:rgba(255,255,255,.55)}
+        .review-comment p{white-space:pre-wrap;margin:6px 0}
+        .review-comment-form{display:none;margin-top:10px}.review-comment-form.open{display:block}
+        .review-comment-form textarea{width:100%;min-height:70px}
+        .review-action-button{border:1px solid var(--season-primary);background:var(--season-soft);border-radius:9px;padding:7px 10px;color:var(--dark);cursor:pointer}
+        .review-notification{padding:10px;border:1px solid var(--season-line);border-radius:10px;margin:8px 0;background:var(--season-soft)}
+        .pending-review{border:1px dashed var(--season-primary);padding:18px;border-radius:14px;margin:14px 0}
         .review-honeypot { position: absolute !important; left: -10000px !important; width: 1px !important; height: 1px !important; overflow: hidden !important; }
         .contacts { padding: 60px 0 80px 0; }
         .contacts-wrapper { display: grid; grid-template-columns: 1fr 1.2fr; gap: 40px; align-items: start; }
@@ -657,10 +666,33 @@ body[data-season="newyear"]{--season-primary:#e0b6b8;--season-primary-dark:#ad6e
             </div>
         </div>
         <div id="communityReviews" class="reviews-grid community-reviews" aria-live="polite"></div>
+        <div id="myReviews" class="reviews-grid community-reviews" aria-live="polite"></div>
+        <div id="reviewAccount" class="review-form-wrap glass-card">
+          <h3 class="review-form-title">Акаунт спільноти</h3>
+          <div id="reviewSignedOut">
+            <p class="review-form-note">Увійдіть або створіть акаунт, щоб залишати відгуки, відповідати, ставити реакції та керувати своїми повідомленнями.</p>
+            <div class="tabs" style="display:flex;justify-content:center;gap:8px;margin-bottom:14px">
+              <button type="button" class="btn btn-primary" id="reviewLoginTab" onclick="setReviewAuthMode('login')">Увійти</button>
+              <button type="button" class="btn btn-secondary" id="reviewSignupTab" onclick="setReviewAuthMode('signup')">Створити акаунт</button>
+            </div>
+            <div id="reviewSignupNameWrap" class="review-field" style="display:none"><label for="reviewAuthName">Ваше ім’я</label><input id="reviewAuthName" maxlength="50" autocomplete="name" placeholder="Як вас називати?"></div>
+            <div class="review-form">
+              <div class="review-field"><label for="reviewAuthEmail">Email</label><input id="reviewAuthEmail" type="email" autocomplete="email" maxlength="254"></div>
+              <div class="review-field"><label for="reviewAuthPassword">Пароль</label><input id="reviewAuthPassword" type="password" minlength="8" autocomplete="current-password"></div>
+              <div class="review-submit-row"><button type="button" class="btn btn-primary" id="reviewAuthSubmit" onclick="submitReviewAuth()">Увійти</button></div>
+            </div>
+          </div>
+          <div id="reviewSignedIn" style="display:none">
+            <p class="review-form-note">Ви увійшли як <strong id="reviewSignedName"></strong> · <span id="reviewSignedEmail"></span></p>
+            <div class="review-submit-row"><button type="button" class="btn btn-secondary" onclick="signOutReviewAccount()">Вийти</button></div>
+          </div>
+          <p id="reviewAccountFeedback" class="review-feedback" role="status" aria-live="polite"></p>
+          <div id="reviewNotificationArea"></div>
+        </div>
 
         <div class="review-form-wrap glass-card">
             <h3 class="review-form-title">Залишити відгук</h3>
-            <p class="review-form-note">Поділіться враженнями про наш салон. Дякуємо за вашу думку!</p>
+            <p class="review-form-note">Залишати та редагувати відгуки можна після входу. Нові й змінені відгуки з’являються після перевірки адміністрацією.</p>
             <form id="customerReviewForm" class="review-form">
                 <div class="review-field">
                     <label for="reviewCustomerName">Ваше ім’я</label>
@@ -686,7 +718,7 @@ body[data-season="newyear"]{--season-primary:#e0b6b8;--season-primary-dark:#ad6e
                     <input id="reviewCompany" name="company" type="text" tabindex="-1" autocomplete="off">
                 </div>
                 <div class="review-submit-row">
-                    <button class="btn btn-primary" type="submit"><i class="fa-solid fa-paper-plane"></i> Надіслати відгук</button>
+                    <button class="btn btn-primary" id="reviewSubmitButton" type="submit"><i class="fa-solid fa-paper-plane"></i> Надіслати відгук</button>
                     <p id="reviewFeedback" class="review-feedback" role="status" aria-live="polite"></p>
                 </div>
             </form>
@@ -1022,7 +1054,7 @@ body[data-season="newyear"]{--season-primary:#e0b6b8;--season-primary-dark:#ad6e
   const client = window.supabase.createClient(
     cfg.SUPABASE_URL,
     cfg.SUPABASE_PUBLISHABLE_KEY,
-    { auth: { persistSession: false } }
+    { auth: { persistSession: true, autoRefreshToken: true, detectSessionInUrl: true } }
   );
   window.amuletSupabase = client;
 
@@ -1387,5 +1419,6 @@ document.querySelectorAll('.gallery-item img').forEach(function(img){
 </script>
 <!-- AMULET SEASONAL LOGIC END -->
 
+<script id="amulet-community-reviews" src="./community-reviews.js"></script>
 </body>
 </html>
