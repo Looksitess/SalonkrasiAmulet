@@ -53,3 +53,13 @@ Deno.test("rejects malformed request bodies", () => {
   const result = validateBookingPayload([], now);
   assert(!result.ok && result.status === 400, "Expected array payload to fail");
 });
+
+Deno.test("rejects a too-long client name instead of silently truncating it", () => {
+  const result = validateBookingPayload({ ...validPayload, client_name: "A".repeat(81) }, now);
+  assert(!result.ok && result.status === 400, "Expected overlong name to fail");
+});
+
+Deno.test("rejects a too-long comment instead of silently truncating it", () => {
+  const result = validateBookingPayload({ ...validPayload, comment: "x".repeat(501) }, now);
+  assert(!result.ok && result.status === 400, "Expected overlong comment to fail");
+});
