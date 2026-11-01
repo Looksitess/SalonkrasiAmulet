@@ -326,7 +326,8 @@
 */
 window.AMULET_CONFIG = {
   SUPABASE_URL: "https://hqbjlvryecmqemmajqyo.supabase.co",
-  SUPABASE_PUBLISHABLE_KEY: "sb_publishable_o4SMwGNId-e5tqfTSrKWfQ_f2Ftn5j7"
+  SUPABASE_PUBLISHABLE_KEY: "sb_publishable_o4SMwGNId-e5tqfTSrKWfQ_f2Ftn5j7",
+  SALON_SLUG: "amulet"
 };
 </script>
 
@@ -1089,6 +1090,7 @@ body[data-season="newyear"]{--season-primary:#e0b6b8;--season-primary-dark:#ad6e
     event.stopImmediatePropagation();
 
     const booking = {
+      salon_slug: cfg.SALON_SLUG || "amulet",
       client_name: fieldValue(["name","client_name","clientName"]),
       phone: fieldValue(["phone","tel","client_phone"]),
       service_name: fieldValue(["service","service_name","services"]),
@@ -1133,126 +1135,7 @@ body[data-season="newyear"]{--season-primary:#e0b6b8;--season-primary-dark:#ad6e
 })();
 </script>
 
-<script>
-(function () {
-  const form = document.getElementById("customerReviewForm");
-  const feedback = document.getElementById("reviewFeedback");
-  const submit = form && form.querySelector('button[type="submit"]');
-  const reviewsContainer = document.getElementById("communityReviews");
-  if (!form) return;
 
-  function setFeedback(message, isError) {
-    if (!feedback) return;
-    feedback.textContent = message;
-    feedback.classList.toggle("error", Boolean(isError));
-  }
-
-  async function loadApprovedReviews() {
-    const client = window.amuletSupabase;
-    if (!client || !reviewsContainer) return;
-
-    const { data, error } = await client
-      .from("customer_reviews")
-      .select("id,customer_name,rating,review_text,created_at")
-      .eq("status", "approved")
-      .order("created_at", { ascending: false })
-      .limit(9);
-
-    if (error) {
-      console.warn("Could not load approved customer reviews:", error.message);
-      return;
-    }
-
-    reviewsContainer.replaceChildren();
-    (data || []).forEach(function (review) {
-      const card = document.createElement("article");
-      card.className = "review-card glass-card community-review-card";
-
-      const stars = document.createElement("div");
-      stars.className = "review-stars";
-      stars.textContent = "★".repeat(Number(review.rating) || 0);
-      stars.setAttribute("aria-label", "Оцінка: " + review.rating + " з 5");
-
-      const text = document.createElement("p");
-      text.className = "review-text";
-      text.textContent = review.review_text || "";
-
-      const author = document.createElement("div");
-      author.className = "review-author";
-
-      const info = document.createElement("div");
-      info.className = "author-info";
-
-      const name = document.createElement("h4");
-      name.textContent = review.customer_name || "Відвідувач";
-
-      const date = document.createElement("span");
-      date.textContent = review.created_at
-        ? new Date(review.created_at).toLocaleDateString("uk-UA")
-        : "";
-
-      info.append(name, date);
-      author.append(info);
-      card.append(stars, text, author);
-      reviewsContainer.appendChild(card);
-    });
-  }
-
-  form.addEventListener("submit", async function (event) {
-    event.preventDefault();
-    setFeedback("", false);
-
-    const values = new FormData(form);
-    if (String(values.get("company") || "").trim()) {
-      form.reset();
-      return;
-    }
-
-    const payload = {
-      customer_name: String(values.get("customer_name") || "").trim(),
-      rating: Number(values.get("rating")),
-      review_text: String(values.get("review_text") || "").trim()
-    };
-
-    if (payload.customer_name.length < 2 || payload.customer_name.length > 60 ||
-        !Number.isInteger(payload.rating) || payload.rating < 1 || payload.rating > 5 ||
-        payload.review_text.length < 5 || payload.review_text.length > 1500) {
-      setFeedback("Перевірте ім’я, оцінку та текст відгуку.", true);
-      return;
-    }
-
-    const client = window.amuletSupabase;
-    if (!client) {
-      setFeedback("Форма тимчасово недоступна. Спробуйте трохи пізніше.", true);
-      return;
-    }
-
-    const oldLabel = submit ? submit.innerHTML : "";
-    if (submit) {
-      submit.disabled = true;
-      submit.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Надсилання…';
-    }
-
-    try {
-      const { error } = await client.from("customer_reviews").insert(payload);
-      if (error) throw error;
-
-      form.reset();
-      setFeedback("Дякуємо! Відгук надіслано й він з’явиться на сайті після перевірки.", false);
-    } catch (error) {
-      console.error("Review submission failed:", error);
-      setFeedback("Не вдалося надіслати відгук. Спробуйте ще раз пізніше.", true);
-    } finally {
-      if (submit) {
-        submit.disabled = false;
-        submit.innerHTML = oldLabel;
-      }
-    }
-  });
-
-  loadApprovedReviews();
-})();
-</script>
 
 <script>
 (function () {
@@ -1326,7 +1209,8 @@ body[data-season="newyear"]{--season-primary:#e0b6b8;--season-primary-dark:#ad6e
     resetTimes("Завантаження вільного часу…");
     const { data, error } = await client.rpc("get_public_available_times", {
       p_booking_date: date,
-      p_master_id: masterId
+      p_master_id: masterId,
+      p_salon_slug: (window.AMULET_CONFIG && window.AMULET_CONFIG.SALON_SLUG) || "amulet"
     });
 
     if (currentRequest !== requestNumber) return;
@@ -1384,10 +1268,10 @@ document.querySelectorAll('.gallery-item img').forEach(function(img){
       select.innerHTML = '<option value="">Запис тимчасово недоступний</option>';
       return;
     }
-    const { data, error } = await client
-      .from("public_masters")
-      .select("id, slot_number, display_name, specialty")
-      .order("slot_number", { ascending: true });
+    const salonSlug = (window.AMULET_CONFIG && window.AMULET_CONFIG.SALON_SLUG) || "amulet";
+    const { data, error } = await client.rpc("get_public_masters", {
+      p_salon_slug: salonSlug
+    });
 
     if (error || !data || !data.length) {
       console.error("Could not load masters", error);
@@ -1404,10 +1288,40 @@ document.querySelectorAll('.gallery-item img').forEach(function(img){
     });
   }
 
+  async function loadServices() {
+    const serviceSelect = form.querySelector('[name="service"]');
+    if (!serviceSelect) return;
+    const salonSlug = (window.AMULET_CONFIG && window.AMULET_CONFIG.SALON_SLUG) || "amulet";
+    const { data, error } = await client.rpc("get_public_services", {
+      p_salon_slug: salonSlug
+    });
+    if (error) {
+      console.warn("Could not load salon services:", error.message);
+      return;
+    }
+    if (!Array.isArray(data) || data.length === 0) return;
+
+    const selected = serviceSelect.value;
+    serviceSelect.replaceChildren(new Option("Оберіть послугу", ""));
+    data.forEach(function(service) {
+      const option = document.createElement("option");
+      option.value = service.name;
+      const price = service.price === null || service.price === undefined
+        ? ""
+        : " — " + new Intl.NumberFormat("uk-UA").format(Number(service.price)) + " грн";
+      option.textContent = service.name + price;
+      serviceSelect.appendChild(option);
+    });
+    if (data.some(function(service) { return service.name === selected; })) {
+      serviceSelect.value = selected;
+    }
+  }
+
   select.addEventListener("change", () => {
     if (dateInput && dateInput.value) dateInput.dispatchEvent(new Event("change"));
   });
   loadMasters();
+  loadServices();
 })();
 </script>
 
