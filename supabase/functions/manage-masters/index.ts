@@ -40,11 +40,12 @@ Deno.serve(async (req) => {
 
     const body = await req.json();
     const action = String(body.action ?? "");
-    if (action !== "create_master") {
+    if (action !== "create_master" && action !== "remove_master") {
       return json({ ok: false, error: "Невідома дія." }, 400);
     }
 
     const slotId = clean(body.slot_id);
+    if (!slotId) return json({ ok: false, error: "Не вказано місце майстра." }, 400);
     const email = clean(body.email).toLowerCase();
     const password = String(body.password ?? "");
     const fullName = clean(body.full_name);
@@ -70,6 +71,42 @@ Deno.serve(async (req) => {
 
     if (slotError) throw slotError;
     if (!slot) return json({ ok: false, error: "Місце майстра не знайдено." }, 404);
+
+    if (action === "remove_master") {
+      const { data: profiles, error: profilesError } = await adminClient
+        .from("profiles").select("id, role, is_admin, master_slot_id")
+        .eq("master_slot_id", slot.id);
+      if (profilesError) throw profilesError;
+      const masterProfile = (profiles || []).find((p) => p.role === "master" && !p.is_admin);
+      if (!masterProfile) return json({ ok: false, error: "У цьому місці немає звичайного акаунта майстра." }, 404);
+
+      const today = new Date().toISOString().slice(0, 10);
+      const { data: futureBookings, error: bookingsError } = await adminClient
+        .from("bookings").select("id").eq("master_id", slot.id)
+        .gte("booking_date", today).in("status", ["new", "confirmed"]).limit(1);
+      if (bookingsError) throw bookingsError;
+      if (futureBookings && futureBookings.length) {
+        return json({ ok: false, error: "У майстра є майбутні активні записи. Спочатку перенесіть або скасуйте їх, потім видаліть майстра." }, 409);
+      }
+
+      const { error: scheduleError } = await adminClient.from("work_schedule").delete().eq("master_id", slot.id);
+      if (scheduleError) throw scheduleError;
+      const { error: blocksError } = await adminClient.from("blocked_slots").delete().eq("master_id", slot.id);
+      if (blocksError) throw blocksError;
+      const { error: resetError } = await adminClient.from("master_slots").update({
+        profile_id: null, enabled: false, display_name: "Вільне місце " + slot.slot_number,
+        phone: null, specialty: null, updated_at: new Date().toISOString()
+      }).eq("id", slot.id);
+      if (resetError) throw resetError;
+      const { error: profileError } = await adminClient.from("profiles").delete().eq("id", masterProfile.id);
+      if (profileError) throw profileError;
+      const { error: userError } = await adminClient.auth.admin.deleteUser(masterProfile.id);
+      if (userError) throw userError;
+
+      return json({ ok: true, slot_number: slot.slot_number,
+        message: "Майстра видалено. Місце №" + slot.slot_number + " знову вільне; для нового майстра створіть акаунт з новим email і паролем." });
+    }
+
     if (slot.profile_id) return json({ ok: false, error: "До цього місця вже прив’язаний акаунт." }, 409);
 
     const { data: userData, error: createUserError } = await adminClient.auth.admin.createUser({
