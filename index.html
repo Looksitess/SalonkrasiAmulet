@@ -117,6 +117,7 @@
         .map-container iframe { width: 100%; height: 100%; border: 0; }
         footer { background: var(--dark); color: #a8a095; padding: 30px 0; text-align: center; font-size: 14px; border-top: 1px solid rgba(197, 168, 128, 0.1); }
         @media (max-width: 992px) { .contacts-wrapper { grid-template-columns: 1fr; } .map-container { height: 350px; } }
+        .forum-nav-link{white-space:nowrap}@media(max-width:520px){.forum-nav-link{margin-right:0;font-size:13px;padding:8px 11px}}
         @media (max-width: 768px) { h1 { font-size: 32px; } .hero p { font-size: 15px; } .header-contacts .btn { display: none; } .offers-banner { flex-direction: column; text-align: center; } .services-grid { grid-template-columns: 1fr; } }
     
       .menu-toggle{display:none;border:0;background:#f5f1eb;width:42px;height:42px;border-radius:12px;cursor:pointer;font-size:18px}
@@ -386,6 +387,7 @@ body[data-season="newyear"]{--season-primary:#e0b6b8;--season-primary-dark:#ad6e
     <header>
         <div class="container">
             <a href="#" class="logo"><span class="logo-badge"><i class="fa-solid fa-gem"></i></span> Амулет</a>
+            <a class="forum-nav-link" href="./forum.html" style="display:inline-block;padding:10px 16px;border-radius:999px;background:#29445f;color:#fff;text-decoration:none;font-weight:700;margin-left:auto;margin-right:18px">Форум</a>
             <div class="header-contacts">
                 <a href="tel:0680006311" class="phone-link"><i class="fa-solid fa-phone"></i> 068 000 6311</a>
                 <a href="#booking" data-booking class="btn btn-primary">Записатися</a>
