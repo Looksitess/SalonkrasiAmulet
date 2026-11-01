@@ -498,8 +498,8 @@ let adminBookingSlots = [];
 async function loadBookings() {
   const box = document.getElementById("bookings");
   box.innerHTML = '<div class="empty">Завантаження заявок…</div>';
-  const [bookingRes, slotsRes] = await Promise.all([
-    supabaseClient.from("bookings").select("*").order("booking_date", {ascending:false}).order("booking_time", {ascending:false}),
+  const [bookingRes, slotsRes, profilesRes] = await Promise.all([
+    supabaseClient.from("bookings").select("*").order("created_at", {ascending:false}),
     supabaseClient.from("master_slots").select("id,slot_number,display_name,profile_id,enabled").order("slot_number"),
     supabaseClient.from("profiles").select("id,active,role,is_admin")
   ]);
