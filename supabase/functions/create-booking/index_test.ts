@@ -1,4 +1,4 @@
-import { validateBookingPayload } from "./validation.ts";
+import { bookingRateLimitKey, validateBookingPayload } from "./validation.ts";
 
 const now = new Date("2026-11-01T08:00:00.000Z"); // 10:00 in Europe/Kyiv
 const validPayload = {
@@ -68,4 +68,16 @@ Deno.test("rejects a too-long comment instead of silently truncating it", () => 
 Deno.test("rejects a malformed salon slug", () => {
   const result = validateBookingPayload({ ...validPayload, salon_slug: "../other-salon" }, now);
   assert(!result.ok && result.status === 400, "Expected invalid salon slug to fail");
+});
+
+Deno.test("generates a stable HMAC rate-limit key without exposing a phone number", async () => {
+  const first = await bookingRateLimitKey("amulet", "+380 67 123 45 67", "server-only-test-secret");
+  const second = await bookingRateLimitKey("amulet", "380671234567", "server-only-test-secret");
+  const otherPhone = await bookingRateLimitKey("amulet", "380671234568", "server-only-test-secret");
+  const otherSalon = await bookingRateLimitKey("other-salon", "380671234567", "server-only-test-secret");
+
+  assert(first === second, "Expected equivalent phone formats to share a key");
+  assert(first !== otherPhone, "Expected different phone numbers to have different keys");
+  assert(first !== otherSalon, "Expected keys to be isolated by salon");
+  assert(/^[0-9a-f]{64}$/.test(first), "Expected a 64-character SHA-256 HMAC hex digest");
 });
