@@ -38,19 +38,36 @@ Deno.serve(async (req) => {
       return json({ ok: false, error: "Недостатньо прав адміністратора." }, 403);
     }
 
-    const body = await req.json();
-    const action = String(body.action ?? "");
+    const rawBody = await req.text();
+    if (rawBody.length > 4096) {
+      return json({ ok: false, error: "Занадто великий запит." }, 413);
+    }
+
+    let body: Record<string, unknown>;
+    try {
+      const parsed = JSON.parse(rawBody);
+      if (!parsed || typeof parsed !== "object" || Array.isArray(parsed)) {
+        return json({ ok: false, error: "Некоректні дані запиту." }, 400);
+      }
+      body = parsed as Record<string, unknown>;
+    } catch {
+      return json({ ok: false, error: "Некоректний формат запиту." }, 400);
+    }
+
+    const action = clean(body.action, 40);
     if (action !== "create_master" && action !== "remove_master") {
       return json({ ok: false, error: "Невідома дія." }, 400);
     }
 
-    const slotId = clean(body.slot_id);
-    if (!slotId) return json({ ok: false, error: "Не вказано місце майстра." }, 400);
-    const email = clean(body.email).toLowerCase();
-    const password = String(body.password ?? "");
-    const fullName = clean(body.full_name);
-    const phone = clean(body.phone);
-    const specialty = clean(body.specialty);
+    const slotId = clean(body.slot_id, 64);
+    if (!/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(slotId)) {
+      return json({ ok: false, error: "Некоректний ідентифікатор місця майстра." }, 400);
+    }
+    const email = clean(body.email, 254).toLowerCase();
+    const password = typeof body.password === "string" ? body.password : "";
+    const fullName = clean(body.full_name, 80);
+    const phone = clean(body.phone, 25);
+    const specialty = clean(body.specialty, 120);
 
     if (!slotId) {
       return json({ ok: false, error: "Не вказано місце майстра." }, 400);
@@ -101,6 +118,9 @@ Deno.serve(async (req) => {
         message: "Майстра видалено. Місце №" + slot.slot_number + " знову вільне; для нового майстра створіть акаунт з новим email і паролем." });
     }
 
+    if (!slot.enabled) {
+      return json({ ok: false, error: "Спочатку увімкніть це місце для запису." }, 409);
+    }
     if (!email || !password || !fullName) {
       return json({ ok: false, error: "Вкажіть ім’я, email і тимчасовий пароль." }, 400);
     }
@@ -140,7 +160,7 @@ Deno.serve(async (req) => {
       });
       if (profileError) throw profileError;
 
-      const { error: slotUpdateError } = await adminClient
+      const { data: claimedSlot, error: slotUpdateError } = await adminClient
         .from("master_slots")
         .update({
           profile_id: newUserId,
@@ -149,8 +169,13 @@ Deno.serve(async (req) => {
           specialty: specialty || null,
           updated_at: new Date().toISOString(),
         })
-        .eq("id", slot.id);
+        .eq("id", slot.id)
+        .eq("salon_id", actorProfile.salon_id)
+        .is("profile_id", null)
+        .select("id")
+        .maybeSingle();
       if (slotUpdateError) throw slotUpdateError;
+      if (!claimedSlot) throw new Error("This master slot was already assigned by another request.");
     } catch (e) {
       await adminClient.from("profiles").delete().eq("id", newUserId);
       await adminClient.auth.admin.deleteUser(newUserId);
@@ -168,8 +193,10 @@ Deno.serve(async (req) => {
   }
 });
 
-function clean(value: unknown): string {
-  return String(value ?? "").trim().slice(0, 1000);
+function clean(value: unknown, maxLength = 1000): string {
+  if (typeof value !== "string") return "";
+  const cleaned = value.trim();
+  return cleaned.length <= maxLength ? cleaned : "";
 }
 
 function json(data: unknown, status = 200) {
