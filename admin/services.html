@@ -57,7 +57,7 @@
             <label>Назва послуги<input id="name" minlength="2" maxlength="120" required></label>
             <label>Категорія<input id="category" maxlength="80" placeholder="Манікюр, волосся, догляд"></label>
             <label>Ціна, грн<input id="price" type="number" min="0" step="0.01" inputmode="decimal" placeholder="Необов’язково"></label>
-            <label>Тривалість, хвилин<input id="duration" type="number" min="15" max="480" step="5" value="60" required></label>
+            <label>Тривалість слота<input id="duration" type="number" value="60" readonly aria-readonly="true"><span class="muted">Наразі запис працює фіксованими слотами по 60 хвилин.</span></label>
             <label class="full">Опис<textarea id="description" maxlength="500" placeholder="Короткий опис послуги"></textarea></label>
             <label><span>Статус послуги</span><span><input id="active" type="checkbox" checked style="width:auto"> Активна та доступна для запису</span></label>
           </div>
@@ -229,12 +229,11 @@
       if (!profile || !profile.salon_id) return;
 
       const name = $("name").value.trim();
-      const duration = Number($("duration").value);
+      const duration = 60;
       const rawPrice = $("price").value.trim();
       const price = rawPrice === "" ? null : Number(rawPrice);
 
       if (name.length < 2 || name.length > 120 ||
-          !Number.isInteger(duration) || duration < 15 || duration > 480 ||
           (price !== null && (!Number.isFinite(price) || price < 0))) {
         message("Перевірте назву, ціну та тривалість послуги.", true);
         return;
@@ -279,7 +278,7 @@
       $("category").value = service.category || "";
       $("description").value = service.description || "";
       $("price").value = service.price === null ? "" : String(service.price);
-      $("duration").value = String(service.duration_minutes || 60);
+      $("duration").value = "60";
       $("active").checked = !!service.active;
       $("formTitle").textContent = "Редагувати послугу";
       $("saveButton").textContent = "Зберегти зміни";
