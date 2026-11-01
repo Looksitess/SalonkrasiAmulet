@@ -220,6 +220,145 @@ body{
   body{background-attachment:scroll !important}
 }
 
+
+/* AMULET SEASONAL DESIGN — coordinated with the main website and admin */
+:root{
+  --season-primary:#c5a880;
+  --season-primary-dark:#b3946a;
+  --season-glow:rgba(197,168,128,.18);
+  --season-soft:rgba(197,168,128,.10);
+  --season-line:rgba(197,168,128,.25);
+  --forum-page-bg:#f4f0e9;
+  --forum-card:#fffefd;
+  --forum-ink:#302c27;
+  --forum-muted:#81796f;
+}
+body{
+  background:linear-gradient(145deg,var(--forum-page-bg),#fffdf9 72%) fixed !important;
+  color:var(--forum-ink) !important;
+  transition:background .6s ease,color .4s ease;
+}
+.top{
+  background:rgba(255,253,250,.94)!important;
+  border-bottom:2px solid var(--season-line)!important;
+  box-shadow:0 6px 20px rgba(67,54,39,.06)!important;
+}
+.brand{color:#302c27!important;text-shadow:none!important}
+.top-links a{
+  background:var(--season-soft)!important;
+  color:#51483d!important;
+  border:1px solid var(--season-line)!important;
+  box-shadow:none!important;
+}
+.top-links a.active{
+  background:linear-gradient(135deg,var(--season-primary),var(--season-primary-dark))!important;
+  color:#fff!important;border-color:var(--season-primary-dark)!important;
+  box-shadow:0 6px 18px var(--season-glow)!important;
+}
+.intro{
+  background:linear-gradient(125deg,#fffdf8,#f1e9dc)!important;
+  color:#302c27!important;
+  border:1.5px solid var(--season-line)!important;
+  box-shadow:0 12px 30px rgba(67,54,39,.08)!important;
+}
+.intro p{color:#6e675f!important}
+.intro h1{color:#302c27!important;text-shadow:none!important}
+.panel,.topic{
+  background:var(--forum-card)!important;
+  color:var(--forum-ink)!important;
+  border:1px solid var(--season-line)!important;
+  box-shadow:0 10px 28px rgba(67,54,39,.07)!important;
+  transition:background .6s ease,border-color .6s ease,box-shadow .3s ease;
+}
+.panel:hover,.topic:hover{
+  border-color:var(--season-primary)!important;
+  box-shadow:0 13px 32px var(--season-glow)!important;
+}
+.panel h2,.toolbar h2,.topic h3{color:#302c27!important;text-shadow:none!important}
+.muted,.meta,.account,.result-count,.pager span,.footer-note{color:var(--forum-muted)!important}
+input,textarea,select{
+  background:#fff!important;color:#302c27!important;
+  border:1px solid var(--season-line)!important;
+  box-shadow:inset 0 1px 2px rgba(67,54,39,.025)!important;
+  color-scheme:light!important;
+}
+input::placeholder,textarea::placeholder{color:#a0988d!important}
+input:focus,textarea:focus,select:focus{
+  outline:none!important;border-color:var(--season-primary)!important;
+  box-shadow:0 0 0 3px var(--season-soft)!important;
+}
+button,.button{
+  background:linear-gradient(135deg,var(--season-primary),var(--season-primary-dark))!important;
+  border:1px solid var(--season-primary-dark)!important;color:#fff!important;
+  box-shadow:0 6px 18px var(--season-glow)!important;transform:none;
+}
+button:hover,.button:hover{
+  filter:brightness(1.04)!important;transform:translateY(-1px);
+  box-shadow:0 8px 22px var(--season-glow)!important;
+}
+.soft,.tabs button{
+  background:var(--season-soft)!important;color:#51483d!important;
+  border:1px solid var(--season-line)!important;box-shadow:none!important;
+}
+.tabs button.active{
+  background:linear-gradient(135deg,var(--season-primary),var(--season-primary-dark))!important;
+  color:#fff!important;border-color:var(--season-primary-dark)!important;
+}
+.danger{background:linear-gradient(135deg,#b96d67,#9d514c)!important;border-color:#9d514c!important}
+.green{background:linear-gradient(135deg,#78a58a,#56866b)!important;border-color:#56866b!important}
+.tag{
+  background:var(--season-soft)!important;color:#665747!important;
+  border:1px solid var(--season-line)!important;box-shadow:none!important;
+}
+.tag.blue{background:#edf2f5!important;color:#58758b!important;border-color:#cfdae2!important}
+.tag.green{background:#edf5ed!important;color:#587c5d!important;border-color:#d5e3d3!important}
+.replies{background:#f9f6f1!important;border-top:1px solid var(--season-line)!important;box-shadow:none!important}
+.reply{background:#fff!important;border:1px solid var(--season-line)!important;color:var(--forum-ink)!important;box-shadow:0 4px 14px rgba(67,54,39,.045)!important}
+.empty{background:#fffdf9!important;border:1px dashed var(--season-line)!important;color:var(--forum-muted)!important;box-shadow:none!important}
+.message.ok{background:#e8f3e9!important;color:#426f50!important;border:1px solid #d1e3d2!important;box-shadow:none!important}
+.message.err{background:#f8eaea!important;color:#9c4f4b!important;border:1px solid #e8cece!important;box-shadow:none!important}
+.check{color:#51483d!important}.check input{accent-color:var(--season-primary-dark)!important}
+.seasonal-mark{
+  position:fixed;right:18px;top:92px;z-index:1400;pointer-events:none;
+  width:48px;height:48px;border-radius:50%;display:grid;place-items:center;
+  font-size:23px;background:linear-gradient(145deg,#fffdf8,#f0e6d8);
+  border:1.5px solid var(--season-line);color:var(--season-primary-dark);
+  box-shadow:0 6px 20px rgba(60,48,35,.12);opacity:.94;
+  animation:seasonFloat 4s ease-in-out infinite;
+}
+@keyframes seasonFloat{0%,100%{transform:translateY(0)}50%{transform:translateY(-5px)}}
+body[data-season="winter"]{
+  --season-primary:#c1d2df;--season-primary-dark:#829fb6;
+  --season-glow:rgba(130,159,182,.24);--season-soft:rgba(193,210,223,.26);--season-line:rgba(130,159,182,.42);
+  --forum-page-bg:#eef3f6;
+}
+body[data-season="spring"]{
+  --season-primary:#e0c1ce;--season-primary-dark:#b9859d;
+  --season-glow:rgba(185,133,157,.22);--season-soft:rgba(224,193,206,.28);--season-line:rgba(185,133,157,.40);
+  --forum-page-bg:#f8f0f4;
+}
+body[data-season="late-spring"]{
+  --season-primary:#c3d5b4;--season-primary-dark:#819f6b;
+  --season-glow:rgba(129,159,107,.22);--season-soft:rgba(195,213,180,.30);--season-line:rgba(129,159,107,.40);
+  --forum-page-bg:#f1f6ed;
+}
+body[data-season="summer"]{
+  --season-primary:#b2d9d5;--season-primary-dark:#639f9a;
+  --season-glow:rgba(99,159,154,.22);--season-soft:rgba(178,217,213,.30);--season-line:rgba(99,159,154,.40);
+  --forum-page-bg:#edf7f5;
+}
+body[data-season="autumn"]{
+  --season-primary:#e5c5a5;--season-primary-dark:#b78358;
+  --season-glow:rgba(183,131,88,.22);--season-soft:rgba(229,197,165,.30);--season-line:rgba(183,131,88,.40);
+  --forum-page-bg:#faf2e9;
+}
+body[data-season="newyear"]{
+  --season-primary:#e0b6b8;--season-primary-dark:#ad6e75;
+  --season-glow:rgba(173,110,117,.22);--season-soft:rgba(224,182,184,.28);--season-line:rgba(173,110,117,.40);
+  --forum-page-bg:#f9eff0;
+}
+@media(max-width:600px){.seasonal-mark{right:10px;top:82px;width:36px;height:36px;font-size:17px}}
+
 </style>
 </head>
 <body>
@@ -264,5 +403,25 @@ async function deletePost(id){if(!confirm("Видалити цю відпові�
 document.getElementById("search").addEventListener("input",()=>{clearTimeout(searchTimer);searchTimer=setTimeout(filterChanged,200)});
 route();
 </script>
+
+<script id="amulet-seasonal-logic">
+(function(){
+  const month=new Date().getMonth()+1;
+  let season='winter',icon='❄️',label='Зима';
+  if(month===3||month===4){season='spring';icon='🌸';label='Весна'}
+  else if(month===5){season='late-spring';icon='🌿';label='Кінець весни'}
+  else if(month>=6&&month<=8){season='summer';icon='☀️';label='Літо'}
+  else if(month>=9&&month<=11){season='autumn';icon='🍂';label='Осінь'}
+  else if(month===12){season='newyear';icon='🎄';label='Новорічний сезон'}
+  document.body.dataset.season=season;
+  const mark=document.createElement('div');
+  mark.className='seasonal-mark';
+  mark.textContent=icon;
+  mark.title=label;
+  mark.setAttribute('aria-label',label);
+  document.body.appendChild(mark);
+})();
+</script>
+
 </body>
 </html>
