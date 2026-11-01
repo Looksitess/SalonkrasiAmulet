@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Амулет — відгуки</title>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<style>
+:root{--bg:#f7f3ec;--card:#fffefa;--text:#302c27;--muted:#7b7267;--gold:#b49a78;--line:#e8ddcf;--red:#b42318;--green:#177245}
+*{box-sizing:border-box}body{margin:0;background:linear-gradient(145deg,var(--bg),#fffdf9 72%) fixed;color:var(--text);font:15px Arial,sans-serif}.container{max-width:1000px;margin:0 auto;padding:22px}.panel,.review{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:20px;margin-bottom:16px;box-shadow:0 7px 22px rgba(72,56,38,.055)}.header{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:18px}h1,h2{margin:0 0 7px}.muted{color:var(--muted)}button{border:0;border-radius:10px;padding:11px 15px;cursor:pointer;font:inherit;background:linear-gradient(135deg,#c9b391,#aa8e69);color:#fff}.secondary{background:#f0e8dc;color:var(--text);border:1px solid var(--line)}.danger{background:#b42318}.message{padding:10px 13px;border-radius:10px;margin:12px 0}.message.ok{background:#e7f5eb;color:var(--green)}.message.err{background:#fff0ef;color:var(--red)}.reviews{display:grid;gap:12px}.review-top{display:flex;justify-content:space-between;gap:12px;align-items:flex-start}.review-name{font-size:18px;font-weight:700}.stars{color:#ffc107;letter-spacing:2px;margin:7px 0}.review-text{white-space:pre-wrap;line-height:1.55;margin:10px 0 15px}.review-date{font-size:12px;color:var(--muted)}.actions{display:flex;gap:8px;flex-wrap:wrap}.login{max-width:430px;margin:8vh auto;background:#fffefa;padding:28px;border-radius:18px;box-shadow:0 8px 28px rgba(0,0,0,.06)}.login input{width:100%;padding:11px 12px;border:1px solid var(--line);border-radius:9px;margin:7px 0 12px}.empty{text-align:center;padding:30px;color:var(--muted)}
+</style>
+</head>
+<body>
+<div id="login" class="login" style="display:none">
+<h1>Амулет — відгуки</h1><p class="muted">Увійдіть як адміністратор.</p>
+<label>Email</label><input id="email" type="email" autocomplete="username" placeholder="name@example.com">
+<label>Пароль</label><input id="password" type="password" autocomplete="current-password" placeholder="Пароль">
+<button style="width:100%" onclick="login()">Увійти</button>
+<div id="loginError" class="message err" style="display:none"></div>
+</div>
+<div id="app" style="display:none"><div class="container">
+<div class="header"><div><h1>Відгуки клієнтів</h1><div class="muted">Тут можна видалити тільки спам, образи або технічний сміттєвий текст.</div></div><div class="actions"><button class="secondary" onclick="location.href='./index.html'">До адмінки</button><button class="secondary" onclick="loadReviews()">Оновити</button><button class="danger" onclick="logout()">Вийти</button></div></div>
+<div id="message"></div>
+<section class="panel"><h2>Опубліковані відгуки</h2><p class="muted">Нові відгуки з форми на сайті з'являються тут одразу. Не потрібно приховувати негативні відгуки — видаляй лише явний спам, образи або технічний сміттєвий текст.</p></section>
+<div id="reviews" class="reviews"><div class="empty">Завантаження…</div></div>
+</div></div>
+<script>
+const SUPABASE_URL="https://hqbjlvryecmqemmajqyo.supabase.co";
+const SUPABASE_KEY="sb_publishable_o4SMwGNId-e5tqfTSrKWfQ_f2Ftn5j7";
+const supabaseClient=window.supabase.createClient(SUPABASE_URL,SUPABASE_KEY);
+let session=null;
+function esc(v){return String(v??'').replaceAll('&','&amp;').replaceAll('<','&lt;').replaceAll('>','&gt;').replaceAll('"','&quot;').replaceAll("'",'&#039;')}
+function showMessage(text,ok){const e=document.getElementById('message');e.innerHTML=text?'<div class="message '+(ok?'ok':'err')+'">'+esc(text)+'</div>':''}
+function showLoginError(text){const e=document.getElementById('loginError');e.textContent=text||'';e.style.display=text?'block':'none'}
+async function route(){const r=await supabaseClient.auth.getSession();session=r.data.session||null;if(!session){document.getElementById('login').style.display='block';return}const p=await supabaseClient.from('profiles').select('id,role,is_admin,active').eq('id',session.user.id).maybeSingle();if(p.error||!p.data||!p.data.active||!(p.data.is_admin||p.data.role==='admin')){await supabaseClient.auth.signOut();document.getElementById('login').style.display='block';showLoginError('Доступ разрешён только администратору.');return}document.getElementById('app').style.display='block';await loadReviews()}
+async function login(){showLoginError('');const email=document.getElementById('email').value.trim();const password=document.getElementById('password').value;if(!email||!password)return showLoginError('Введіть email і пароль.');const r=await supabaseClient.auth.signInWithPassword({email,password});if(r.error)return showLoginError('Не вдалося увійти: '+r.error.message);await route()}
+async function logout(){await supabaseClient.auth.signOut();location.reload()}
+async function loadReviews(){const box=document.getElementById('reviews');box.innerHTML='<div class="empty">Завантаження…</div>';const r=await supabaseClient.from('customer_reviews').select('id,customer_name,rating,review_text,created_at,status').order('created_at',{ascending:false});if(r.error){box.innerHTML='<div class="empty">Не вдалося завантажити відгуки: '+esc(r.error.message)+'</div>';return}if(!r.data.length){box.innerHTML='<div class="empty">Відгуків поки немає.</div>';return}box.innerHTML=r.data.map(x=>'<article class="review"><div class="review-top"><div><div class="review-name">'+esc(x.customer_name)+'</div><div class="stars">'+('★'.repeat(Number(x.rating)))+('☆'.repeat(5-Number(x.rating)))+'</div></div><div class="review-date">'+new Date(x.created_at).toLocaleString('uk-UA')+'</div></div><div class="review-text">'+esc(x.review_text)+'</div><div class="actions"><button class="danger" onclick="deleteReview(\''+x.id+'\')">Удалить</button></div></article>').join('')}
+async function deleteReview(id){if(!confirm('Удалить этот отзыв? Удалять следует только явный спам, оскорбления или технический мусор.'))return;const r=await supabaseClient.from('customer_reviews').delete().eq('id',id);if(r.error){showMessage('Не удалось удалить отзыв: '+r.error.message,false);return}showMessage('Отзыв удалён.',true);await loadReviews()}
+route();
+</script>
+</body>
+</html>
