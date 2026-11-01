@@ -175,7 +175,7 @@
         const meta = document.createElement("div");
         meta.className = "muted";
         meta.textContent = (service.category || "Без категорії") + " · " +
-          Number(service.duration_minutes) + " хвилин · " +
+          Number(service.duration_minutes || 60) + " хв слот запису · " +
           (service.active ? "Активна" : "Неактивна");
         const desc = document.createElement("p");
         desc.textContent = service.description || "";
