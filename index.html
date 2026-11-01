@@ -463,7 +463,7 @@ body[data-season="newyear"]{--season-primary:#e0b6b8;--season-primary-dark:#ad6e
           <button class="service-filter" data-filter="nails" type="button">Манікюр</button>
           <button class="service-filter" data-filter="care" type="button">Догляд</button>
         </div>
-<div class="services-grid">
+<div class="services-grid" id="publicServiceCatalog">
             <div class="services-category glass-card" data-service-group="hair">
                 <h3><i class="fa-solid fa-scissors"></i> Перукарський зал</h3>
                 <ul class="service-list">
@@ -1315,6 +1315,55 @@ document.querySelectorAll('.gallery-item img').forEach(function(img){
     });
     if (data.some(function(service) { return service.name === selected; })) {
       serviceSelect.value = selected;
+    }
+
+    const catalog = document.getElementById("publicServiceCatalog");
+    if (catalog) {
+      const groups = new Map();
+      data.forEach(function(service) {
+        const category = String(service.category || "Інші послуги").trim() || "Інші послуги";
+        if (!groups.has(category)) groups.set(category, []);
+        groups.get(category).push(service);
+      });
+      const fragment = document.createDocumentFragment();
+      groups.forEach(function(services, category) {
+        const normalized = category.toLocaleLowerCase("uk-UA");
+        const group = normalized.includes("манік") || normalized.includes("нігт") || normalized.includes("nail")
+          ? "nails"
+          : normalized.includes("волос") || normalized.includes("перук") || normalized.includes("hair")
+            ? "hair"
+            : "care";
+        const card = document.createElement("article");
+        card.className = "services-category glass-card";
+        card.dataset.serviceGroup = group;
+
+        const heading = document.createElement("h3");
+        const icon = document.createElement("i");
+        icon.className = "fa-solid " + (group === "hair" ? "fa-scissors" : group === "nails" ? "fa-hand-sparkles" : "fa-wand-magic-sparkles");
+        heading.append(icon, document.createTextNode(" " + category));
+
+        const list = document.createElement("ul");
+        list.className = "service-list";
+        services.forEach(function(service) {
+          const item = document.createElement("li");
+          item.className = "service-item";
+          const name = document.createElement("span");
+          name.className = "service-name";
+          name.textContent = service.name;
+          const dots = document.createElement("span");
+          dots.className = "service-dots";
+          const price = document.createElement("span");
+          price.className = "service-price";
+          price.textContent = service.price === null || service.price === undefined
+            ? "Уточнюйте"
+            : new Intl.NumberFormat("uk-UA").format(Number(service.price)) + " грн";
+          item.append(name, dots, price);
+          list.appendChild(item);
+        });
+        card.append(heading, list);
+        fragment.appendChild(card);
+      });
+      catalog.replaceChildren(fragment);
     }
   }
 
