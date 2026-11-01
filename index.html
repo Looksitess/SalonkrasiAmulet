@@ -265,6 +265,8 @@
       .form-grid input:focus,.form-grid select:focus,.form-grid textarea:focus{border-color:#c5a880;box-shadow:0 0 0 3px rgba(197,168,128,.12)}
       .form-grid textarea{min-height:85px;resize:vertical}
       .form-success{display:none;margin-top:12px;padding:12px;border-radius:12px;background:#edf8f1;color:#28784f;font-size:13px}
+      .booking-master-notice{padding:12px 14px;border:1px solid rgba(197,168,128,.35);border-radius:12px;background:#fbf7f1;color:#66533c;font-size:13px;line-height:1.5}
+      .booking-master-notice a{display:inline-block;margin-top:5px;color:#8f6d42;font-weight:700}
       .reveal{opacity:0;transform:translateY(18px);transition:opacity .7s ease,transform .7s ease}
       .reveal.visible{opacity:1;transform:none}
       .cookie{position:fixed;left:18px;right:18px;bottom:18px;z-index:2200;display:none;align-items:center;justify-content:space-between;gap:20px;padding:16px 18px;background:rgba(26,25,23,.96);color:#fff;border-radius:16px;box-shadow:0 15px 50px rgba(0,0,0,.25)}
@@ -786,6 +788,10 @@ body[data-season="newyear"]{--season-primary:#e0b6b8;--season-primary-dark:#ad6e
           <select name="master_id" id="bookingMaster" required>
             <option value="">Завантаження майстрів…</option>
           </select>
+          <div id="bookingMasterNotice" class="booking-master-notice" hidden>
+            Наразі немає активного майстра для онлайн-запису. Зателефонуйте до салону:
+            <a href="tel:0680006311">068 000 6311</a>
+          </div>
           <input name="date" type="date" required>
 
 <select name="time" required>
@@ -1264,8 +1270,10 @@ document.querySelectorAll('.gallery-item img').forEach(function(img){
 
   async function loadMasters() {
     const client = window.amuletSupabase;
+    const notice = document.getElementById("bookingMasterNotice");
     if (!client) {
       select.innerHTML = '<option value="">Запис тимчасово недоступний</option>';
+      if (notice) notice.hidden = false;
       return;
     }
     const salonSlug = (window.AMULET_CONFIG && window.AMULET_CONFIG.SALON_SLUG) || "amulet";
@@ -1276,8 +1284,11 @@ document.querySelectorAll('.gallery-item img').forEach(function(img){
     if (error || !data || !data.length) {
       console.error("Could not load masters", error);
       select.innerHTML = '<option value="">Немає доступних майстрів</option>';
+      if (notice) notice.hidden = false;
       return;
     }
+
+    if (notice) notice.hidden = true;
 
     select.innerHTML = '<option value="">Оберіть майстра</option>';
     data.forEach((master) => {
