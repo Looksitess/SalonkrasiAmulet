@@ -77,6 +77,10 @@ body[data-season="newyear"]{--admin-season-bg:#f9eff0;--admin-season-button:#e0b
       <div class="stat"><div>Цього місяця</div><div class="stat-number" id="monthCount">0</div></div>
     </div>
     <div id="adminMessage" aria-live="polite"></div>
+    <nav class="panel" aria-label="Разделы админки" style="display:flex;gap:10px;flex-wrap:wrap;align-items:center;padding:12px 16px">
+      <a href="#bookingsSection" style="display:inline-block;padding:11px 18px;border-radius:10px;background:#b49a78;color:#fff;text-decoration:none;font-weight:700">Записи</a>
+      <a href="./reviews.html" style="display:inline-block;padding:11px 18px;border-radius:10px;background:#f0e8dc;color:#302c27;text-decoration:none;font-weight:700;border:1px solid #e8ddcf">Отзывы</a>
+    </nav>
     <section class="panel">
       <h2 class="section-heading">Календар записів</h2>
       <p class="section-text">Перегляд записів за тиждень, розподілених за днями та часом.</p>
@@ -90,7 +94,7 @@ body[data-season="newyear"]{--admin-season-bg:#f9eff0;--admin-season-button:#e0b
       </div>
       <div id="bookingCalendar"><div class="empty">Завантаження календаря…</div></div>
     </section>
-    <section class="panel">
+    <section class="panel" id="bookingsSection">
       <h2>Заявки клієнтів</h2>
       <div class="booking-filters">
         <input id="bookingSearch" type="search" placeholder="Пошук за ім’ям або телефоном" oninput="renderBookingGroups()">
