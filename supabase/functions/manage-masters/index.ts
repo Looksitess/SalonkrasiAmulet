@@ -52,14 +52,8 @@ Deno.serve(async (req) => {
     const phone = clean(body.phone);
     const specialty = clean(body.specialty);
 
-    if (!slotId || !email || !password || !fullName) {
-      return json({ ok: false, error: "Вкажіть ім’я, email і тимчасовий пароль." }, 400);
-    }
-    if (password.length < 8) {
-      return json({ ok: false, error: "Пароль має містити щонайменше 8 символів." }, 400);
-    }
-    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-      return json({ ok: false, error: "Перевірте правильність email." }, 400);
+    if (!slotId) {
+      return json({ ok: false, error: "Не вказано місце майстра." }, 400);
     }
 
     const { data: slot, error: slotError } = await adminClient
@@ -107,6 +101,18 @@ Deno.serve(async (req) => {
         message: "Майстра видалено. Місце №" + slot.slot_number + " знову вільне; для нового майстра створіть акаунт з новим email і паролем." });
     }
 
+    if (!email || !password || !fullName) {
+      return json({ ok: false, error: "Вкажіть ім’я, email і тимчасовий пароль." }, 400);
+    }
+    if (password.length < 12 || password.length > 128) {
+      return json({ ok: false, error: "Пароль має містити від 12 до 128 символів." }, 400);
+    }
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+      return json({ ok: false, error: "Перевірте правильність email." }, 400);
+    }
+    if (fullName.length < 2 || fullName.length > 80 || phone.length > 25 || specialty.length > 120) {
+      return json({ ok: false, error: "Перевірте довжину імені, телефону та спеціалізації." }, 400);
+    }
     if (slot.profile_id) return json({ ok: false, error: "До цього місця вже прив’язаний акаунт." }, 409);
 
     const { data: userData, error: createUserError } = await adminClient.auth.admin.createUser({
