@@ -240,6 +240,7 @@
         return;
       }
 
+      const wasEditing = Boolean(editingId);
       const payload = {
         name,
         category: $("category").value.trim() || null,
@@ -265,7 +266,7 @@
         }
 
         resetForm();
-        message(editingId ? "Послугу оновлено." : "Послугу додано.");
+        message(wasEditing ? "Послугу оновлено." : "Послугу додано.");
         await loadServices();
       } finally {
         $("saveButton").disabled = false;
