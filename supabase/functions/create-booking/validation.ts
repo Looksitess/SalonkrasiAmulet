@@ -123,3 +123,33 @@ export function validateBookingPayload(value: unknown, now: Date = new Date()): 
 
   return { ok: true, data: { ...data, booking_time: requestedTime } };
 }
+
+export async function bookingRateLimitKey(
+  salonSlug: string,
+  phone: string,
+  serverSecret: string,
+): Promise<string> {
+  if (!serverSecret) throw new Error("Rate limit secret is missing");
+
+  const phoneDigits = phone.replace(/\\D/g, "");
+  if (!phoneDigits) throw new Error("Phone number is invalid");
+
+  const encoder = new TextEncoder();
+  const key = await crypto.subtle.importKey(
+    "raw",
+    encoder.encode(serverSecret),
+    { name: "HMAC", hash: "SHA-256" },
+    false,
+    ["sign"],
+  );
+
+  const signature = await crypto.subtle.sign(
+    "HMAC",
+    key,
+    encoder.encode("booking-rate-limit:" + salonSlug + ":" + phoneDigits),
+  );
+
+  return Array.from(new Uint8Array(signature))
+    .map((byte) => byte.toString(16).padStart(2, "0"))
+    .join("");
+}
