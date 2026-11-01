@@ -131,7 +131,7 @@ export async function bookingRateLimitKey(
 ): Promise<string> {
   if (!serverSecret) throw new Error("Rate limit secret is missing");
 
-  const phoneDigits = phone.replace(/\\D/g, "");
+  const phoneDigits = phone.replace(/\D/g, "");
   if (!phoneDigits) throw new Error("Phone number is invalid");
 
   const encoder = new TextEncoder();
