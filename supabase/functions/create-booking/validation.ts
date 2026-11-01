@@ -12,7 +12,7 @@ export type BookingValidation =
   | { ok: true; data: BookingRequest }
   | { ok: false; status: number; error: string };
 
-function textField(input: Record<string, unknown>, key: string, maxLength: number): string {
+function textField(input: Record<string, unknown>, key: string): string {
   const value = input[key];
   return typeof value === "string" ? value.trim() : "";
 }
@@ -49,13 +49,13 @@ export function validateBookingPayload(value: unknown, now: Date = new Date()): 
   }
 
   const data: BookingRequest = {
-    client_name: textField(input, "client_name", 80),
-    phone: textField(input, "phone", 25),
-    service_name: textField(input, "service_name", 120),
-    booking_date: textField(input, "booking_date", 10),
-    booking_time: textField(input, "booking_time", 8),
-    master_id: textField(input, "master_id", 64),
-    comment: textField(input, "comment", 500),
+    client_name: textField(input, "client_name"),
+    phone: textField(input, "phone"),
+    service_name: textField(input, "service_name"),
+    booking_date: textField(input, "booking_date"),
+    booking_time: textField(input, "booking_time"),
+    master_id: textField(input, "master_id"),
+    comment: textField(input, "comment"),
   };
 
   if (data.comment.length > 500) {
