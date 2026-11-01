@@ -67,9 +67,10 @@ jobs:
         run: |
           set -euo pipefail
           if [[ -z "$STORED_KEY_BASE64" || -z "$STORED_KEY_PASSWORD" || -z "$STORED_KEY_ALIAS" || -z "$STORED_PRIVATE_KEY_PASSWORD" ]]; then
-            echo "Android release build is blocked until all four AMULET_UPLOAD_KEYSTORE_* GitHub Actions secrets are configured." >&2
-            echo "This workflow will not generate or publish a signing key in a public repository." >&2
-            exit 1
+            echo "ready=false" >> "$GITHUB_OUTPUT"
+            echo "::notice::Android release package skipped. Configure all four protected AMULET_UPLOAD_KEYSTORE_* Actions secrets to enable signing."
+            echo "No signing key will be generated or published by this workflow."
+            exit 0
           fi
 
           KEYSTORE="$RUNNER_TEMP/amulet-upload-key.jks"
@@ -80,9 +81,11 @@ jobs:
           echo "::add-mask::$STORED_KEY_PASSWORD"
           echo "::add-mask::$STORED_PRIVATE_KEY_PASSWORD"
           echo "keystore=$KEYSTORE" >> "$GITHUB_OUTPUT"
+          echo "ready=true" >> "$GITHUB_OUTPUT"
           echo "Play upload key loaded and validated from protected Actions secrets."
 
       - name: Build signed Android App Bundle and APK
+        if: steps.signing.outputs.ready == 'true'
         env:
           AMULET_KEYSTORE_PATH: ${{ steps.signing.outputs.keystore }}
           AMULET_KEYSTORE_PASSWORD: ${{ secrets.AMULET_UPLOAD_KEYSTORE_PASSWORD }}
@@ -92,6 +95,7 @@ jobs:
         run: gradle --no-daemon --stacktrace clean bundleRelease assembleRelease
 
       - name: Prepare app-only download package
+        if: steps.signing.outputs.ready == 'true'
         shell: bash
         run: |
           set -euo pipefail
@@ -107,6 +111,7 @@ jobs:
           EOF
 
       - name: Upload app-only Android package
+        if: steps.signing.outputs.ready == 'true'
         uses: actions/upload-artifact@v4
         with:
           name: amulet-admin-play-package
