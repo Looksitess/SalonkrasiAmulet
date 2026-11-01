@@ -74,6 +74,53 @@ button:hover,.button:hover{filter:brightness(1.12);transform:translateY(-1px);bo
 .check{color:#e2d8ef}.check input{accent-color:#ad77f0}
 ::selection{background:#8d51cf;color:#fff}
 
+
+/* Refined charcoal background + extra-bright violet neon */
+:root{--bg:#0c0b10;--card:#17141d;--text:#f8f3ff;--muted:#b9aec8;--line:#59317a;--blue:#9a4de0}
+body{
+  background:
+    radial-gradient(ellipse at 50% 0%,rgba(133,77,191,.12),transparent 40%),
+    #0d0c11 fixed !important;
+  color:#f8f3ff;
+}
+.top,.header{color:#f8f3ff}
+.panel,.topic,.reply,.stat{
+  background:linear-gradient(160deg,#191620,#141219);
+  border:1px solid #7540a1;
+  box-shadow:0 0 15px rgba(174,75,255,.48),0 12px 30px rgba(145,48,235,.38),0 5px 0 rgba(181,91,255,.38),inset 0 1px 0 rgba(255,226,255,.09);
+}
+.panel:hover,.topic:hover,.stat:hover{
+  border-color:#c178ff;
+  box-shadow:0 0 25px rgba(189,95,255,.78),0 17px 36px rgba(151,54,255,.52),0 6px 0 rgba(193,119,255,.50);
+}
+.filters input,.filters select,.login input{
+  background:#100e15;border:1px solid #7540a1;color:#faf5ff;
+  box-shadow:0 0 10px rgba(166,69,255,.40),0 6px 18px rgba(151,54,255,.24),inset 0 1px 5px rgba(0,0,0,.60);
+}
+.filters input:focus,.filters select:focus,.login input:focus{
+  outline:2px solid rgba(198,127,255,.48);border-color:#d18aff;
+  box-shadow:0 0 0 3px rgba(166,69,255,.18),0 0 24px rgba(185,87,255,.72),0 8px 22px rgba(151,54,255,.32);
+}
+button,.button{
+  background:linear-gradient(135deg,#b25aff,#7934c5);
+  border:1px solid #d39aff;color:#fff;
+  box-shadow:0 0 14px rgba(178,83,255,.68),0 7px 18px rgba(141,50,231,.44),0 3px 0 rgba(216,157,255,.40);
+}
+button:hover,.button:hover{
+  box-shadow:0 0 22px rgba(195,111,255,.92),0 10px 25px rgba(150,59,245,.58),0 4px 0 rgba(225,179,255,.52);
+}
+.soft{
+  background:linear-gradient(135deg,#211a2b,#19141f);
+  color:#f0e5ff;border:1px solid #8b52b7;
+  box-shadow:0 0 12px rgba(165,72,255,.42),0 5px 15px rgba(145,54,227,.28),0 2px 0 rgba(207,145,255,.32);
+}
+.badge{background:#281b36;color:#ead8ff;border:1px solid #804bb1;box-shadow:0 0 9px rgba(175,77,255,.38)}
+.badge.hidden{background:#321421;color:#ffbdcf;border-color:#a04a6b}
+.reply{background:#1b1722;border-color:#7540a1;box-shadow:0 0 13px rgba(174,75,255,.45),0 5px 15px rgba(145,48,235,.30),0 3px 0 rgba(181,91,255,.32)}
+.empty{background:#15121a;border:1px dashed #a15bd5;box-shadow:0 0 17px rgba(174,75,255,.38)}
+.login{background:linear-gradient(160deg,#191620,#141219);border:1px solid #9a4bea;box-shadow:0 0 22px rgba(174,75,255,.58),0 16px 36px rgba(145,48,235,.42),0 5px 0 rgba(181,91,255,.36)}
+.stat strong{color:#fff4ff;text-shadow:0 0 15px rgba(195,111,255,.65)}
+
 </style>
 </head>
 <body>
