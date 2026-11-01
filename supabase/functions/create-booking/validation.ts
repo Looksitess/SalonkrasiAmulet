@@ -1,4 +1,5 @@
 export type BookingRequest = {
+  salon_slug: string;
   client_name: string;
   phone: string;
   service_name: string;
@@ -49,6 +50,7 @@ export function validateBookingPayload(value: unknown, now: Date = new Date()): 
   }
 
   const data: BookingRequest = {
+    salon_slug: textField(input, "salon_slug"),
     client_name: textField(input, "client_name"),
     phone: textField(input, "phone"),
     service_name: textField(input, "service_name"),
@@ -60,6 +62,14 @@ export function validateBookingPayload(value: unknown, now: Date = new Date()): 
 
   if (data.comment.length > 500) {
     return { ok: false, status: 400, error: "Коментар має бути не довшим за 500 символів." };
+  }
+
+  if (
+    data.salon_slug.length < 2 ||
+    data.salon_slug.length > 80 ||
+    !/^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(data.salon_slug)
+  ) {
+    return { ok: false, status: 400, error: "Невідомий сайт салону." };
   }
 
   if (
