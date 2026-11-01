@@ -1,5 +1,6 @@
 (function(){
   const client=window.amuletSupabase;
+  const salonSlug=(window.AMULET_CONFIG&&window.AMULET_CONFIG.SALON_SLUG)||"amulet";
   const form=document.getElementById("customerReviewForm");
   if(!client||!form)return;
   const reviewsBox=document.getElementById("communityReviews");
@@ -97,7 +98,7 @@
   }
   async function loadComments(reviewId){
     const host=$("reviewComments-"+reviewId);if(!host)return;
-    const r=await client.from("review_comments").select("id,review_id,parent_id,author_id,author_name,body,created_at,updated_at").eq("review_id",reviewId).eq("status","published").order("created_at",{ascending:true}).limit(300);
+    const r=await client.rpc("get_public_review_comments",{p_salon_slug:salonSlug,p_review_id:reviewId});
     if(r.error){host.innerHTML='<p class="review-feedback error">Не вдалося завантажити обговорення.</p>';return;}
     const rows=r.data||[];await loadStats("review_comment",rows.map(x=>x.id));
     const children={};rows.forEach(x=>{const k=x.parent_id||"root";(children[k]||(children[k]=[])).push(x);});
@@ -140,7 +141,7 @@
     return '<article class="review-card glass-card community-review-card" id="customer-review-'+x.id+'"><div class="review-stars">'+("★".repeat(Number(x.rating)||0))+'</div><p class="review-text">'+esc(x.review_text)+'</p><div class="review-author"><div class="author-info"><h4>'+esc(x.customer_name)+'</h4><span>'+new Date(x.created_at).toLocaleDateString("uk-UA")+'</span></div></div>'+controls("customer_review",x.id,owner)+'<div class="review-comments"><strong>Обговорення</strong><div id="reviewComments-'+x.id+'"><div class="review-feedback">Завантаження…</div></div></div></article>';
   }
   async function loadApproved(){
-    const r=await client.from("customer_reviews").select("id,customer_name,rating,review_text,created_at,author_id").eq("status","approved").order("created_at",{ascending:false}).limit(20);
+    const r=await client.rpc("get_public_approved_reviews",{p_salon_slug:salonSlug});
     if(r.error){console.warn("Approved reviews unavailable:",r.error.message);return;}
     await loadStats("customer_review",(r.data||[]).map(x=>x.id));
     reviewsBox.innerHTML=(r.data||[]).map(reviewCard).join("");
@@ -191,7 +192,12 @@
     try{
       const r=editingId
         ?await client.rpc("update_customer_review_content",{p_review_id:editingId,p_customer_name:payload.customer_name,p_rating:payload.rating,p_review_text:payload.review_text})
-        :await client.from("customer_reviews").insert({...payload,author_id:session.user.id,status:"pending"});
+        :await client.rpc("submit_customer_review",{
+          p_salon_slug:salonSlug,
+          p_customer_name:payload.customer_name,
+          p_rating:payload.rating,
+          p_review_text:payload.review_text
+        });
       if(r.error)throw r.error;
       editingId=null;form.reset();if(submit)submit.innerHTML='<i class="fa-solid fa-paper-plane"></i> Надіслати відгук';
       reviewMsg("Дякуємо! Відгук надіслано на перевірку. Він з’явиться на сайті після схвалення.");
