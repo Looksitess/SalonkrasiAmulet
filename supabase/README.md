@@ -25,7 +25,7 @@ The Supabase service-role/secret key must remain in Edge Function secrets. It mu
 - `salons` owns each tenant.
 - `profiles.salon_id` identifies the tenant for staff/admin profiles.
 - `master_slots.salon_id` scopes each slot. Slot numbering is unique within a salon using `(salon_id, slot_number)`.
-- `bookings.salon_id` is checked by the booking Edge Function and used by booking RLS.
+- `bookings.salon_id` is NOT NULL and has a foreign key to `salons`; composite foreign keys require `master_id` and `service_id` to belong to the same salon as the booking.
 - `services.salon_id` and `customer_reviews.salon_id` scope catalogue and reviews.
 - `review_comments` inherits tenant scope through its parent review.
 - Review-related `content_reports` inherit salon_id from the linked review; forum reports remain global because the forum is a shared platform community.
