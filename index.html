@@ -778,13 +778,9 @@ body[data-season="newyear"]{--season-primary:#e0b6b8;--season-primary-dark:#ad6e
           <input name="name" required minlength="2" maxlength="80" autocomplete="name" placeholder="Ваше ім'я">
           <input name="phone" required type="tel" minlength="7" maxlength="25" autocomplete="tel" placeholder="Номер телефону">
           <select name="service" required>
-            <option value="">Оберіть послугу</option>
-            <option>Перукарський зал</option>
-            <option>Манікюр / педикюр</option>
-            <option>Косметологія та догляд</option>
-            <option>SPA-масаж</option>
-            <option>Інше</option>
+            <option value="">Завантаження послуг…</option>
           </select>
+          <div id="bookingServiceNotice" class="booking-master-notice" hidden></div>
           <select name="master_id" id="bookingMaster" required>
             <option value="">Завантаження майстрів…</option>
           </select>
@@ -1307,12 +1303,29 @@ document.querySelectorAll('.gallery-item img').forEach(function(img){
     const { data, error } = await client.rpc("get_public_services", {
       p_salon_slug: salonSlug
     });
+    const serviceNotice = document.getElementById("bookingServiceNotice");
     if (error) {
       console.warn("Could not load salon services:", error.message);
+      serviceSelect.replaceChildren(new Option("Послуги тимчасово недоступні", ""));
+      serviceSelect.disabled = true;
+      if (serviceNotice) {
+        serviceNotice.hidden = false;
+        serviceNotice.textContent = "Не вдалося завантажити каталог послуг. Спробуйте пізніше або зателефонуйте до салону.";
+      }
       return;
     }
-    if (!Array.isArray(data) || data.length === 0) return;
+    if (!Array.isArray(data) || data.length === 0) {
+      serviceSelect.replaceChildren(new Option("Послуги ще не налаштовані", ""));
+      serviceSelect.disabled = true;
+      if (serviceNotice) {
+        serviceNotice.hidden = false;
+        serviceNotice.textContent = "Салон ще не налаштував послуги для онлайн-запису. Зверніться до адміністратора.";
+      }
+      return;
+    }
 
+    serviceSelect.disabled = false;
+    if (serviceNotice) serviceNotice.hidden = true;
     const selected = serviceSelect.value;
     serviceSelect.replaceChildren(new Option("Оберіть послугу", ""));
     data.forEach(function(service) {
