@@ -14,7 +14,7 @@ export type BookingValidation =
 
 function textField(input: Record<string, unknown>, key: string, maxLength: number): string {
   const value = input[key];
-  return typeof value === "string" ? value.trim().slice(0, maxLength) : "";
+  return typeof value === "string" ? value.trim() : "";
 }
 
 function kyivDateAndTime(now: Date): { date: string; time: string } {
@@ -57,6 +57,10 @@ export function validateBookingPayload(value: unknown, now: Date = new Date()): 
     master_id: textField(input, "master_id", 64),
     comment: textField(input, "comment", 500),
   };
+
+  if (data.comment.length > 500) {
+    return { ok: false, status: 400, error: "Коментар має бути не довшим за 500 символів." };
+  }
 
   if (
     data.client_name.length < 2 ||
