@@ -566,7 +566,8 @@ function renderBookingGroups() {
       '<div class="detail"><div class="detail-title">Послуга</div><strong>' + escapeHtml(booking.service_name || "Не вказана") + '</strong></div>' +
       '<div class="detail"><div class="detail-title">Дата</div><strong>' + escapeHtml(booking.booking_date || "—") + '</strong></div>' +
       '<div class="detail"><div class="detail-title">Час</div><strong>' + escapeHtml(String(booking.booking_time || "—").slice(0,5)) + '</strong></div>' +
-      '<div class="detail"><div class="detail-title">Майстер</div><strong>' + escapeHtml(masterName) + '</strong></div></div>' +
+      '<div class="detail"><div class="detail-title">Майстер</div><strong>' + escapeHtml(masterName) + '</strong></div>' +
+      '<div class="detail"><div class="detail-title">Отримано</div><strong>' + escapeHtml(booking.created_at ? new Date(booking.created_at).toLocaleString("uk-UA") : "—") + '</strong></div></div>' +
       (booking.comment ? '<p class="muted">' + escapeHtml(booking.comment) + '</p>' : '') + '</article>';
   }
   if (!adminBookingData.length) {
@@ -577,19 +578,14 @@ function renderBookingGroups() {
     box.innerHTML = '<div class="empty">За цими фільтрами заявок не знайдено.</div>';
     return;
   }
-  const groups = adminBookingSlots.filter(function(slot){return !masterFilter || slot.id === masterFilter;}).map(function(slot) {
-    return {slot:slot,bookings:data.filter(function(booking){return booking.master_id === slot.id || booking.master_slot_id === slot.id;})};
+  const sortedData = data.slice().sort(function(a, b) {
+    const aTime = Date.parse(a.created_at || "") || 0;
+    const bTime = Date.parse(b.created_at || "") || 0;
+    return bTime - aTime;
   });
-  const unassigned = data.filter(function(booking) {
-    return !adminBookingSlots.some(function(slot){return slot.id === booking.master_id || slot.id === booking.master_slot_id;});
-  });
-  box.innerHTML = groups.map(function(group) {
-    return '<section class="booking-master-group"><h3 class="master-group-title"><span>Майстер №' + escapeHtml(group.slot.slot_number) + ' — ' +
-      escapeHtml(group.slot.display_name) + '</span><span class="pill">' + group.bookings.length + ' заявок</span></h3>' +
-      (group.bookings.length ? group.bookings.map(renderBooking).join("") : '<div class="empty">За цими фільтрами заявок у цього майстра немає.</div>') +
-      '</section>';
-  }).join("") + (unassigned.length ? '<section class="panel"><h3>Заявки без призначеного майстра (' + unassigned.length + ')</h3>' +
-    unassigned.map(renderBooking).join("") + '</section>' : '');
+  box.innerHTML = '<section class="booking-master-group"><h3 class="master-group-title"><span>Усі заявки — спочатку нові</span>' +
+    '<span class="pill">' + sortedData.length + ' заявок</span></h3>' +
+    sortedData.map(renderBooking).join("") + '</section>';
 }
 let bookingNotificationTimer = null;
 let knownBookingIds = null;
