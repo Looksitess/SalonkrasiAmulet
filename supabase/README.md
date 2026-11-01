@@ -14,7 +14,7 @@ These are live facts from the last audit, not example data. Do not create dummy 
 
 ## Edge Functions
 
-- `functions/create-booking/index.ts` — ACTIVE version 14. Public endpoint. Validates payloads and salon slug, verifies the selected master and service belong to that salon, checks availability, creates a booking, and applies a per-salon/per-phone HMAC rate limit of 5 validated attempts per 10 minutes.
+- `functions/create-booking/index.ts` — ACTIVE version 15. Public endpoint. Validates payloads and salon slug, verifies the selected master and service belong to that salon, checks availability, creates a booking, and applies a per-salon/per-phone HMAC rate limit of 5 validated attempts per 10 minutes.
 - `functions/manage-masters/index.ts` — ACTIVE version 9. Verifies the caller's JWT and active salon-admin profile, scopes every slot operation to that profile's salon, creates and removes master Auth accounts, prevents duplicate concurrent slot claims, and protects future bookings before removal.
 - `functions/admin-password-reset/index.ts` — legacy endpoint intentionally disabled with HTTP 410. Do not re-enable the old shared-secret reset flow. Use the supported Supabase Auth recovery process if password recovery is needed.
 
