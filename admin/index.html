@@ -307,7 +307,7 @@ function renderMasterManager() {
     if (!profile) {
       accountHtml = '<details class="details"><summary>Створити вхід для майстра</summary>' +
         '<div class="account-box"><label class="field">Email<input data-email type="email" autocomplete="off" placeholder="майстер@example.com"></label>' +
-        '<label class="field">Тимчасовий пароль<input data-password type="password" autocomplete="new-password" placeholder="Не менше 8 символів"></label>' +
+        '<label class="field">Тимчасовий пароль<input data-password type="password" autocomplete="new-password" minlength="12" maxlength="128" placeholder="12–128 символів" required></label>' +
         '<p class="tiny">Після створення передайте email і пароль майстру окремо.</p>' +
         '<button type="button" onclick="createMasterAccount(\'' + slot.id + '\')">Створити акаунт</button></div></details>';
     }
