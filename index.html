@@ -1307,10 +1307,12 @@ document.querySelectorAll('.gallery-item img').forEach(function(img){
     data.forEach(function(service) {
       const option = document.createElement("option");
       option.value = service.name;
-      const price = service.price === null || service.price === undefined
-        ? ""
-        : " — " + new Intl.NumberFormat("uk-UA").format(Number(service.price)) + " грн";
-      option.textContent = service.name + price;
+      const priceLabel = service.price_label || (
+        service.price === null || service.price === undefined
+          ? ""
+          : new Intl.NumberFormat("uk-UA").format(Number(service.price)) + " грн"
+      );
+      option.textContent = service.name + (priceLabel ? " — " + priceLabel : "");
       serviceSelect.appendChild(option);
     });
     if (data.some(function(service) { return service.name === selected; })) {
@@ -1354,9 +1356,11 @@ document.querySelectorAll('.gallery-item img').forEach(function(img){
           dots.className = "service-dots";
           const price = document.createElement("span");
           price.className = "service-price";
-          price.textContent = service.price === null || service.price === undefined
-            ? "Уточнюйте"
-            : new Intl.NumberFormat("uk-UA").format(Number(service.price)) + " грн";
+          price.textContent = service.price_label || (
+            service.price === null || service.price === undefined
+              ? "Уточнюйте"
+              : new Intl.NumberFormat("uk-UA").format(Number(service.price)) + " грн"
+          );
           item.append(name, dots, price);
           list.appendChild(item);
         });
