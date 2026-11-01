@@ -50,7 +50,7 @@ The production database has 25 applied migrations, but only 15 original SQL migr
 
 - `android-admin` is a native Android WebView wrapper around `https://looksitess.github.io/SalonkrasiAmulet/admin/`. It automatically uses the latest deployed admin website; no duplicate Supabase logic is embedded in Java.
 - `android-app` is the Capacitor wrapper. `scripts/prepare-web.mjs` downloads the online admin shell and PWA assets from the repo.
-- Android release signing uses GitHub Actions secrets. Never commit keystore files or signing passwords.
+- Android release signing uses GitHub Actions secrets. The workflow skips release builds until all four protected signing secrets exist; once enabled, its download artifact contains only the APK/AAB, never the keystore or passwords. Never commit keystore files or signing passwords.
 
 ## Important remaining release checks
 
