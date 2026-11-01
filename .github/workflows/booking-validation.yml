@@ -36,6 +36,8 @@ jobs:
         with:
           deno-version: v2.x
           cache: true
+      - name: Lint Supabase booking function
+        run: deno lint supabase/functions/create-booking
       - name: Run booking validation tests
         run: deno test supabase/functions/create-booking/index_test.ts
       - name: Check frontend JavaScript syntax
