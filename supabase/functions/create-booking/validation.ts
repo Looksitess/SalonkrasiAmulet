@@ -29,7 +29,7 @@ function kyivDateAndTime(now: Date): { date: string; time: string } {
   }).formatToParts(now);
 
   const values = Object.fromEntries(
-    parts.filter((part) => part.type !== "literal").map((part) => [part.type, part.value]),
+    parts.filter((part) => part.type !== "literal").map((part) => [part.type, part.value] as const),
   );
 
   return {
