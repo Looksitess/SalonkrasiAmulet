@@ -86,12 +86,13 @@ Deno.serve(async (req) => {
     if (action === "remove_master") {
       const { data: profiles, error: profilesError } = await adminClient
         .from("profiles").select("id, role, is_admin, master_slot_id")
-        .eq("master_slot_id", slot.id);
+        .eq("master_slot_id", slot.id)
+        .eq("salon_id", actorProfile.salon_id);
       if (profilesError) throw profilesError;
       const masterProfile = (profiles || []).find((p) => p.role === "master" && !p.is_admin);
       if (!masterProfile) return json({ ok: false, error: "У цьому місці немає звичайного акаунта майстра." }, 404);
 
-      const today = new Date().toISOString().slice(0, 10);
+      const today = kyivDateKey();
       const { data: futureBookings, error: bookingsError } = await adminClient
         .from("bookings").select("id").eq("master_id", slot.id)
         .gte("booking_date", today).in("status", ["new", "confirmed"]).limit(1);
@@ -201,4 +202,17 @@ function clean(value: unknown, maxLength = 1000): string {
 
 function json(data: unknown, status = 200) {
   return new Response(JSON.stringify(data), { status, headers: cors });
+}
+
+function kyivDateKey(now = new Date()): string {
+  const parts = new Intl.DateTimeFormat("en-GB", {
+    timeZone: "Europe/Kyiv",
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+  }).formatToParts(now);
+  const values = Object.fromEntries(
+    parts.filter((part) => part.type !== "literal").map((part) => [part.type, part.value] as const),
+  );
+  return `${values.year}-${values.month}-${values.day}`;
 }
