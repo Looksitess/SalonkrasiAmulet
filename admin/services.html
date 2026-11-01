@@ -1,0 +1,312 @@
+<!doctype html>
+<html lang="uk">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="theme-color" content="#f7f4f0">
+  <title>Послуги салону — Амулет</title>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <style>
+    :root{color-scheme:light;--bg:#f7f4f0;--card:#fffdf9;--text:#302c27;--muted:#756e64;--line:#e8ddcf;--gold:#b49a78;--danger:#a63b34}
+    *{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text);font:15px Arial,sans-serif}
+    .wrap{width:min(100% - 28px,1000px);margin:28px auto}
+    .top,.panel,.service{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:18px;margin-bottom:16px}
+    .top{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap}
+    h1{font-size:24px;margin:0 0 4px}h2{font-size:19px;margin:0 0 14px}.muted{color:var(--muted);font-size:13px}
+    a{color:#29445f}.button{border:0;border-radius:9px;padding:10px 14px;background:var(--gold);color:white;cursor:pointer;font-weight:700}
+    .button.secondary{background:#eee5d9;color:var(--text)}.button.danger{background:#f7e8e6;color:var(--danger)}
+    button:disabled{opacity:.55;cursor:not-allowed}
+    .grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+    label{display:grid;gap:6px;font-size:13px;font-weight:700}
+    input,textarea{font:inherit;padding:11px 12px;border:1px solid var(--line);border-radius:9px;background:#fff;color:var(--text);width:100%}
+    textarea{min-height:78px;resize:vertical}.full{grid-column:1/-1}
+    .actions{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-top:12px}
+    .notice{padding:10px 12px;border-radius:9px;background:#edf4eb;color:#315b35;margin:12px 0}.notice.error{background:#fae9e7;color:#8f2e28}
+    .service{display:flex;justify-content:space-between;gap:16px;align-items:flex-start}
+    .service h3{margin:0 0 6px;font-size:17px}.service p{margin:5px 0;color:var(--muted);white-space:pre-wrap}
+    .price{font-weight:700;white-space:nowrap}.empty{padding:22px;text-align:center;color:var(--muted)}
+    #app{display:none}.hidden{display:none!important}
+    @media(max-width:640px){.grid{grid-template-columns:1fr}.full{grid-column:auto}.service{display:block}.service .actions{margin-top:12px}}
+  </style>
+</head>
+<body>
+  <main class="wrap">
+    <section id="loginScreen" class="panel">
+      <h1>Адмінка «Амулет»</h1>
+      <p class="muted">Увійдіть, щоб редагувати каталог послуг свого салону.</p>
+      <form id="loginForm">
+        <div class="grid">
+          <label>Email<input id="email" type="email" autocomplete="username" required></label>
+          <label>Пароль<input id="password" type="password" autocomplete="current-password" required></label>
+        </div>
+        <div class="actions"><button class="button" type="submit">Увійти</button><a href="./index.html">Повернутися до адмінки</a></div>
+      </form>
+      <div id="loginMessage" class="notice error hidden" role="alert"></div>
+    </section>
+
+    <div id="app">
+      <header class="top">
+        <div><h1>Послуги та ціни</h1><div class="muted">Каталог використовується у формі онлайн-запису.</div></div>
+        <div class="actions"><a href="./index.html">← До адмінки</a><button id="logout" class="button secondary" type="button">Вийти</button></div>
+      </header>
+
+      <section class="panel">
+        <h2 id="formTitle">Додати послугу</h2>
+        <form id="serviceForm">
+          <div class="grid">
+            <label>Назва послуги<input id="name" minlength="2" maxlength="120" required></label>
+            <label>Категорія<input id="category" maxlength="80" placeholder="Манікюр, волосся, догляд"></label>
+            <label>Ціна, грн<input id="price" type="number" min="0" step="0.01" inputmode="decimal" placeholder="Необов’язково"></label>
+            <label>Тривалість, хвилин<input id="duration" type="number" min="15" max="480" step="5" value="60" required></label>
+            <label class="full">Опис<textarea id="description" maxlength="500" placeholder="Короткий опис послуги"></textarea></label>
+            <label><span>Статус послуги</span><span><input id="active" type="checkbox" checked style="width:auto"> Активна та доступна для запису</span></label>
+          </div>
+          <div class="actions">
+            <button class="button" id="saveButton" type="submit">Зберегти послугу</button>
+            <button class="button secondary hidden" id="cancelEdit" type="button">Скасувати редагування</button>
+          </div>
+        </form>
+        <div id="notice" class="notice hidden" aria-live="polite"></div>
+      </section>
+
+      <section class="panel">
+        <h2>Каталог салону</h2>
+        <div id="serviceList"><div class="empty">Завантаження…</div></div>
+      </section>
+    </div>
+  </main>
+
+  <script>
+    const SUPABASE_URL = "https://hqbjlvryecmqemmajqyo.supabase.co";
+    const SUPABASE_KEY = "sb_publishable_o4SMwGNId-e5tqfTSrKWfQ_f2Ftn5j7";
+    const db = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY, {
+      auth: { persistSession: true, autoRefreshToken: true, detectSessionInUrl: true }
+    });
+
+    let profile = null;
+    let editingId = null;
+    const $ = (id) => document.getElementById(id);
+
+    function message(text, isError = false) {
+      const box = $("notice");
+      box.textContent = text || "";
+      box.classList.toggle("hidden", !text);
+      box.classList.toggle("error", !!isError);
+    }
+
+    function loginMessage(text) {
+      $("loginMessage").textContent = text || "";
+      $("loginMessage").classList.toggle("hidden", !text);
+    }
+
+    function resetForm() {
+      editingId = null;
+      $("serviceForm").reset();
+      $("duration").value = "60";
+      $("active").checked = true;
+      $("formTitle").textContent = "Додати послугу";
+      $("saveButton").textContent = "Зберегти послугу";
+      $("cancelEdit").classList.add("hidden");
+    }
+
+    async function route() {
+      const sessionResult = await db.auth.getSession();
+      const session = sessionResult.data.session;
+      if (!session) {
+        $("loginScreen").style.display = "block";
+        $("app").style.display = "none";
+        return;
+      }
+
+      const result = await db.from("profiles")
+        .select("id,role,is_admin,active,salon_id")
+        .eq("id", session.user.id)
+        .maybeSingle();
+
+      if (result.error || !result.data || !result.data.active ||
+          !(result.data.is_admin || result.data.role === "admin") ||
+          !result.data.salon_id) {
+        await db.auth.signOut();
+        $("loginScreen").style.display = "block";
+        $("app").style.display = "none";
+        loginMessage("Доступ дозволено лише активному адміністратору салону.");
+        return;
+      }
+
+      profile = result.data;
+      $("loginScreen").style.display = "none";
+      $("app").style.display = "block";
+      await loadServices();
+    }
+
+    async function login(event) {
+      event.preventDefault();
+      loginMessage("");
+      const { error } = await db.auth.signInWithPassword({
+        email: $("email").value.trim(),
+        password: $("password").value
+      });
+      if (error) {
+        loginMessage("Не вдалося увійти. Перевірте email і пароль.");
+        return;
+      }
+      await route();
+    }
+
+    function renderServices(rows) {
+      const box = $("serviceList");
+      box.replaceChildren();
+      if (!rows.length) {
+        const empty = document.createElement("div");
+        empty.className = "empty";
+        empty.textContent = "Послуг ще немає. Додайте першу послугу у формі вище.";
+        box.appendChild(empty);
+        return;
+      }
+
+      rows.forEach((service) => {
+        const card = document.createElement("article");
+        card.className = "service";
+
+        const details = document.createElement("div");
+        const title = document.createElement("h3");
+        title.textContent = service.name;
+        const meta = document.createElement("div");
+        meta.className = "muted";
+        meta.textContent = (service.category || "Без категорії") + " · " +
+          Number(service.duration_minutes) + " хвилин · " +
+          (service.active ? "Активна" : "Неактивна");
+        const desc = document.createElement("p");
+        desc.textContent = service.description || "";
+        details.append(title, meta, desc);
+
+        const side = document.createElement("div");
+        const price = document.createElement("div");
+        price.className = "price";
+        price.textContent = service.price === null || service.price === undefined
+          ? "Ціну не вказано"
+          : new Intl.NumberFormat("uk-UA").format(Number(service.price)) + " грн";
+
+        const actions = document.createElement("div");
+        actions.className = "actions";
+        const edit = document.createElement("button");
+        edit.type = "button";
+        edit.className = "button secondary";
+        edit.textContent = "Редагувати";
+        edit.addEventListener("click", () => editService(service));
+
+        const toggle = document.createElement("button");
+        toggle.type = "button";
+        toggle.className = "button " + (service.active ? "danger" : "secondary");
+        toggle.textContent = service.active ? "Вимкнути" : "Увімкнути";
+        toggle.addEventListener("click", () => setServiceActive(service.id, !service.active));
+
+        actions.append(edit, toggle);
+        side.append(price, actions);
+        card.append(details, side);
+        box.appendChild(card);
+      });
+    }
+
+    async function loadServices() {
+      $("serviceList").innerHTML = '<div class="empty">Завантаження…</div>';
+      const { data, error } = await db.from("services")
+        .select("id,salon_id,name,category,description,price,duration_minutes,active")
+        .order("category", { ascending: true })
+        .order("name", { ascending: true });
+
+      if (error) {
+        $("serviceList").textContent = "Не вдалося завантажити каталог послуг.";
+        message("Помилка доступу до каталогу. Перевірте роль адміністратора та RLS.", true);
+        return;
+      }
+      renderServices(data || []);
+      message("");
+    }
+
+    async function saveService(event) {
+      event.preventDefault();
+      if (!profile || !profile.salon_id) return;
+
+      const name = $("name").value.trim();
+      const duration = Number($("duration").value);
+      const rawPrice = $("price").value.trim();
+      const price = rawPrice === "" ? null : Number(rawPrice);
+
+      if (name.length < 2 || name.length > 120 ||
+          !Number.isInteger(duration) || duration < 15 || duration > 480 ||
+          (price !== null && (!Number.isFinite(price) || price < 0))) {
+        message("Перевірте назву, ціну та тривалість послуги.", true);
+        return;
+      }
+
+      const payload = {
+        name,
+        category: $("category").value.trim() || null,
+        description: $("description").value.trim() || null,
+        price,
+        duration_minutes: duration,
+        active: $("active").checked
+      };
+
+      $("saveButton").disabled = true;
+      try {
+        const result = editingId
+          ? await db.from("services").update(payload).eq("id", editingId)
+          : await db.from("services").insert({ ...payload, salon_id: profile.salon_id });
+
+        if (result.error) {
+          if (result.error.code === "23505") {
+            message("Послуга з такою назвою вже існує у цьому салоні.", true);
+          } else {
+            message("Не вдалося зберегти послугу. Перевірте дані й права доступу.", true);
+          }
+          return;
+        }
+
+        resetForm();
+        message(editingId ? "Послугу оновлено." : "Послугу додано.");
+        await loadServices();
+      } finally {
+        $("saveButton").disabled = false;
+      }
+    }
+
+    function editService(service) {
+      editingId = service.id;
+      $("name").value = service.name || "";
+      $("category").value = service.category || "";
+      $("description").value = service.description || "";
+      $("price").value = service.price === null ? "" : String(service.price);
+      $("duration").value = String(service.duration_minutes || 60);
+      $("active").checked = !!service.active;
+      $("formTitle").textContent = "Редагувати послугу";
+      $("saveButton").textContent = "Зберегти зміни";
+      $("cancelEdit").classList.remove("hidden");
+      $("serviceForm").scrollIntoView({ behavior: "smooth", block: "start" });
+    }
+
+    async function setServiceActive(id, active) {
+      const { error } = await db.from("services").update({ active }).eq("id", id);
+      if (error) {
+        message("Не вдалося змінити статус послуги.", true);
+        return;
+      }
+      message(active ? "Послугу знову активовано." : "Послугу вимкнено.");
+      await loadServices();
+    }
+
+    $("loginForm").addEventListener("submit", login);
+    $("serviceForm").addEventListener("submit", saveService);
+    $("cancelEdit").addEventListener("click", resetForm);
+    $("logout").addEventListener("click", async () => {
+      await db.auth.signOut();
+      profile = null;
+      await route();
+    });
+
+    db.auth.onAuthStateChange(() => { setTimeout(route, 0); });
+    route();
+  </script>
+</body>
+</html>
