@@ -14,7 +14,7 @@
 
 ### Онлайн-запись и мастера
 
-- `create-booking` развёрнута как активная версия **15**. Проверяет JSON, slug салона, имя, телефон, услугу, UUID мастера, календарную дату, время и длину комментария; дополнительно ограничивает до 5 валидных заявок с одного номера на салон за 10 минут.
+- `create-booking` развёрнута как активная версия **16**. Проверяет JSON, slug салона, имя, телефон, услугу, UUID мастера, календарную дату, время и длину комментария; дополнительно ограничивает до 5 валидных заявок с одного номера на салон за 10 минут.
 - Edge Function находит салон по проверенному slug, сверяет мастера с этим салоном, проверяет активность профиля и занятость через tenant-aware RPC.
 - Сервер принимает только активную услугу из каталога салона. Для Amulet перенесены все 14 услуг, уже опубликованные на странице, с точными подписями цены, включая «від … грн».
 - Запись получает `salon_id`, `master_id` и, когда услуга заведена в каталоге, `service_id`.
@@ -114,3 +114,8 @@
 - The Play release workflow now skips signing when its four protected upload-key secrets are absent; it does not generate a new key in a public repository.
 - When the secrets exist, only APK/AAB are uploaded as an artifact. The keystore and its passwords are not included in the downloadable package.
 - The workflow itself has not been run/verified in this audit; the Android release build is not yet confirmed.
+
+
+## Последний CI
+
+- GitHub Actions quality workflow прошёл успешно на commit `e91b1b9841c85b04b52180b573170748d308f198`: Deno lint, 11 тестов бронирования (11/11) и проверка синтаксиса 20 клиентских скриптов (20/20).
