@@ -184,9 +184,11 @@
         const side = document.createElement("div");
         const price = document.createElement("div");
         price.className = "price";
-        price.textContent = service.price === null || service.price === undefined
-          ? "Ціну не вказано"
-          : new Intl.NumberFormat("uk-UA").format(Number(service.price)) + " грн";
+        price.textContent = service.price_label || (
+          service.price === null || service.price === undefined
+            ? "Ціну не вказано"
+            : new Intl.NumberFormat("uk-UA").format(Number(service.price)) + " грн"
+        );
 
         const actions = document.createElement("div");
         actions.className = "actions";
