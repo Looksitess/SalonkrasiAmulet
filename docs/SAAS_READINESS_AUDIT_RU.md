@@ -106,3 +106,11 @@
 ## Важное ограничение
 
 Сейчас нет активного публичного мастера; каталог из 14 услуг уже заполнен. Поэтому, несмотря на внесённые изменения в код и RLS, сайт ещё нельзя честно рекламировать как полностью запущенную систему онлайн-записи и продавать как завершённый SaaS. Текущий результат — подготовленная tenant-aware основа и исправленная админка, которую нужно заполнить реальными данными и пройти сквозные проверки.
+
+
+## Android administration build
+
+- The native Android admin shell is a WebView over the published `/admin/` site and uses the same current Supabase-backed admin interface.
+- The Play release workflow now skips signing when its four protected upload-key secrets are absent; it does not generate a new key in a public repository.
+- When the secrets exist, only APK/AAB are uploaded as an artifact. The keystore and its passwords are not included in the downloadable package.
+- The workflow itself has not been run/verified in this audit; the Android release build is not yet confirmed.
