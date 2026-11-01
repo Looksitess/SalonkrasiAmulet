@@ -772,8 +772,8 @@ body[data-season="newyear"]{--season-primary:#e0b6b8;--season-primary-dark:#ad6e
         <h3>Запис у «Амулет»</h3>
         <p>Залиште контакти — адміністратор підтвердить зручний час.</p>
         <form class="form-grid" id="bookingForm">
-          <input name="name" required placeholder="Ваше ім'я">
-          <input name="phone" required type="tel" placeholder="Номер телефону">
+          <input name="name" required minlength="2" maxlength="80" autocomplete="name" placeholder="Ваше ім'я">
+          <input name="phone" required type="tel" minlength="7" maxlength="25" autocomplete="tel" placeholder="Номер телефону">
           <select name="service" required>
             <option value="">Оберіть послугу</option>
             <option>Перукарський зал</option>
@@ -803,7 +803,7 @@ body[data-season="newyear"]{--season-primary:#e0b6b8;--season-primary-dark:#ad6e
   <option value="20:00">20:00</option>
 </select>
 
-<textarea name="comment" placeholder="Additional comments or requests"></textarea>
+<textarea name="comment" maxlength="500" placeholder="Additional comments or requests"></textarea>
           <button class="btn btn-primary" type="submit"><i class="fa-solid fa-paper-plane"></i> Надіслати заявку</button>
         </form>
         <div class="form-success" id="formSuccess">Дякуємо! Ми отримали вашу заявку і скоро зв’яжемося з вами для підтвердження.</div>
@@ -1262,6 +1262,14 @@ body[data-season="newyear"]{--season-primary:#e0b6b8;--season-primary-dark:#ad6e
   const timeSelect = form.querySelector('[name="time"]');
   const masterSelect = form.querySelector('[name="master_id"]');
   if (!dateInput || !timeSelect || !masterSelect) return;
+
+  const todayParts = new Intl.DateTimeFormat("en-GB", {
+    timeZone: "Europe/Kyiv", year: "numeric", month: "2-digit", day: "2-digit"
+  }).formatToParts(new Date());
+  const todayValues = Object.fromEntries(
+    todayParts.filter(part => part.type !== "literal").map(part => [part.type, part.value])
+  );
+  dateInput.min = `${todayValues.year}-${todayValues.month}-${todayValues.day}`;
 
   let requestNumber = 0;
 
