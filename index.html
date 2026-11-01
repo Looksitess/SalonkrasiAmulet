@@ -1290,7 +1290,8 @@ document.querySelectorAll('.gallery-item img').forEach(function(img){
 
   async function loadServices() {
     const serviceSelect = form.querySelector('[name="service"]');
-    if (!serviceSelect) return;
+    const client = window.amuletSupabase;
+    if (!serviceSelect || !client) return;
     const salonSlug = (window.AMULET_CONFIG && window.AMULET_CONFIG.SALON_SLUG) || "amulet";
     const { data, error } = await client.rpc("get_public_services", {
       p_salon_slug: salonSlug
