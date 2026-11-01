@@ -1,22 +1,32 @@
-name: Booking validation tests
+name: Booking validation and frontend syntax
 
 on:
   push:
     branches: [main]
     paths:
       - "supabase/functions/create-booking/**"
+      - "index.html"
+      - "admin/**"
+      - "forum.html"
+      - "community-reviews.js"
+      - "scripts/check-inline-scripts.mjs"
       - ".github/workflows/booking-validation.yml"
   pull_request:
     paths:
       - "supabase/functions/create-booking/**"
+      - "index.html"
+      - "admin/**"
+      - "forum.html"
+      - "community-reviews.js"
+      - "scripts/check-inline-scripts.mjs"
       - ".github/workflows/booking-validation.yml"
 
 permissions:
   contents: read
 
 jobs:
-  booking-validation:
-    name: Validate public booking payloads
+  quality-checks:
+    name: Booking tests and JavaScript syntax
     runs-on: ubuntu-latest
     steps:
       - name: Check out repository
@@ -28,3 +38,5 @@ jobs:
           cache: true
       - name: Run booking validation tests
         run: deno test supabase/functions/create-booking/index_test.ts
+      - name: Check frontend JavaScript syntax
+        run: node scripts/check-inline-scripts.mjs
