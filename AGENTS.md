@@ -35,7 +35,7 @@ This repository contains a live salon-booking website and Supabase backend. Work
 
 ## Migration-history warning
 
-The production Supabase database has 24 applied migrations, but only 14 original SQL migration files are currently present in `supabase/migrations/`. See `supabase/migrations/README_RU.md` for the ten missing historical files. Do not run `supabase db reset` or claim a clean-room deploy is reproducible until a tested bootstrap snapshot or the original migrations have been recovered. Never fabricate empty placeholder migrations.
+The production Supabase database has 25 applied migrations, but only 15 original SQL migration files are currently present in `supabase/migrations/`. See `supabase/migrations/README_RU.md` for the ten missing historical files. Do not run `supabase db reset` or claim a clean-room deploy is reproducible until a tested bootstrap snapshot or the original migrations have been recovered. Never fabricate empty placeholder migrations.
 
 ## Release rules
 - Preserve the live Amulet flow during SaaS refactoring.
