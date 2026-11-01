@@ -92,25 +92,15 @@ Deno.serve(async (req) => {
       .eq("active", true);
     if (servicesError) throw servicesError;
 
-    let selectedService: { id: string; name: string } | null = null;
-    if ((configuredServices ?? []).length > 0) {
-      selectedService = configuredServices.find((service: { id: string; name: string }) =>
-        service.name === service_name
-      ) ?? null;
-      if (!selectedService) {
-        return json({ ok: false, error: "Оберіть послугу з актуального каталогу салону." }, 400);
-      }
-    } else {
-      const legacyCategories = [
-        "Перукарський зал",
-        "Манікюр / педикюр",
-        "Косметологія та догляд",
-        "SPA-масаж",
-        "Інше",
-      ];
-      if (!legacyCategories.includes(service_name)) {
-        return json({ ok: false, error: "Послуга недоступна для цього салону." }, 400);
-      }
+    if (!Array.isArray(configuredServices) || configuredServices.length === 0) {
+      return json({ ok: false, error: "Салон ще не налаштував послуги для онлайн-запису." }, 409);
+    }
+
+    const selectedService = configuredServices.find((service: { id: string; name: string }) =>
+      service.name === service_name
+    ) ?? null;
+    if (!selectedService) {
+      return json({ ok: false, error: "Оберіть послугу з актуального каталогу салону." }, 400);
     }
 
     const rateLimitKey = await bookingRateLimitKey(salon_slug, phone, secretKey);
