@@ -155,8 +155,18 @@ Deno.serve(async (req) => {
       .select("id")
       .single();
 
-    if (error?.code === "23505") {
+    if (
+      error?.code === "23505" ||
+      error?.message?.includes("overlapping active booking")
+    ) {
       return json({ ok: false, error: "Цей час щойно зайняли. Оберіть інший." }, 409);
+    }
+    if (error?.message?.includes("time is blocked")) {
+      return json({ ok: false, error: "Майстер закрив цей час для запису." }, 409);
+    }
+    if (error?.message?.includes("duration changed") ||
+        error?.message?.includes("no longer active")) {
+      return json({ ok: false, error: "Дані послуги змінилися. Оновіть форму та оберіть час ще раз." }, 409);
     }
     if (error) throw error;
 
