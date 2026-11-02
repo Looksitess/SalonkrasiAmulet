@@ -6,6 +6,7 @@ const validPayload = {
   client_name: "Олена",
   phone: "+380 67 123 45 67",
   service_name: "Манікюр / педикюр",
+  service_id: "00000000-0000-4000-8000-000000000002",
   booking_date: "2026-11-02",
   booking_time: "11:00",
   master_id: "00000000-0000-4000-8000-000000000001",
@@ -80,4 +81,19 @@ Deno.test("generates a stable HMAC rate-limit key without exposing a phone numbe
   assert(first !== otherPhone, "Expected different phone numbers to have different keys");
   assert(first !== otherSalon, "Expected keys to be isolated by salon");
   assert(/^[0-9a-f]{64}$/.test(first), "Expected a 64-character SHA-256 HMAC hex digest");
+});
+
+Deno.test("accepts a 15-minute aligned start time", () => {
+  const result = validateBookingPayload({ ...validPayload, booking_time: "11:15" }, now);
+  assert(result.ok && result.data.booking_time === "11:15", "Expected 15-minute time to pass");
+});
+
+Deno.test("rejects a start time outside the 15-minute grid", () => {
+  const result = validateBookingPayload({ ...validPayload, booking_time: "11:10" }, now);
+  assert(!result.ok && result.status === 400, "Expected off-grid time to fail");
+});
+
+Deno.test("rejects a malformed service identifier", () => {
+  const result = validateBookingPayload({ ...validPayload, service_id: "service-1" }, now);
+  assert(!result.ok && result.status === 400, "Expected malformed service id to fail");
 });
