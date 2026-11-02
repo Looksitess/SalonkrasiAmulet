@@ -1,6 +1,6 @@
 # Важное замечание о миграциях Supabase
 
-На production-проекте Supabase применено 27 миграций. В этой папке на 2 ноября 2026 года сохранено 17 SQL-файлов. Десять исходных SQL-файлов старых миграций отсутствуют в доступной истории GitHub:
+На production-проекте Supabase применено **40 миграций**. В этой папке на 2 ноября 2026 года сохранено **30 SQL-файлов**. Десять исходных SQL-файлов старых миграций отсутствуют в доступной истории GitHub:
 
 - `20261028133855_secure_first_admin_invitation`
 - `20261030200805_add_customer_reviews`
@@ -12,6 +12,11 @@
 - `20261101140200_forum_reviews_interactions_and_moderation`
 - `20261101140227_review_owner_and_admin_read_policies`
 - `20261101140802_review_resubmission_and_updated_timestamps`
+
+Последние добавленные миграции для service-aware расписания и защиты публичных авторских ID:
+
+- `20261102191249_extend_service_aware_slot_grid_to_full_day.sql`
+- `20261102191609_mask_public_author_ids_for_privacy.sql`
 
 ## Что это значит
 
