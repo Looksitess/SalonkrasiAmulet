@@ -1159,6 +1159,11 @@ body[data-season="newyear"]{--season-primary:#e0b6b8;--season-primary-dark:#ad6e
     todayParts.filter(part => part.type !== "literal").map(part => [part.type, part.value])
   );
   dateInput.min = `${todayValues.year}-${todayValues.month}-${todayValues.day}`;
+  const maxBookingDate = new Date(Date.UTC(
+    Number(todayValues.year), Number(todayValues.month) - 1, Number(todayValues.day)
+  ));
+  maxBookingDate.setUTCDate(maxBookingDate.getUTCDate() + 365);
+  dateInput.max = maxBookingDate.toISOString().slice(0, 10);
 
   let requestNumber = 0;
 
