@@ -7,6 +7,7 @@ const htmlFiles = [
   "admin/reviews.html",
   "admin/forum.html",
   "admin/services.html",
+  "admin/claim-invitation.html",
   "forum.html",
 ];
 const jsFiles = ["community-reviews.js"];
