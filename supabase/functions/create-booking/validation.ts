@@ -3,6 +3,7 @@ export type BookingRequest = {
   client_name: string;
   phone: string;
   service_name: string;
+  service_id: string;
   booking_date: string;
   booking_time: string;
   master_id: string;
@@ -54,6 +55,7 @@ export function validateBookingPayload(value: unknown, now: Date = new Date()): 
     client_name: textField(input, "client_name"),
     phone: textField(input, "phone"),
     service_name: textField(input, "service_name"),
+    service_id: textField(input, "service_id"),
     booking_date: textField(input, "booking_date"),
     booking_time: textField(input, "booking_time"),
     master_id: textField(input, "master_id"),
@@ -92,6 +94,10 @@ export function validateBookingPayload(value: unknown, now: Date = new Date()): 
     return { ok: false, status: 400, error: "Вкажіть коректний номер телефону." };
   }
 
+  if (!/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(data.service_id)) {
+    return { ok: false, status: 400, error: "Оберіть послугу зі списку." };
+  }
+
   if (!/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(data.master_id)) {
     return { ok: false, status: 400, error: "Оберіть майстра зі списку." };
   }
@@ -108,7 +114,7 @@ export function validateBookingPayload(value: unknown, now: Date = new Date()): 
     return { ok: false, status: 400, error: "Такої календарної дати не існує." };
   }
 
-  if (!/^(?:[01]\d|2[0-3]):00(?::00)?$/.test(data.booking_time)) {
+  if (!/^(?:[01]\d|2[0-3]):(?:00|15|30|45)(?::00)?$/.test(data.booking_time)) {
     return { ok: false, status: 400, error: "Оберіть час із доступного списку." };
   }
 
