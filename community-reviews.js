@@ -62,12 +62,18 @@
 
   async function loadStats(type,ids){
     if(!ids.length)return;
-    const r=await client.from("content_reactions").select("target_type,target_id,user_id").eq("target_type",type).in("target_id",ids);
+    const r=await client.rpc("get_public_content_reactions",{
+      p_salon_slug:salonSlug,
+      p_target_type:type,
+      p_target_ids:ids
+    });
     if(r.error)return;
     ids.forEach(id=>stats[type+":"+id]={count:0,liked:false});
     (r.data||[]).forEach(x=>{
-      const k=type+":"+x.target_id,s=stats[k]||(stats[k]={count:0,liked:false});
-      s.count++;if(session&&x.user_id===session.user.id)s.liked=true;
+      stats[type+":"+x.target_id]={
+        count:Number(x.reaction_count)||0,
+        liked:Boolean(x.liked_by_caller)
+      };
     });
   }
   function controls(type,id,extra=""){
@@ -76,9 +82,11 @@
   }
   window.toggleReviewReaction=async function(type,id){
     if(!session){accountMsg("Увійдіть, щоб поставити реакцію.",true);$("reviewAccount").scrollIntoView({behavior:"smooth"});return;}
-    const old=await client.from("content_reactions").select("id").eq("target_type",type).eq("target_id",id).eq("user_id",session.user.id).maybeSingle();
-    if(old.error){reviewMsg("Не вдалося перевірити реакцію: "+old.error.message,true);return;}
-    const r=old.data?await client.from("content_reactions").delete().eq("id",old.data.id):await client.from("content_reactions").insert({target_type:type,target_id:id,user_id:session.user.id});
+    const r=await client.rpc("toggle_public_content_reaction",{
+      p_salon_slug:salonSlug,
+      p_target_type:type,
+      p_target_id:id
+    });
     if(r.error){reviewMsg("Не вдалося змінити реакцію: "+r.error.message,true);return;}
     await loadApproved();
   };
