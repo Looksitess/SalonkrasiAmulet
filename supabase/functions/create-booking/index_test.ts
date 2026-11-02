@@ -93,6 +93,11 @@ Deno.test("rejects a start time outside the 15-minute grid", () => {
   assert(!result.ok && result.status === 400, "Expected off-grid time to fail");
 });
 
+Deno.test("rejects a date more than 365 days ahead", () => {
+  const result = validateBookingPayload({ ...validPayload, booking_date: "2027-11-02" }, now);
+  assert(!result.ok && result.status === 400, "Expected a date beyond one year to fail");
+});
+
 Deno.test("rejects a malformed service identifier", () => {
   const result = validateBookingPayload({ ...validPayload, service_id: "service-1" }, now);
   assert(!result.ok && result.status === 400, "Expected malformed service id to fail");
