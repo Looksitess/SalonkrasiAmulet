@@ -574,7 +574,22 @@ async function loadTopics(){
 }
 function statsFor(type,id){return reactionStats[type+":"+id]||{count:0,liked:false}}
 let reactionStats={};
-async function loadReactionStats(type,ids){if(!ids.length)return;let q=db.from("content_reactions").select("target_type,target_id,user_id").eq("target_type",type).in("target_id",ids);const r=await q;if(r.error)return;for(const id of ids)reactionStats[type+":"+id]={count:0,liked:false};(r.data||[]).forEach(x=>{const s=reactionStats[type+":"+x.target_id]||(reactionStats[type+":"+x.target_id]={count:0,liked:false});s.count++;if(session&&x.user_id===session.user.id)s.liked=true})}
+async function loadReactionStats(type,ids){
+  if(!ids.length)return;
+  const r=await db.rpc("get_public_content_reactions",{
+    p_salon_slug:SALON_SLUG,
+    p_target_type:type,
+    p_target_ids:ids
+  });
+  if(r.error)return;
+  for(const id of ids)reactionStats[type+":"+id]={count:0,liked:false};
+  (r.data||[]).forEach(x=>{
+    reactionStats[type+":"+x.target_id]={
+      count:Number(x.reaction_count)||0,
+      liked:Boolean(x.liked_by_caller)
+    };
+  });
+}
 function actionButtons(type,id,owner,extra=""){const st=statsFor(type,id);return '<div class="actions" style="margin-top:8px"><button class="soft" onclick="toggleReaction(\''+type+'\',\''+id+'\')">👍 '+st.count+(st.liked?' · Ваше':'')+'</button><button class="soft" onclick="reportContent(\''+type+'\',\''+id+'\')">Поскаржитися</button>'+extra+'</div>'}
 function renderTopic(t){const count=postCounts[t.id]||0;const own=session&&t.author_id===session.user.id;const ownerActions=own?'<button class="soft" onclick="editTopic(\''+t.id+'\')">Редагувати</button><button class="soft" onclick="deleteOwnTopic(\''+t.id+'\')">Видалити</button>':'';return '<article class="topic" id="topic-'+t.id+'"><div class="topic-main"><div class="topic-head"><div><span class="tag">'+esc(t.category)+'</span>'+(count===0?' <span class="tag green">Без відповідей</span>':'')+(t.is_locked?' <span class="tag">Закрита тема</span>':'')+'<h3>'+esc(t.title)+'</h3></div><span class="tag blue">'+count+' відповідей</span></div><div class="meta">Автор: '+esc(t.author_name)+' · Створено: '+new Date(t.created_at).toLocaleString("uk-UA")+(t.updated_at&&t.updated_at!==t.created_at?' · Редаговано':'')+'</div><div class="topic-body">'+esc(t.body)+'</div><div class="topic-footer"><button class="soft" onclick="toggleReplies(\''+t.id+'\')">Показати відповіді ('+count+')</button><button class="soft" onclick="copyTopicLink(\''+t.id+'\')">Копіювати посилання</button>'+(t.is_locked?'':'<button onclick="replyTo(\''+t.id+'\')">Відповісти</button>')+ownerActions+'</div>'+actionButtons("forum_topic",t.id,own)+'</div><div class="replies" id="replies-'+t.id+'"><div class="empty">Відкрийте відповіді…</div>'+(t.is_locked?'':'<div class="reply-form" id="replyForm-'+t.id+'"><textarea maxlength="2000" placeholder="Ваша відповідь…"></textarea><div class="actions" style="margin-top:8px"><button onclick="sendReply(\''+t.id+'\')">Надіслати відповідь</button><button class="soft" onclick="replyTo(\''+t.id+'\')">Скасувати</button></div></div>')+'</div></article>'}
 async function toggleReplies(id,forceOpen=false){
@@ -593,7 +608,20 @@ async function toggleReplies(id,forceOpen=false){
 }
 function renderPostNode(topicId,p,byParent,depth=0){const own=session&&p.author_id===session.user.id;const ownerActions=own?'<button class="soft" onclick="editPost(\''+p.id+'\')">Редагувати</button><button class="soft" onclick="deleteOwnPost(\''+p.id+'\',\''+topicId+'\')">Видалити</button>':'';const children=byParent[p.id]||[];return '<div class="reply" style="margin-left:'+Math.min(depth,5)*14+'px"><div><strong>'+esc(p.author_name)+'</strong> <span class="meta">· '+new Date(p.created_at).toLocaleString("uk-UA")+(p.updated_at&&p.updated_at!==p.created_at?' · редаговано':'')+'</span></div><p>'+esc(p.body)+'</p>'+actionButtons("forum_post",p.id,own,'<button class="soft" onclick="replyToPost(\''+topicId+'\',\''+p.id+'\')">Відповісти</button>'+ownerActions)+'<div class="reply-form" id="postReplyForm-'+p.id+'"><textarea maxlength="2000" placeholder="Ваша відповідь…"></textarea><div class="actions" style="margin-top:8px"><button onclick="sendReply(\''+topicId+'\',\''+p.id+'\')">Надіслати</button><button class="soft" onclick="replyToPost(\''+topicId+'\',\''+p.id+'\')">Скасувати</button></div></div>'+(children.length?children.map(ch=>renderPostNode(topicId,ch,byParent,depth+1)).join(""):"")+'</div>'}
 function renderReplies(id,rows){const panel=document.getElementById("replies-"+id);if(!panel)return;const byParent={};rows.forEach(p=>{const key=p.parent_id||"root";(byParent[key]||(byParent[key]=[])).push(p)});const roots=byParent.root||[];const form=document.getElementById("replyForm-"+id);const formHTML=form?form.outerHTML:"";panel.innerHTML=(roots.length?roots.map(p=>renderPostNode(id,p,byParent)).join(""):'<div class="empty">Відповідей ще немає. Станьте першим, хто відповість.</div>')+formHTML}
-async function toggleReaction(type,id){if(!session){document.getElementById("accountPanel").scrollIntoView({behavior:"smooth"});msg("accountMessage","Увійдіть, щоб поставити реакцію.",false);return}const key=type+":"+id;const existing=await db.from("content_reactions").select("id").eq("target_type",type).eq("target_id",id).eq("user_id",session.user.id).maybeSingle();if(existing.error){msg("accountMessage","Не вдалося перевірити реакцію: "+existing.error.message,false);return}let r;if(existing.data)r=await db.from("content_reactions").delete().eq("id",existing.data.id);else r=await db.from("content_reactions").insert({target_type:type,target_id:id,user_id:session.user.id});if(r.error){msg("accountMessage","Не вдалося змінити реакцію: "+r.error.message,false);return}reactionStats[key]=reactionStats[key]||{count:0,liked:false};reactionStats[key].count=Math.max(0,reactionStats[key].count+(existing.data?-1:1));reactionStats[key].liked=!existing.data;Object.keys(replyCache).forEach(k=>delete replyCache[k]);await loadTopics()}
+async function toggleReaction(type,id){
+  if(!session){
+    document.getElementById("accountPanel").scrollIntoView({behavior:"smooth"});
+    msg("accountMessage","Увійдіть, щоб поставити реакцію.",false);return;
+  }
+  const r=await db.rpc("toggle_public_content_reaction",{
+    p_salon_slug:SALON_SLUG,
+    p_target_type:type,
+    p_target_id:id
+  });
+  if(r.error){msg("accountMessage","Не вдалося змінити реакцію: "+r.error.message,false);return;}
+  Object.keys(replyCache).forEach(k=>delete replyCache[k]);
+  await loadTopics();
+}
 async function reportContent(type,id){if(!session){msg("accountMessage","Увійдіть, щоб надіслати скаргу.",false);document.getElementById("accountPanel").scrollIntoView({behavior:"smooth"});return}const reason=prompt("Причина скарги (спам, образи, недостовірна інформація, інше):","Спам");if(!reason)return;const r=await db.from("content_reports").insert({target_type:type,target_id:id,reporter_id:session.user.id,reason:reason.trim().slice(0,80)});if(r.error){msg("accountMessage","Не вдалося надіслати скаргу: "+r.error.message,false);return}msg("accountMessage","Скаргу передано адміністрації.",true)}
 async function editTopic(id){const t=topicRows.find(x=>x.id===id);if(!t||!session||t.author_id!==session.user.id)return;const title=prompt("Назва теми:",t.title);if(title===null)return;const body=prompt("Текст теми:",t.body);if(body===null)return;const category=prompt("Категорія (Загальне / Догляд і краса / Питання майстрам / Манікюр і педикюр / Волосся):",t.category);if(category===null)return;const r=await db.rpc("update_forum_topic_content",{p_topic_id:id,p_title:title,p_body:body,p_category:category});if(r.error){msg("accountMessage","Не вдалося відредагувати тему: "+r.error.message,false);return}msg("accountMessage","Тему оновлено. Після редагування вона зберігає статус публікації.",true);await loadTopics()}
 async function deleteOwnTopic(id){if(!confirm("Видалити свою тему разом із відповідями?"))return;const r=await db.from("forum_topics").delete().eq("id",id).eq("author_id",session.user.id);if(r.error){msg("accountMessage","Не вдалося видалити тему: "+r.error.message,false);return}msg("accountMessage","Тему видалено.",true);await loadTopics()}
