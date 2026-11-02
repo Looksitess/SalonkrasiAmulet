@@ -97,25 +97,6 @@ Deno.serve(async (req) => {
       return json({ ok: false, error: "Оберіть активну послугу з каталогу цього салону." }, 400);
     }
 
-    const rateLimitKey = await bookingRateLimitKey(salon_slug, phone, secretKey);
-    const { data: rateAllowed, error: rateLimitError } = await supabase.rpc(
-      "consume_booking_rate_limit",
-      {
-        p_key_hash: rateLimitKey,
-        p_limit: 5,
-        p_window_seconds: 600,
-      },
-    );
-
-    if (rateLimitError) throw rateLimitError;
-    if (rateAllowed !== true) {
-      return json(
-        { ok: false, error: "Забагато заявок із цього номера. Спробуйте трохи пізніше." },
-        429,
-        { "Retry-After": "600" },
-      );
-    }
-
     const { data: availability, error: availabilityError } = await supabase.rpc(
       "get_public_available_times",
       { p_booking_date: booking_date, p_master_id: slot.id, p_salon_slug: salon_slug, p_service_id: selectedService.id },
@@ -135,6 +116,25 @@ Deno.serve(async (req) => {
     }
     if (matchingTime.is_blocked) {
       return json({ ok: false, error: "Майстер закрив цей час для запису." }, 409);
+    }
+
+    const rateLimitKey = await bookingRateLimitKey(salon_slug, phone, secretKey);
+    const { data: rateAllowed, error: rateLimitError } = await supabase.rpc(
+      "consume_booking_rate_limit",
+      {
+        p_key_hash: rateLimitKey,
+        p_limit: 5,
+        p_window_seconds: 600,
+      },
+    );
+
+    if (rateLimitError) throw rateLimitError;
+    if (rateAllowed !== true) {
+      return json(
+        { ok: false, error: "Забагато заявок із цього номера. Спробуйте трохи пізніше." },
+        429,
+        { "Retry-After": "600" },
+      );
     }
 
     const { data: booking, error } = await supabase
