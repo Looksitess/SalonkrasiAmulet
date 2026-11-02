@@ -572,28 +572,6 @@ async function loadTopics(){
     loading=false;box.classList.remove("loading");
   }
 }
-let query=db.from("forum_topics").select("id,title,category,body,author_id,author_name,created_at,updated_at,is_locked,forum_posts(count)",{count:"exact"}).eq("status","published");
-const category=document.getElementById("categoryFilter").value;
-const search=safeSearchValue(document.getElementById("searchInput").value);
-if(category)query=query.eq("category",category);
-if(document.getElementById("mineFilter").checked&&session)query=query.eq("author_id",session.user.id);
-if(document.getElementById("sortFilter").value==="oldest")query=query.order("created_at",{ascending:true});else query=query.order("updated_at",{ascending:false});
-const r=await query.range(0,TOPIC_CAP-1);if(r.error)throw r.error;
-let replyMatches=new Set();if(search){const pattern="%"+search+"%";const pr=await db.from("forum_posts").select("topic_id").eq("status","published").or("body.ilike."+pattern+",author_name.ilike."+pattern).limit(3000);if(pr.error)throw pr.error;replyMatches=new Set((pr.data||[]).map(p=>p.topic_id))}
-topicRows=r.data||[];if(search)topicRows=topicRows.filter(t=>[t.title,t.body,t.author_name].some(v=>String(v||"").toLocaleLowerCase("uk-UA").includes(search.toLocaleLowerCase("uk-UA")))||replyMatches.has(t.id));postCounts={};
-topicRows.forEach(t=>{postCounts[t.id]=Number((t.forum_posts||[])[0]?.count||0)});
-if(document.getElementById("unansweredFilter").checked)topicRows=topicRows.filter(t=>(postCounts[t.id]||0)===0);
-topicRows=sortRows(topicRows,document.getElementById("sortFilter").value);
-const total=topicRows.length;const totalPages=Math.max(1,Math.ceil(total/PAGE_SIZE));if(page>totalPages)page=totalPages;
-document.getElementById("resultCount").textContent=total+" тем"+(total===TOPIC_CAP?" (показано максимум 1000)":"");
-if(!total){box.innerHTML='<div class="empty">За цими умовами нічого не знайдено. Спробуйте змінити пошук або скинути фільтри.</div>';renderPager(0);return}
-const visible=topicRows.slice((page-1)*PAGE_SIZE,page*PAGE_SIZE);
-reactionStats={};await loadReactionStats("forum_topic",visible.map(t=>t.id));
-box.innerHTML=visible.map(renderTopic).join("");
-renderPager(totalPages);
-}catch(e){box.innerHTML='<div class="empty">Не вдалося завантажити форум: '+esc(e.message)+'</div>';document.getElementById("resultCount").textContent="Помилка завантаження"}
-finally{loading=false;box.classList.remove("loading")}}
-
 function statsFor(type,id){return reactionStats[type+":"+id]||{count:0,liked:false}}
 let reactionStats={};
 async function loadReactionStats(type,ids){if(!ids.length)return;let q=db.from("content_reactions").select("target_type,target_id,user_id").eq("target_type",type).in("target_id",ids);const r=await q;if(r.error)return;for(const id of ids)reactionStats[type+":"+id]={count:0,liked:false};(r.data||[]).forEach(x=>{const s=reactionStats[type+":"+x.target_id]||(reactionStats[type+":"+x.target_id]={count:0,liked:false});s.count++;if(session&&x.user_id===session.user.id)s.liked=true})}
