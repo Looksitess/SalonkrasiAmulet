@@ -120,6 +120,13 @@ export function validateBookingPayload(value: unknown, now: Date = new Date()): 
 
   const requestedTime = data.booking_time.slice(0, 5);
   const localNow = kyivDateAndTime(now);
+
+  const maxDate = new Date(`${localNow.date}T00:00:00.000Z`);
+  maxDate.setUTCDate(maxDate.getUTCDate() + 365);
+  if (data.booking_date > maxDate.toISOString().slice(0, 10)) {
+    return { ok: false, status: 400, error: "Запис доступний не далі ніж на рік уперед." };
+  }
+
   if (
     data.booking_date < localNow.date ||
     (data.booking_date === localNow.date && requestedTime <= localNow.time)
