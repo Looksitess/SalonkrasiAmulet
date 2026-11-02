@@ -34,7 +34,7 @@ Deno.serve(async (req) => {
       salon_slug,
       client_name,
       phone,
-      service_name,
+      service_id,
       booking_date,
       booking_time,
       comment,
@@ -85,22 +85,16 @@ Deno.serve(async (req) => {
       return json({ ok: false, error: "Цей майстер зараз не приймає записи." }, 409);
     }
 
-    const { data: configuredServices, error: servicesError } = await supabase
+    const { data: selectedService, error: serviceError } = await supabase
       .from("services")
-      .select("id, name")
+      .select("id, name, duration_minutes")
+      .eq("id", service_id)
       .eq("salon_id", salon.id)
-      .eq("active", true);
-    if (servicesError) throw servicesError;
-
-    if (!Array.isArray(configuredServices) || configuredServices.length === 0) {
-      return json({ ok: false, error: "Салон ще не налаштував послуги для онлайн-запису." }, 409);
-    }
-
-    const selectedService = configuredServices.find((service: { id: string; name: string }) =>
-      service.name === service_name
-    ) ?? null;
+      .eq("active", true)
+      .maybeSingle();
+    if (serviceError) throw serviceError;
     if (!selectedService) {
-      return json({ ok: false, error: "Оберіть послугу з актуального каталогу салону." }, 400);
+      return json({ ok: false, error: "Оберіть активну послугу з каталогу цього салону." }, 400);
     }
 
     const rateLimitKey = await bookingRateLimitKey(salon_slug, phone, secretKey);
@@ -124,7 +118,7 @@ Deno.serve(async (req) => {
 
     const { data: availability, error: availabilityError } = await supabase.rpc(
       "get_public_available_times",
-      { p_booking_date: booking_date, p_master_id: slot.id, p_salon_slug: salon_slug },
+      { p_booking_date: booking_date, p_master_id: slot.id, p_salon_slug: salon_slug, p_service_id: selectedService.id },
     );
 
     if (availabilityError) throw availabilityError;
@@ -150,8 +144,9 @@ Deno.serve(async (req) => {
         master_id: slot.id,
         client_name,
         phone,
-        service_id: selectedService?.id ?? null,
-        service_name,
+        service_id: selectedService.id,
+        service_name: selectedService.name,
+        duration_minutes: selectedService.duration_minutes,
         booking_date,
         booking_time,
         comment: comment || null,
