@@ -488,7 +488,7 @@ async function loadCalendar() {
     const events = dayBookings.map(function(b){
       const slot = slots.find(function(s){return s.id === b.master_id || s.id === b.master_slot_id;});
       const masterName = b.master_name || (slot ? slot.display_name : "Майстер не призначений");
-      return '<div class="calendar-event"><div class="calendar-event-time">' + escapeHtml(String(b.booking_time||"—").slice(0,5)) + '</div><div class="calendar-event-client">' + escapeHtml(b.client_name||"Клієнт") + '</div><div class="calendar-event-meta">' + escapeHtml(masterName) + '</div><div class="calendar-event-meta">' + escapeHtml(b.service_name||"Послуга не вказана") + ' · ' + escapeHtml(statusName(b.status||"new")) + '</div></div>';
+      return '<div class="calendar-event"><div class="calendar-event-time">' + escapeHtml(String(b.booking_time||"—").slice(0,5)) + '</div><div class="calendar-event-client">' + escapeHtml(b.client_name||"Клієнт") + '</div><div class="calendar-event-meta">' + escapeHtml(masterName) + '</div><div class="calendar-event-meta">' + escapeHtml(b.service_name||"Послуга не вказана") + ' · ' + escapeHtml(String(b.duration_minutes||60)) + ' хв · ' + escapeHtml(statusName(b.status||"new")) + '</div></div>';
     }).join("");
     dayMarkup.push('<div class="calendar-day' + (key===todayKey ? ' today' : '') + '"><div class="calendar-day-head">' + days[i] + '<div class="calendar-date">' + formatDate(date) + '</div></div>' + (events || '<div class="calendar-empty">Немає записів</div>') + '</div>');
   }
@@ -565,6 +565,7 @@ function renderBookingGroups() {
         return '<option value="' + value + '" ' + (status === value ? "selected" : "") + '>' + names[value] + '</option>';
       }).join("") + '</select></div></div><div class="details-grid">' +
       '<div class="detail"><div class="detail-title">Послуга</div><strong>' + escapeHtml(booking.service_name || "Не вказана") + '</strong></div>' +
+      '<div class="detail"><div class="detail-title">Тривалість</div><strong>' + escapeHtml(String(booking.duration_minutes || 60)) + ' хв</strong></div>' +
       '<div class="detail"><div class="detail-title">Дата</div><strong>' + escapeHtml(booking.booking_date || "—") + '</strong></div>' +
       '<div class="detail"><div class="detail-title">Час</div><strong>' + escapeHtml(String(booking.booking_time || "—").slice(0,5)) + '</strong></div>' +
       '<div class="detail"><div class="detail-title">Майстер</div><strong>' + escapeHtml(masterName) + '</strong></div>' +
@@ -701,7 +702,7 @@ async function loadMasterPortal() {
 
   const results = await Promise.all([
     supabaseClient.from("work_schedule").select("*").eq("master_id",slotId).order("weekday"),
-    supabaseClient.from("bookings").select("id,client_name,phone,service_name,booking_date,booking_time,status,comment")
+    supabaseClient.from("bookings").select("id,client_name,phone,service_name,duration_minutes,booking_date,booking_time,status,comment")
       .eq("master_id",slotId).gte("booking_date",today).order("booking_date").order("booking_time").limit(50),
     supabaseClient.from("blocked_slots").select("*").eq("master_id",slotId).gt("ends_at",new Date().toISOString()).order("starts_at")
   ]);
@@ -732,7 +733,8 @@ function renderMyBookings(rows) {
       escapeHtml(statusName(b.status)) + '</span></div><div class="details-grid"><div class="detail"><div class="detail-title">Дата</div><strong>' +
       escapeHtml(b.booking_date) + '</strong></div><div class="detail"><div class="detail-title">Час</div><strong>' +
       escapeHtml(String(b.booking_time).slice(0,5)) + '</strong></div><div class="detail"><div class="detail-title">Послуга</div><strong>' +
-      escapeHtml(b.service_name || "Не вказана") + '</strong></div></div>' +
+      escapeHtml(b.service_name || "Не вказана") + '</strong></div><div class="detail"><div class="detail-title">Тривалість</div><strong>' +
+      escapeHtml(String(b.duration_minutes || 60)) + ' хв</strong></div></div>' +
       (b.comment ? '<p class="muted">' + escapeHtml(b.comment) + '</p>' : '') + '</article>';
   }).join("");
 }
