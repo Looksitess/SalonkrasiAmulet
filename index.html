@@ -1091,11 +1091,14 @@ body[data-season="newyear"]{--season-primary:#e0b6b8;--season-primary-dark:#ad6e
     event.preventDefault();
     event.stopImmediatePropagation();
 
+    const serviceSelect = form.querySelector('[name="service"]');
+    const selectedServiceOption = serviceSelect?.selectedOptions?.[0] || null;
     const booking = {
       salon_slug: cfg.SALON_SLUG || "amulet",
       client_name: fieldValue(["name","client_name","clientName"]),
       phone: fieldValue(["phone","tel","client_phone"]),
-      service_name: fieldValue(["service","service_name","services"]),
+      service_id: fieldValue(["service"]),
+      service_name: selectedServiceOption?.dataset.serviceName || "",
       booking_date: fieldValue(["date","booking_date"]),
       booking_time: fieldValue(["time","booking_time"]),
       master_id: fieldValue(["master_id"]),
@@ -1146,7 +1149,8 @@ body[data-season="newyear"]{--season-primary:#e0b6b8;--season-primary-dark:#ad6e
   const dateInput = form.querySelector('[name="date"]');
   const timeSelect = form.querySelector('[name="time"]');
   const masterSelect = form.querySelector('[name="master_id"]');
-  if (!dateInput || !timeSelect || !masterSelect) return;
+  const serviceSelect = form.querySelector('[name="service"]');
+  if (!dateInput || !timeSelect || !masterSelect || !serviceSelect) return;
 
   const todayParts = new Intl.DateTimeFormat("en-GB", {
     timeZone: "Europe/Kyiv", year: "numeric", month: "2-digit", day: "2-digit"
@@ -1196,8 +1200,9 @@ body[data-season="newyear"]{--season-primary:#e0b6b8;--season-primary-dark:#ad6e
     const currentRequest = ++requestNumber;
     const date = dateInput.value;
     const masterId = masterSelect.value;
+    const serviceId = serviceSelect.value;
 
-    if (!date || !masterId) {
+    if (!date || !masterId || !serviceId) {
       resetTimes("Спочатку оберіть майстра та дату");
       return;
     }
@@ -1212,7 +1217,8 @@ body[data-season="newyear"]{--season-primary:#e0b6b8;--season-primary-dark:#ad6e
     const { data, error } = await client.rpc("get_public_available_times", {
       p_booking_date: date,
       p_master_id: masterId,
-      p_salon_slug: (window.AMULET_CONFIG && window.AMULET_CONFIG.SALON_SLUG) || "amulet"
+      p_salon_slug: (window.AMULET_CONFIG && window.AMULET_CONFIG.SALON_SLUG) || "amulet",
+      p_service_id: serviceId
     });
 
     if (currentRequest !== requestNumber) return;
@@ -1226,6 +1232,7 @@ body[data-season="newyear"]{--season-primary:#e0b6b8;--season-primary-dark:#ad6e
 
   dateInput.addEventListener("change", updateTimes);
   masterSelect.addEventListener("change", updateTimes);
+  serviceSelect.addEventListener("change", updateTimes);
   resetTimes();
 })();
 </script>
@@ -1330,7 +1337,8 @@ document.querySelectorAll('.gallery-item img').forEach(function(img){
     serviceSelect.replaceChildren(new Option("Оберіть послугу", ""));
     data.forEach(function(service) {
       const option = document.createElement("option");
-      option.value = service.name;
+      option.value = service.id;
+      option.dataset.serviceName = service.name;
       const priceLabel = service.price_label || (
         service.price === null || service.price === undefined
           ? ""
@@ -1339,8 +1347,11 @@ document.querySelectorAll('.gallery-item img').forEach(function(img){
       option.textContent = service.name + (priceLabel ? " — " + priceLabel : "");
       serviceSelect.appendChild(option);
     });
-    if (data.some(function(service) { return service.name === selected; })) {
+    if (data.some(function(service) { return service.id === selected; })) {
       serviceSelect.value = selected;
+    }
+    if (form.querySelector('[name="date"]')?.value && form.querySelector('[name="master_id"]')?.value) {
+      serviceSelect.dispatchEvent(new Event("change"));
     }
 
     const catalog = document.getElementById("publicServiceCatalog");
