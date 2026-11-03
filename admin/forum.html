@@ -2,7 +2,7 @@
 <html lang="uk">
 <head>
 <meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Амулет — модерація форуму</title>
+<title>Амулет — керування форумом</title>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
 :root{--bg:#faf8f4;--card:#fffefd;--text:#302c27;--muted:#81796f;--line:#e9e2d8;--red:#b42318;--green:#177245;--blue:#29445f}
@@ -359,12 +359,126 @@ body[data-season="newyear"]{
 }
 @media(max-width:600px){.seasonal-mark{right:10px;top:82px;width:36px;height:36px;font-size:17px}}
 
+
+/* FINAL AMULET ADMIN PALETTE — warm beige, orange and white */
+:root{
+  --bg:#fff8f0!important;
+  --card:#fffdf9!important;
+  --text:#302c27!important;
+  --muted:#81796f!important;
+  --line:rgba(197,168,128,.30)!important;
+  --blue:#b98255!important;
+}
+html{background:#fff8f0}
+body{
+  background-color:#fff8f0!important;
+  background-image:
+    radial-gradient(ellipse at 8% 10%,rgba(230,125,58,.28) 0%,rgba(230,125,58,.13) 24%,transparent 48%),
+    radial-gradient(ellipse at 90% 24%,rgba(246,177,112,.34) 0%,rgba(246,177,112,.16) 28%,transparent 52%),
+    radial-gradient(ellipse at 76% 88%,rgba(218,151,91,.24) 0%,rgba(218,151,91,.10) 26%,transparent 50%),
+    radial-gradient(ellipse at 35% 58%,rgba(239,220,194,.46) 0%,transparent 48%),
+    linear-gradient(125deg,#fffdf9 0%,#f4e5d4 48%,#fff9f1 100%)!important;
+  background-attachment:fixed!important;
+  color:#302c27!important;
+}
+.panel,.topic,.reply,.stat,.login{
+  background:rgba(255,253,249,.96)!important;
+  color:#302c27!important;
+  border:1px solid rgba(197,168,128,.34)!important;
+  box-shadow:0 10px 28px rgba(103,75,48,.075)!important;
+  text-shadow:none!important;
+}
+.panel:hover,.topic:hover,.stat:hover{
+  border-color:rgba(217,151,91,.65)!important;
+  box-shadow:0 13px 32px rgba(190,128,76,.13)!important;
+}
+.header h1,.panel h2,.topic h3,.login h1,.stat strong{
+  color:#302c27!important;
+  text-shadow:none!important;
+}
+.muted,.meta,.summary .stat span,.pager span{color:#81796f!important}
+.filters input,.filters select,.login input{
+  background:rgba(255,255,255,.96)!important;
+  border:1px solid rgba(197,168,128,.42)!important;
+  color:#302c27!important;
+  box-shadow:inset 0 1px 2px rgba(67,54,39,.025)!important;
+  color-scheme:light!important;
+}
+.filters input::placeholder,.login input::placeholder{color:#a0988d!important}
+.filters input:focus,.filters select:focus,.login input:focus{
+  outline:none!important;
+  border-color:#c58b5c!important;
+  box-shadow:0 0 0 3px rgba(217,151,91,.16)!important;
+}
+button,.button{
+  background:linear-gradient(135deg,#d99b68,#bd8050)!important;
+  border:1px solid #b98255!important;
+  color:#fff!important;
+  box-shadow:0 6px 16px rgba(190,128,76,.20)!important;
+  text-shadow:none!important;
+}
+button:hover,.button:hover{
+  filter:brightness(1.04)!important;
+  box-shadow:0 8px 20px rgba(190,128,76,.25)!important;
+}
+.soft{
+  background:linear-gradient(135deg,#fffaf3,#f3e7d8)!important;
+  color:#5a4938!important;
+  border:1px solid rgba(197,168,128,.42)!important;
+  box-shadow:none!important;
+}
+.danger{
+  background:linear-gradient(135deg,#bd7468,#a85b51)!important;
+  border:1px solid #a85b51!important;
+  color:#fff!important;
+}
+.green{
+  background:linear-gradient(135deg,#80a58a,#62896d)!important;
+  border:1px solid #62896d!important;
+  color:#fff!important;
+}
+.badge{
+  background:#f6eadb!important;
+  color:#76583d!important;
+  border:1px solid rgba(197,168,128,.36)!important;
+  box-shadow:none!important;
+}
+.badge.hidden{
+  background:#f8e8e5!important;
+  color:#99534a!important;
+  border-color:#e7c7c1!important;
+}
+.reply{background:rgba(255,250,243,.92)!important}
+.empty{
+  background:rgba(255,253,249,.90)!important;
+  color:#81796f!important;
+  border:1px dashed rgba(197,168,128,.48)!important;
+  box-shadow:none!important;
+}
+.message.ok{
+  background:#edf4eb!important;color:#4b7150!important;
+  border:1px solid #d7e4d2!important;box-shadow:none!important;
+}
+.message.err{
+  background:#f8eae7!important;color:#99534a!important;
+  border:1px solid #e8ceca!important;box-shadow:none!important;
+}
+.check{color:#5a4938!important}
+.check input{accent-color:#bd8050!important}
+.seasonal-mark{
+  background:linear-gradient(145deg,#fffdf9,#f1e2d1)!important;
+  color:#b98255!important;
+  border:1px solid rgba(197,168,128,.38)!important;
+  box-shadow:0 6px 18px rgba(103,75,48,.10)!important;
+}
+::selection{background:#e5b58d!important;color:#302c27!important}
+
 </style>
 </head>
 <body>
-<div id="login" class="login" style="display:none"><h1>Модерація форуму</h1><p class="muted">Увійдіть під адміністраторським акаунтом.</p><label>Email</label><input id="email" type="email" autocomplete="username"><label>Пароль</label><input id="password" type="password" autocomplete="current-password"><button style="width:100%" onclick="login()">Увійти</button><div id="loginError"></div></div>
+<div id="login" class="login" style="display:none"><h1>Керування форумом</h1><p class="muted">Увійдіть під адміністраторським акаунтом.</p><label>Email</label><input id="email" type="email" autocomplete="username"><label>Пароль</label><input id="password" type="password" autocomplete="current-password"><button style="width:100%" onclick="login()">Увійти</button><div id="loginError"></div></div>
 <div id="app" style="display:none"><div class="container">
-<div class="header"><div><h1 style="margin:0">Модерація форуму</h1><div class="muted">Пошук, фільтри, керування темами й відповідями.</div></div><div class="actions"><a class="button soft" href="./index.html">До адмінки</a><a class="button soft" href="./reviews.html">Відгуки та скарги</a><a class="button soft" href="../forum.html" target="_blank" rel="noopener">Відкрити форум</a><button class="soft" onclick="loadTopics()">Оновити</button><button class="danger" onclick="logout()">Вийти</button></div></div>
+<div class="header"><div><h1 style="margin:0">Керування форумом</h1><div class="muted">Пошук, фільтри, керування темами й відповідями.</div></div><div class="actions"><a class="button soft" href="./index.html">До адмінки</a><a class="button soft" href="./reviews.html">Відгуки та скарги</a><a class="button soft" href="../forum.html" target="_blank" rel="noopener">Відкрити форум</a><button class="soft" onclick="loadTopics()">Оновити</button><button class="danger" onclick="logout()">Вийти</button></div></div>
 <div id="message"></div>
 <div class="summary"><div class="stat"><strong id="allCount">0</strong><span class="muted">Усього тем</span></div><div class="stat"><strong id="publishedCount">0</strong><span class="muted">Опубліковано</span></div><div class="stat"><strong id="hiddenCount">0</strong><span class="muted">Приховано</span></div><div class="stat"><strong id="replyCount">0</strong><span class="muted">Відповідей</span></div></div>
 <section class="panel"><h2 style="margin-top:0">Фільтри модерації</h2><div class="filters">
