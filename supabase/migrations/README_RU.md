@@ -1,6 +1,6 @@
 # Важное замечание о миграциях Supabase
 
-На production-проекте Supabase применено **44 миграции**. В этой папке на 2 ноября 2026 года сохранено **34 SQL-файла**. Десять исходных SQL-файлов старых миграций отсутствуют в доступной истории GitHub:
+На production-проекте Supabase применено **45 миграций**. В этой папке на 3 ноября 2026 года сохранено **35 SQL-файлов**. Десять исходных SQL-файлов старых миграций отсутствуют в доступной истории GitHub:
 
 - `20261028133855_secure_first_admin_invitation`
 - `20261030200805_add_customer_reviews`
@@ -21,6 +21,7 @@
 - `20261102192319_bound_public_availability_date_window.sql`
 - `20261102192624_compare_booking_intervals_as_timestamps.sql`
 - `20261102193039_allow_new_auth_users_to_claim_admin_invites.sql`
+- `20261103133442_index_content_rate_limits_user_id.sql`
 
 ## Что это значит
 
