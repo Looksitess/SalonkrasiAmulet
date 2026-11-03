@@ -67,7 +67,7 @@ body[data-season="newyear"]{--admin-season-bg:#f9eff0;--admin-season-button:#e0b
   <div class="container">
     <div class="header">
       <div><h1 style="margin:0 0 5px">Адміністратор «Амулет»</h1><div class="subtitle">20 місць для майстрів • графіки • записи</div></div>
-      <div class="actions"><button id="installAppButton" class="secondary" style="display:none" type="button" onclick="installAdminApp()">Установить приложение</button><button id="bookingNotificationsToggle" class="secondary" onclick="toggleBookingNotifications()">Увімкнути сповіщення</button><span id="bookingNotificationsStatus" class="pill off" aria-live="polite">Сповіщення вимкнено</span><button class="secondary" onclick="refreshAdmin()">Оновити</button><button class="danger" onclick="logout()">Вийти</button></div>
+      <div class="actions"><button id="installAppButton" class="secondary" style="display:none" type="button" onclick="installAdminApp()">Установить приложение</button><button id="bookingNotificationsToggle" class="secondary" onclick="toggleBookingNotifications()">Увімкнути сповіщення</button><span id="bookingNotificationsStatus" class="pill off" aria-live="polite">Сповіщення вимкнено</span><button class="secondary" onclick="refreshAdmin()">Оновити</button><button class="danger" onclick="logout()">Вийти з акаунта</button></div>
     </div>
     <div class="stats">
       <div class="stat"><div>Усього записів</div><div class="stat-number" id="totalCount">0</div></div>
@@ -122,7 +122,7 @@ body[data-season="newyear"]{--admin-season-bg:#f9eff0;--admin-season-button:#e0b
   <div class="container">
     <div class="header">
       <div><h1 style="margin:0 0 5px">Мій графік</h1><div class="subtitle" id="masterWelcome"></div></div>
-      <div class="actions"><button class="secondary" onclick="loadMasterPortal()">Оновити</button><button class="danger" onclick="logout()">Вийти</button></div>
+      <div class="actions"><button class="secondary" onclick="loadMasterPortal()">Оновити</button><button class="danger" onclick="logout()">Вийти з акаунта</button></div>
     </div>
     <div id="masterMessage" aria-live="polite"></div>
     <section class="panel">
