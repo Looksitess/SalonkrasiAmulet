@@ -3,11 +3,40 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Амулет — відгуки</title>
+<title>Амулет — відгуки та скарги</title>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
 :root{--bg:#f7f3ec;--card:#fffefa;--text:#302c27;--muted:#7b7267;--gold:#b49a78;--line:#e8ddcf;--red:#b42318;--green:#177245}
 *{box-sizing:border-box}body{margin:0;background:linear-gradient(145deg,var(--bg),#fffdf9 72%) fixed;color:var(--text);font:15px Arial,sans-serif}.container{max-width:1000px;margin:0 auto;padding:22px}.panel,.review{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:20px;margin-bottom:16px;box-shadow:0 7px 22px rgba(72,56,38,.055)}.header{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:18px}h1,h2{margin:0 0 7px}.muted{color:var(--muted)}button{border:0;border-radius:10px;padding:11px 15px;cursor:pointer;font:inherit;background:linear-gradient(135deg,#c9b391,#aa8e69);color:#fff}.secondary{background:#f0e8dc;color:var(--text);border:1px solid var(--line)}.danger{background:#b42318}.message{padding:10px 13px;border-radius:10px;margin:12px 0}.message.ok{background:#e7f5eb;color:var(--green)}.message.err{background:#fff0ef;color:var(--red)}.reviews{display:grid;gap:12px}.review-top{display:flex;justify-content:space-between;gap:12px;align-items:flex-start}.review-name{font-size:18px;font-weight:700}.stars{color:#ffc107;letter-spacing:2px;margin:7px 0}.review-text{white-space:pre-wrap;line-height:1.55;margin:10px 0 15px}.review-date{font-size:12px;color:var(--muted)}.actions{display:flex;gap:8px;flex-wrap:wrap}.login{max-width:430px;margin:8vh auto;background:#fffefa;padding:28px;border-radius:18px;box-shadow:0 8px 28px rgba(0,0,0,.06)}.login input{width:100%;padding:11px 12px;border:1px solid var(--line);border-radius:9px;margin:7px 0 12px}.empty{text-align:center;padding:30px;color:var(--muted)}
+
+/* Warm Amulet look shared with the public website */
+:root{
+  --bg:#fff8f0;--card:#fffdf9;--text:#302c27;--muted:#81796f;
+  --gold:#bd8050;--line:rgba(197,168,128,.34);
+}
+html{background:#fff8f0}
+body{
+  background-color:#fff8f0;
+  background-image:
+    radial-gradient(ellipse at 8% 10%,rgba(230,125,58,.28) 0%,rgba(230,125,58,.13) 24%,transparent 48%),
+    radial-gradient(ellipse at 90% 24%,rgba(246,177,112,.34) 0%,rgba(246,177,112,.16) 28%,transparent 52%),
+    radial-gradient(ellipse at 76% 88%,rgba(218,151,91,.24) 0%,rgba(218,151,91,.10) 26%,transparent 50%),
+    radial-gradient(ellipse at 35% 58%,rgba(239,220,194,.46) 0%,transparent 48%),
+    linear-gradient(125deg,#fffdf9 0%,#f4e5d4 48%,#fff9f1 100%);
+  background-attachment:fixed;color:var(--text);
+}
+.panel,.review,.login{
+  background:rgba(255,253,249,.96);
+  border:1px solid var(--line);
+  box-shadow:0 10px 28px rgba(103,75,48,.075);
+}
+button{background:linear-gradient(135deg,#d99b68,#bd8050);box-shadow:0 6px 16px rgba(190,128,76,.20)}
+.secondary{background:linear-gradient(135deg,#fffaf3,#f3e7d8);color:#5a4938;border:1px solid rgba(197,168,128,.42);box-shadow:none}
+.danger{background:linear-gradient(135deg,#bd7468,#a85b51);color:#fff}
+.green{background:linear-gradient(135deg,#80a58a,#62896d);color:#fff}
+.login input{background:#fff;border-color:rgba(197,168,128,.42);color:#302c27}
+.empty{background:rgba(255,253,249,.9);border:1px dashed rgba(197,168,128,.48);border-radius:12px}
+
 </style>
 </head>
 <body>
@@ -19,9 +48,9 @@
 <div id="loginError" class="message err" style="display:none"></div>
 </div>
 <div id="app" style="display:none"><div class="container">
-<div class="header"><div><h1>Відгуки клієнтів</h1><div class="muted">Нові відгуки очікують перевірки. Схвалюйте чесні відгуки, а відхиляйте лише порушення правил або очевидний спам.</div></div><div class="actions"><button class="secondary" onclick="location.href='./index.html'">До адмінки</button><button class="secondary" onclick="location.href='./forum.html'">Форум</button><button class="secondary" onclick="loadReviews()">Оновити</button><button class="danger" onclick="logout()">Вийти</button></div></div>
+<div class="header"><div><h1>Відгуки клієнтів</h1><div class="muted">Нові відгуки очікують перевірки. Схвалюйте чесні відгуки, а відхиляйте лише порушення правил або очевидний спам.</div></div><div class="actions"><button class="secondary" onclick="location.href='./index.html'">До адмінки</button><button class="secondary" onclick="location.href='./forum.html'">Форум</button><button class="secondary" onclick="loadReviews()">Оновити</button><button class="danger" onclick="logout()">Вийти з акаунта</button></div></div>
 <div id="message"></div>
-<section class="panel"><h2>Опубліковані відгуки</h2><p class="muted">Нові відгуки з форми потрапляють сюди зі статусом «Очікує перевірки». Негативні, але коректні відгуки можна схвалювати — відхиляйте лише спам або порушення правил.</p></section>
+<section class="panel"><h2>Усі відгуки</h2><p class="muted">Нові відгуки з форми потрапляють сюди зі статусом «Очікує перевірки». Негативні, але коректні відгуки можна схвалювати — відхиляйте лише спам або порушення правил.</p></section>
 <div id="reviews" class="reviews"><div class="empty">Завантаження…</div></div>
 <section class="panel" style="margin-top:20px"><h2>Коментарі до відгуків</h2><p class="muted">Можна приховувати порушення правил або видаляти явний спам.</p><div id="reviewCommentsAdmin"><div class="empty">Завантаження…</div></div></section>
 <section class="panel" style="margin-top:20px"><h2>Скарги спільноти</h2><p class="muted">Скарги на теми форуму, відповіді, відгуки та коментарі зібрані тут.</p><div id="communityReports"><div class="empty">Завантаження…</div></div></section>
