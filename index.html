@@ -419,6 +419,110 @@ header .container{align-items:center!important;justify-content:flex-start!import
   .forum-nav-link{padding:5px 7px!important;font-size:10px!important}
 }
 </style>
+
+<style id="amulet-compact-layout">
+/* Compact overall proportions while preserving readable booking controls */
+:root{--radius:14px;--shadow:0 9px 26px rgba(26,25,23,.055)}
+body{font-size:14px;line-height:1.55}
+.container{max-width:1100px;padding-left:20px;padding-right:20px}
+header{padding:14px 0}
+header .container{gap:10px!important}
+.logo{width:132px!important;height:42px!important;flex-basis:132px!important}
+.logo img{max-height:42px!important}
+.header-booking-btn{padding:8px 13px!important;min-height:35px!important;font-size:12px!important}
+.forum-nav-link{padding:6px 9px!important;min-height:29px!important;font-size:11px!important}
+.header-contacts{gap:6px!important}
+.phone-link{font-size:13px!important;gap:6px!important;white-space:nowrap}
+.phone-link i{font-size:14px!important}
+.hero{min-height:0;padding:60px 0 44px}
+.hero h1{font-size:clamp(34px,5.2vw,58px);margin-bottom:16px}
+.hero p{font-size:16px;margin-bottom:26px}
+.hero-actions{gap:12px}
+.btn{padding:11px 22px;font-size:14px;gap:8px}
+.rating-badge{font-size:13px;padding:5px 12px;margin-bottom:18px}
+.features{padding:30px 0}
+.features-grid{gap:18px;grid-template-columns:repeat(auto-fit,minmax(250px,1fr))}
+.feature-card{padding:24px}
+.feature-icon{width:44px;height:44px;font-size:18px;margin-bottom:15px;border-radius:11px}
+.feature-card h3{font-size:18px;margin-bottom:8px}
+.feature-card p{font-size:13px}
+.services,.reviews{padding:46px 0}
+.section-title{font-size:32px;margin-bottom:9px}
+.section-title::after{width:54px;height:2px;margin-top:9px}
+.section-subtitle{font-size:14px;margin-bottom:32px}
+.services-grid{grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:22px}
+.services-category{padding:26px}
+.services-category h3{font-size:20px;margin-bottom:18px;gap:9px;padding-bottom:10px}
+.service-item{font-size:14px;margin-bottom:14px}
+.offers{padding:30px 0}
+.offers-banner{padding:30px;gap:22px}
+.offers-content h3{font-size:23px;margin-bottom:8px}
+.offers-content p{font-size:14px}
+.reviews-grid{grid-template-columns:repeat(auto-fit,minmax(270px,1fr));gap:18px}
+.review-card{padding:24px}
+.review-text{font-size:13px;margin-bottom:15px}
+.review-form-wrap{max-width:700px;margin:32px auto 0;padding:24px}
+.review-form-title{font-size:23px}
+.review-form-note{font-size:13px;margin-bottom:18px}
+.review-form{gap:13px}
+.review-field input,.review-field select,.review-field textarea{padding:11px 12px;font-size:14px}
+.review-field textarea{min-height:112px}
+.contacts{padding:46px 0 60px}
+.contacts-wrapper{gap:28px}
+.contacts-info{padding:28px}
+.contact-item{gap:12px;margin-bottom:19px}
+.contact-item i{font-size:18px}
+.contact-item h4{font-size:15px}
+.contact-item p{font-size:13px}
+.map-container{height:340px}
+footer{padding:24px 0;font-size:13px}
+.glass-card{box-shadow:0 9px 26px rgba(67,54,39,.06)}
+.section-head{margin-bottom:30px}
+.facade-section{padding:16px 0 44px}
+.facade-card img{height:260px;max-height:260px}
+.service-tools{gap:8px;margin:-12px 0 22px}
+.service-filter{padding:8px 12px;font-size:12px}
+.seasonal-mark{width:42px;height:42px;font-size:20px}
+@media(max-width:768px){
+  .container{padding-left:16px;padding-right:16px}
+  header{padding:11px 0}
+  header .container{gap:6px!important;padding-left:10px!important;padding-right:10px!important;flex-wrap:nowrap!important}
+  .logo{width:104px!important;height:34px!important;flex-basis:104px!important}
+  .logo img{max-height:34px!important}
+  .header-booking-btn{padding:7px 9px!important;min-height:31px!important;font-size:11px!important}
+  .forum-nav-link{padding:5px 7px!important;min-height:27px!important;font-size:10px!important}
+  .header-contacts{margin-left:auto!important;gap:4px!important}
+  .header-contacts .phone-link{font-size:11px!important;gap:4px!important}
+  .header-contacts .phone-link i{font-size:13px!important}
+  .hero{padding:44px 0 34px}
+  .hero h1{font-size:clamp(32px,7vw,44px)}
+  .hero p{font-size:15px}
+  .features,.services,.reviews{padding:34px 0}
+  .features-grid{grid-template-columns:1fr;gap:14px}
+  .feature-card{padding:20px}
+  .services-grid{grid-template-columns:1fr;gap:16px}
+  .services-category{padding:22px}
+  .section-title{font-size:28px}
+  .section-subtitle{margin-bottom:24px}
+  .offers-banner{padding:24px}
+  .review-card{padding:20px}
+  .review-form-wrap{padding:20px}
+  .contacts{padding:34px 0 48px}
+  .contacts-info{padding:22px}
+  .map-container{height:300px}
+  .facade-card img{height:220px;max-height:220px}
+}
+@media(max-width:390px){
+  header .container{gap:4px!important}
+  .logo{width:92px!important;height:31px!important;flex-basis:92px!important}
+  .logo img{max-height:31px!important}
+  .header-booking-btn{padding:6px 7px!important;font-size:10px!important}
+  .forum-nav-link{padding:5px 6px!important;font-size:9px!important}
+  .header-contacts .phone-link{font-size:10px!important}
+  .header-contacts .phone-link i{font-size:12px!important}
+  .hero h1{font-size:31px}
+}
+</style>
 </head>
 <body><a class="skip-link" href="#main">Перейти до основного вмісту</a>
     <header>
@@ -427,7 +531,7 @@ header .container{align-items:center!important;justify-content:flex-start!import
             <a href="#booking" data-booking class="btn btn-primary header-booking-btn">Записатися</a>
             <a class="forum-nav-link" href="./forum.html">Форум</a>
             <div class="header-contacts">
-                <a href="tel:0680006311" class="phone-link"><i class="fa-solid fa-phone"></i> 068 000 6311</a>
+                <a href="tel:0680006311" class="phone-link" aria-label="Зателефонувати: 068 000 63 11"><i class="fa-solid fa-phone" aria-hidden="true"></i><span>068 000 63 11</span></a>
             </div>
         </div>
     </header>
