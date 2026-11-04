@@ -396,20 +396,38 @@ body[data-season="newyear"]{--season-primary:#e0b6b8;--season-primary-dark:#ad6e
 
 
 <style id="amulet-real-logo">
-header .container{align-items:center!important}
+header .container{align-items:center!important;justify-content:flex-start!important;gap:12px!important}
 .logo{display:flex!important;align-self:center!important;align-items:center!important;justify-content:flex-start!important;width:142px!important;height:46px!important;min-width:0!important;flex:0 0 142px!important;line-height:0!important;font-size:0!important;gap:0!important;margin:0!important}
 .logo img{display:block!important;width:100%!important;height:100%!important;max-height:46px!important;object-fit:contain!important;object-position:left center!important}
-@media(max-width:768px){.logo{width:112px!important;height:37px!important;flex-basis:112px!important}.logo img{max-height:37px!important}}
+.header-booking-btn{display:inline-flex!important;align-items:center!important;justify-content:center!important;flex:0 0 auto!important;padding:10px 16px!important;min-height:38px!important;font-size:13px!important;white-space:nowrap!important;margin:0!important}
+.forum-nav-link{display:inline-flex!important;align-items:center!important;justify-content:center!important;flex:0 0 auto!important;padding:7px 11px!important;min-height:32px!important;margin:0!important;border-radius:999px!important;background:#29445f!important;color:#fff!important;text-decoration:none!important;font-size:12px!important;font-weight:700!important;white-space:nowrap!important}
+.header-contacts{display:flex!important;align-items:center!important;gap:8px!important;margin-left:auto!important;flex:0 0 auto!important}
+@media(max-width:768px){
+  header .container{gap:7px!important;padding-left:12px!important;padding-right:12px!important}
+  .logo{width:104px!important;height:34px!important;flex-basis:104px!important}
+  .logo img{max-height:34px!important}
+  .header-booking-btn{padding:8px 10px!important;min-height:32px!important;font-size:11px!important}
+  .forum-nav-link{padding:6px 8px!important;min-height:29px!important;font-size:11px!important}
+  .header-contacts{margin-left:auto!important}
+  .header-contacts .phone-link{font-size:0!important}
+  .header-contacts .phone-link i{font-size:15px!important}
+}
+@media(max-width:360px){
+  header .container{gap:5px!important;padding-left:9px!important;padding-right:9px!important}
+  .logo{width:94px!important;flex-basis:94px!important}
+  .header-booking-btn{padding:7px 8px!important;font-size:10px!important}
+  .forum-nav-link{padding:5px 7px!important;font-size:10px!important}
+}
 </style>
 </head>
 <body><a class="skip-link" href="#main">Перейти до основного вмісту</a>
     <header>
         <div class="container">
-            <a href="./index.html" class="logo" aria-label="АМУЛЕТ — сімейний салон краси"><img src="./assets/amulet-logo.svg?v=2" alt="Логотип салону краси АМУЛЕТ" width="770" height="250"></a>
-            <a class="forum-nav-link" href="./forum.html" style="display:inline-block;padding:10px 16px;border-radius:999px;background:#29445f;color:#fff;text-decoration:none;font-weight:700;margin-left:auto;margin-right:18px">Форум</a>
+            <a href="./index.html" class="logo" aria-label="АМУЛЕТ — сімейний салон краси"><img src="./assets/amulet-logo.svg?v=3" alt="Логотип салону краси АМУЛЕТ" width="770" height="250"></a>
+            <a href="#booking" data-booking class="btn btn-primary header-booking-btn">Записатися</a>
+            <a class="forum-nav-link" href="./forum.html">Форум</a>
             <div class="header-contacts">
                 <a href="tel:0680006311" class="phone-link"><i class="fa-solid fa-phone"></i> 068 000 6311</a>
-                <a href="#booking" data-booking class="btn btn-primary">Записатися</a>
             </div>
         </div>
     </header>
