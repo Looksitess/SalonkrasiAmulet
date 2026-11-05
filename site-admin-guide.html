@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="Покрокова інструкція з керування сайтом та його адміністративною панеллю.">
+<title>Як керувати сайтом</title>
+<style>
+:root{--ink:#28231e;--muted:#746b61;--gold:#b89462;--paper:#f8f5f0;--line:#e9dfd2;--card:#fffdfa}
+*{box-sizing:border-box}body{margin:0;background:var(--paper);color:var(--ink);font:16px/1.7 Arial,sans-serif}
+header{background:#29241f;color:#fff;padding:54px 20px;text-align:center}header h1{font:700 clamp(32px,5vw,48px)/1.15 Georgia,serif;margin:0 0 12px}header p{margin:0;color:#e4d9ca}
+main{max-width:900px;margin:34px auto;padding:0 18px 60px}
+nav{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:20px 24px;margin-bottom:24px}
+nav h2{margin:0 0 10px;font-size:19px}nav ol{margin:0;padding-left:22px}a{color:#8a673e;text-decoration:none}a:hover{text-decoration:underline}
+section{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:26px;margin:18px 0;scroll-margin-top:18px}
+h2{font:700 25px/1.25 Georgia,serif;margin:0 0 14px}h3{font-size:18px;margin:22px 0 7px}
+p{margin:8px 0}ul,ol{padding-left:23px}li{margin:6px 0}
+.link{display:inline-block;margin:8px 8px 4px 0;padding:10px 15px;border-radius:9px;background:#eee4d7;color:#4a3827;font-weight:700}
+.note{background:#f4eee5;border-left:4px solid var(--gold);padding:13px 16px;border-radius:7px;margin:15px 0}
+.step{display:inline-grid;place-items:center;width:27px;height:27px;border-radius:50%;background:#e9ddcc;color:#60472b;font-weight:700;margin-right:7px}
+footer{text-align:center;color:var(--muted);padding:24px}
+@media(max-width:600px){section{padding:20px}header{padding:40px 18px}}
+</style>
+</head>
+<body>
+<header><h1>Як керувати сайтом</h1><p>Послідовна інструкція для адміністратора</p></header>
+<main>
+<nav><h2>Зміст — у правильному порядку</h2><ol>
+<li><a href="#login">Вхід до адміністративної панелі</a></li>
+<li><a href="#bookings">Керування записами</a></li>
+<li><a href="#schedule">Графік майстрів і вільний час</a></li>
+<li><a href="#services">Керування послугами</a></li>
+<li><a href="#reviews">Відгуки та скарги</a></li>
+<li><a href="#forum">Керування форумом</a></li>
+</ol></nav>
+<section id="login"><h2><span class="step">1</span>Вхід до адміністративної панелі</h2>
+<p>Адміністративна панель призначена для керування записами, графіком майстрів, послугами та відгуками.</p>
+<a class="link" href="./admin/">Відкрити адмінпанель</a>
+<ol><li>Відкрийте сторінку адміністративної панелі.</li><li>Введіть облікові дані адміністратора.</li><li>Після входу оберіть потрібний розділ у меню.</li></ol>
+<div class="note">Не передавайте пароль стороннім. Після завершення роботи натисніть «Вийти».</div></section>
+<section id="bookings"><h2><span class="step">2</span>Керування записами</h2>
+<p>У розділі «Записи» переглядайте заявки клієнтів і перевіряйте їхні дані.</p>
+<ul><li>Переглядайте ім’я, телефон, послугу, майстра, дату та час.</li><li>Користуйтеся пошуком і фільтрами, якщо потрібно знайти конкретну заявку.</li><li>Перевіряйте нові заявки та оновлюйте список кнопкою «Оновити», якщо вона доступна.</li><li>Підтверджуйте або змінюйте статус запису лише відповідними кнопками в панелі.</li></ul>
+<div class="note">Перед зміною або скасуванням запису уважно перевірте дату, час і контактний номер клієнта.</div></section>
+<section id="schedule"><h2><span class="step">3</span>Графік майстрів і вільний час</h2>
+<p>У налаштуваннях графіка керуйте робочими днями та годинами майстрів.</p>
+<ul><li>Оберіть потрібного майстра.</li><li>Перевірте робочі дні та часові проміжки.</li><li>Позначайте вихідні й недоступний час відповідними налаштуваннями.</li><li>Збережіть зміни та перевірте на сайті, чи правильно відображаються доступні години.</li></ul>
+<p>Зайняті години мають бути недоступними для нового онлайн-запису. Вільні години мають залишатися доступними для вибору.</p></section>
+<section id="services"><h2><span class="step">4</span>Керування послугами</h2>
+<p>У розділі «Послуги» підтримуйте актуальний перелік послуг.</p>
+<ul><li>Додавайте нову послугу, якщо панель має таку функцію.</li><li>Перевіряйте назву, категорію та ціну.</li><li>Редагуйте або вимикайте послуги, які тимчасово не надаються.</li><li>Після збереження відкрийте головний сайт і перевірте, чи оновився каталог та форма запису.</li></ul>
+<div class="note">Не залишайте застарілі ціни або послуги, які більше не надаються.</div></section>
+<section id="reviews"><h2><span class="step">5</span>Відгуки та скарги</h2>
+<p>Відгуки та повідомлення спільноти перевіряються в окремому розділі.</p>
+<a class="link" href="./admin/reviews.html">Відкрити відгуки та скарги</a>
+<ul><li>Переглядайте нові відгуки, які очікують перевірки.</li><li>Схвалюйте відгуки, що відповідають правилам.</li><li>Відхиляйте спам або матеріали з порушеннями.</li><li>Перевіряйте коментарі та скарги на теми, відповіді й відгуки.</li></ul>
+<div class="note">Не відхиляйте відгук лише через негативну оцінку. Орієнтуйтеся на правила публікації.</div></section>
+<section id="forum"><h2><span class="step">6</span>Керування форумом</h2>
+<p>Цей розділ останній у посібнику. Тут адміністратор стежить за темами та відповідями користувачів.</p>
+<a class="link" href="./admin/forum.html">Відкрити керування форумом</a>
+<a class="link" href="./forum.html">Відкрити публічний форум</a>
+<h3>Пошук і фільтри</h3><ul><li>Шукайте теми за назвою, текстом або автором.</li><li>Фільтруйте за категорією та статусом.</li><li>Використовуйте фільтри тем із відповідями або без відповідей, а також закритих тем.</li><li>Кнопкою «Оновити» завантажуйте актуальний список.</li></ul>
+<h3>Модерація</h3><ul><li>Переглядайте зміст тем і відповідей.</li><li>Приховуйте матеріали, які порушують правила або є спамом, використовуючи доступні дії в панелі.</li><li>Перевіряйте скарги через розділ «Відгуки та скарги».</li><li>Після завершення роботи вийдіть з облікового запису адміністратора.</li></ul>
+<div class="note">Назви кнопок керування окремою темою або відповіддю можуть відрізнятися залежно від доступних дій у панелі. Перед дією перевіряйте, який саме матеріал вибрано.</div>
+</section>
+</main><footer>Інструкція адміністратора · Як керувати сайтом</footer>
+</body></html>
