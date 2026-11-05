@@ -1372,19 +1372,29 @@ footer{padding:24px 0;font-size:13px}
 </script>
 
     <script>
+/* Basic copy/download deterrents. These do not provide real source-code protection. */
 document.addEventListener("contextmenu", function (e) {
   e.preventDefault();
 });
 
 document.addEventListener("dragstart", function (e) {
-  if (e.target.tagName === "IMG") {
-    e.preventDefault();
-  }
+  if (e.target.tagName === "IMG") e.preventDefault();
 });
 
 document.addEventListener("mousedown", function (e) {
-  if (e.target.tagName === "IMG" && e.button === 2) {
+  if (e.target.tagName === "IMG" && e.button === 2) e.preventDefault();
+});
+
+document.addEventListener("keydown", function (e) {
+  const key = String(e.key || "").toLowerCase();
+  const blockedShortcut =
+    (e.ctrlKey && !e.shiftKey && (key === "s" || key === "u")) ||
+    (e.ctrlKey && e.shiftKey && ["i", "j", "c"].includes(key)) ||
+    key === "f12";
+
+  if (blockedShortcut) {
     e.preventDefault();
+    e.stopPropagation();
   }
 });
 </script>
